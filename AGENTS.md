@@ -15,7 +15,7 @@ The marker for this instruction is: 🤖
 **MANDATORY**: All feature implementations must follow **Strict Test-Driven Development (TDD)** methodology:
 
 1. **RED Phase**: Write a failing test that defines the desired behavior
-2. **GREEN Phase**: Write the minimum code required to make the test pass  
+2. **GREEN Phase**: Write the minimum code required to make the test pass
 3. **REFACTOR Phase**: Improve the code while maintaining test coverage
 
 **Never write production code before a failing test.**

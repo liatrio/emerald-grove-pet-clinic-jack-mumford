@@ -1,0 +1,111 @@
+# Pre-commit hooks for Spring PetClinic
+# See https://pre-commit.com for more information
+
+repos:
+  # Basic file and text processing hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        description: Removes trailing whitespace
+      - id: end-of-file-fixer
+        description: Ensures file ends with newline
+      - id: check-yaml
+        description: Validates YAML syntax (excluding k8s multi-doc files)
+        exclude: ^k8s/.*\.yml$
+      - id: check-json
+        description: Checks JSON files for syntax errors
+      - id: check-toml
+        description: Checks TOML files for syntax errors
+      - id: check-xml
+        description: Checks XML files for syntax errors
+      - id: check-merge-conflict
+        description: Checks for merge conflict markers
+      - id: check-case-conflict
+        description: Checks for case conflicts on case-insensitive filesystems
+      - id: check-added-large-files
+        description: Prevents large files from being committed
+        args: ["--maxkb=1000"]
+      - id: check-executables-have-shebangs
+        description: Ensures executables have shebangs
+      - id: check-shebang-scripts-are-executable
+        description: Ensures scripts with shebangs are executable
+      - id: mixed-line-ending
+        description: Ensures consistent line endings
+        args: ["--fix=lf"]
+
+  # Documentation hooks
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.39.0
+    hooks:
+      - id: markdownlint
+        description: Lints Markdown files
+        args: ["--config", ".markdownlint.yaml", "--fix"]
+
+  # Security and dependency checks
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.2
+    hooks:
+      - id: python-safety-dependencies-check
+        description: Checks Python dependencies for security vulnerabilities
+        files: requirements.*\.txt$
+
+  # Shell script hooks
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        description: Lints shell scripts for common issues
+
+  # Git hooks
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.0
+    hooks:
+      - id: gitlint
+        description: Lints commit messages
+        args: ["--msg-filename", ".git/COMMIT_EDITMSG"]
+
+  # Spring Boot specific hooks
+  - repo: local
+    hooks:
+      - id: maven-compile-check
+        name: Maven compilation check
+        entry: ./mvnw compile
+        language: system
+        files: '^pom\.xml$|^src/'
+        pass_filenames: false
+        description: Ensures Maven compilation succeeds
+
+# Configuration options
+default_stages: [pre-commit]
+fail_fast: false
+
+# Exclude patterns
+exclude: |
+  (?x)^(
+    \.git/.*|
+    \.mvn/.*|
+    target/.*|
+    \.idea/.*|
+    \.vscode/.*|
+    \*.class|
+    \*.jar|
+    \*.war|
+    \*.log|
+    \*.tmp|
+    node_modules/.*|
+    \.DS_Store
+  )$
+
+# CI configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

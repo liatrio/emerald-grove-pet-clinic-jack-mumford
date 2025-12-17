@@ -51,18 +51,18 @@ flowchart TD
         Integration[Integration Tests<br/>@DataJpaTest<br/>Database + Service]
         Unit[Unit Tests<br/>@WebMvcTest<br/>Individual Components]
     end
-    
+
     E2E --> Integration
     Integration --> Unit
-    
+
     style Unit fill:#e1f5fe,stroke:#01579b,color:#01579b
     style Integration fill:#fff3e0,stroke:#ef6c00,color:#ef6c00
     style E2E fill:#c8e6c9,stroke:#2e7d32,color:#2e7d32
-    
+
     Unit2["Fast & Isolated<br/>Many Tests<br/>MockMvc, Mockito"]
     Integration2["Medium Speed<br/>Fewer Tests<br/>TestContainers, @DataJpaTest"]
     E2E2["Slow & Comprehensive<br/>Few Tests<br/>Full Stack, Real DB"]
-    
+
     Unit --> Unit2
     Integration --> Integration2
     E2E --> E2E2
@@ -275,7 +275,7 @@ flowchart LR
     RED[RED Phase<br/>Write Failing Test] --> GREEN[GREEN Phase<br/>Make Test Pass]
     GREEN --> REFACTOR[REFACTOR Phase<br/>Improve Code]
     REFACTOR --> RED
-    
+
     style RED fill:#ffcdd2,stroke:#c62828,color:#c62828
     style GREEN fill:#c8e6c9,stroke:#2e7d32,color:#2e7d32
     style REFACTOR fill:#fff3e0,stroke:#ef6c00,color:#ef6c00
@@ -314,10 +314,10 @@ void shouldCreateOwnerWithValidData() {
     owner.setAddress("123 Main St");
     owner.setCity("Anytown");
     owner.setTelephone("555-1234");
-    
+
     // Act
     Owner savedOwner = ownerService.save(owner);
-    
+
     // Assert
     assertThat(savedOwner.getId()).isNotNull();
     assertThat(savedOwner.getFirstName()).isEqualTo("John");
@@ -363,30 +363,30 @@ flowchart TD
         Utils[Entity Utils<br/>getById(), validate()]
         Fixtures[Data Fixtures<br/>Sample Owners, Pets, Vets]
     end
-    
+
     subgraph "Test Execution"
         Setup[Setup Test Data<br/>@BeforeEach]
         Execute[Run Test<br/>MockMvc, @DataJpaTest]
         Cleanup[Cleanup<br/>@Transactional Rollback]
     end
-    
+
     subgraph "Data Sources"
         H2[H2 In-Memory<br/>Auto-populated]
         MySQL[MySQL TestContainer<br/>Docker Instance]
         PG[PostgreSQL<br/>Docker Compose]
     end
-    
+
     Factory --> Setup
     Utils --> Setup
     Fixtures --> Setup
-    
+
     Setup --> Execute
     Execute --> Cleanup
-    
+
     H2 -.-> Execute
     MySQL -.-> Execute
     PG -.-> Execute
-    
+
     style Factory fill:#e1f5fe,stroke:#01579b
     style Utils fill:#e1f5fe,stroke:#01579b
     style Fixtures fill:#e1f5fe,stroke:#01579b
@@ -410,7 +410,7 @@ private Owner george() {
     george.setAddress("110 W. Liberty St.");
     george.setCity("Madison");
     george.setTelephone("6085551023");
-    
+
     Pet max = new Pet();
     PetType dog = new PetType();
     dog.setName("dog");
@@ -459,7 +459,7 @@ void setup() {
     Owner george = george();
     given(this.owners.findByLastNameStartingWith(eq("Franklin"), any(Pageable.class)))
         .willReturn(new PageImpl<>(List.of(george)));
-    
+
     given(this.owners.findById(TEST_OWNER_ID)).willReturn(Optional.of(george));
 }
 ```
@@ -489,7 +489,7 @@ void shouldFindSingleOwnerWithPet() {
     Optional<Owner> optionalOwner = this.owners.findById(1);
     assertThat(optionalOwner).isPresent();
     Owner owner = optionalOwner.get();
-    
+
     assertThat(owner.getLastName()).startsWith("Franklin");
     assertThat(owner.getPets()).hasSize(1);
     assertThat(owner.getPets().get(0).getType()).isNotNull();
@@ -521,18 +521,18 @@ flowchart TD
     Profile -->|Default| H2[H2 In-Memory DB]
     Profile -->|MySQL| MySQL[MySQL + TestContainers]
     Profile -->|PostgreSQL| PG[PostgreSQL + Docker]
-    
+
     H2 --> Unit[Unit Tests<br/>@WebMvcTest]
     MySQL --> Integration[Integration Tests<br/>@DataJpaTest]
     PG --> E2E[End-to-End Tests<br/>@SpringBootTest]
-    
+
     Unit --> Coverage[Generate Coverage<br/>JaCoCo Report]
     Integration --> Coverage
     E2E --> Coverage
-    
+
     Coverage --> Results[Test Results<br/>HTML Reports]
     Results --> End[Complete]
-    
+
     style Start fill:#e1f5fe,stroke:#01579b
     style End fill:#c8e6c9,stroke:#2e7d32
     style H2 fill:#f3e5f5,stroke:#7b1fa2
@@ -634,7 +634,7 @@ Key testing dependencies in `pom.xml`:
 Maintain high test coverage across all layers:
 
 - **Controllers**: 90%+ coverage
-- **Services**: 85%+ coverage  
+- **Services**: 85%+ coverage
 - **Repositories**: 80%+ coverage
 - **Models**: 75%+ coverage
 

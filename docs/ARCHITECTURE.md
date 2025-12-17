@@ -51,28 +51,28 @@ flowchart TD
         A[Web Browser] --> B[Spring MVC Controllers]
         B --> C[Thymeleaf Templates]
     end
-    
+
     subgraph Business Layer
         D[Service Classes]
         E[Business Logic]
         F[Validation]
     end
-    
+
     subgraph Data Layer
         G[Spring Data JPA]
         H[Repository Interfaces]
         I[JPA Entities]
     end
-    
+
     subgraph Database Layer
         J[H2/MySQL/PostgreSQL]
         K[HikariCP Connection Pool]
     end
-    
+
     C --> D
     D --> G
     G --> J
-    
+
     style A fill:#e1f5fe,stroke:#01579b
     style J fill:#c8e6c9,stroke:#2e7d32
     style B fill:#fff3e0,stroke:#ef6c00
@@ -156,7 +156,7 @@ erDiagram
         string city
         string telephone
     }
-    
+
     Pet {
         int id PK
         string name
@@ -164,35 +164,35 @@ erDiagram
         int type_id FK
         int owner_id FK
     }
-    
+
     PetType {
         int id PK
         string name
     }
-    
+
     Visit {
         int id PK
         LocalDate date
         string description
         int pet_id FK
     }
-    
+
     Vet {
         int id PK
         string first_name
         string last_name
     }
-    
+
     Specialty {
         int id PK
         string name
     }
-    
+
     Vet_Specialty {
         int vet_id FK
         int specialty_id FK
     }
-    
+
     Owner ||--o{ Pet : owns
     Pet }o--|| PetType : has
     Pet ||--o{ Visit : has
@@ -264,7 +264,7 @@ Controllers follow RESTful conventions:
 @Controller
 @RequestMapping("/owners")
 public class OwnerController {
-    
+
     @GetMapping("/{ownerId}")
     public String showOwner(@PathVariable("ownerId") int ownerId, Model model) {
         model.addAttribute("owner", ownerRepository.findById(ownerId));
@@ -285,12 +285,12 @@ flowchart LR
     D --> E[Repository Layer]
     E --> F[JPA/Hibernate]
     F --> G[Database]
-    
+
     G --> H[Response Entity]
     H --> I[Thymeleaf Template]
     I --> J[HTML Response]
     J --> K[Browser Render]
-    
+
     style A fill:#e1f5fe,stroke:#01579b
     style G fill:#c8e6c9,stroke:#2e7d32
     style K fill:#fff3e0,stroke:#ef6c00
