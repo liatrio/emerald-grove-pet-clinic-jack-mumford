@@ -47,6 +47,16 @@ Access the application at `http://localhost:8080`
 - **[Architecture Guide](docs/ARCHITECTURE.md)** - System design and technical decisions
 - **[Testing Guide](docs/TESTING.md)** - Comprehensive testing strategies and patterns
 
+## Development Standards
+
+⚠️ **Important**: This project follows **Strict Test-Driven Development (TDD)** methodology. All feature implementations must follow the Red-Green-Refactor cycle:
+
+1. **RED**: Write a failing test first
+2. **GREEN**: Write minimum code to pass the test  
+3. **REFACTOR**: Improve code while maintaining tests
+
+See the [Development Guide](docs/DEVELOPMENT.md) for detailed TDD requirements and development workflow.
+
 ## Technology Stack
 
 - **Spring Boot 4.0.0** - Modern Java application framework

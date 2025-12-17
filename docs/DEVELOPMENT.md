@@ -9,6 +9,61 @@ This guide covers development setup, testing, and contribution guidelines for th
 - **Git** for version control
 - **Docker** (optional, for containerized databases)
 
+## Development Workflow
+
+### TDD-First Development Process
+
+⚠️ **Critical**: This project enforces **Strict Test-Driven Development (TDD)**. All development must follow the Red-Green-Refactor cycle:
+
+#### 1. RED Phase - Write Failing Test
+
+- Write a test that defines the desired behavior
+- Ensure the test fails for the correct reason
+- Test should be specific and focused on one behavior
+
+#### 2. GREEN Phase - Make Test Pass
+
+- Write the **minimum** code required to make the test pass
+- No extra functionality beyond what the test requires
+- Focus on making the test pass quickly
+
+#### 3. REFACTOR Phase - Improve Code
+
+- Improve code structure while keeping tests green
+- Eliminate duplication and improve readability
+- Ensure all tests still pass
+
+### Feature Development Process
+
+1. **Requirements Analysis**: Understand the feature requirements
+2. **Test Design**: Write comprehensive failing tests
+3. **TDD Implementation**: Follow Red-Green-Refactor cycle
+4. **Integration**: Verify with existing code
+5. **Review**: Code review and feedback
+6. **Documentation**: Update relevant documentation
+
+### TDD Quality Gates
+
+#### Before Writing Code
+
+- [ ] Test is written and failing
+- [ ] Test clearly defines expected behavior
+- [ ] Test covers edge cases and error conditions
+
+#### Before Commit
+
+- [ ] All tests pass (including new ones)
+- [ ] Code coverage meets standards (>90%)
+- [ ] Code follows clean code principles
+- [ ] No code duplication
+
+#### Before Merge
+
+- [ ] Peer review completed
+- [ ] Integration tests pass
+- [ ] Documentation updated
+- [ ] Performance impact assessed
+
 ## Development Setup
 
 ### Clone and Build

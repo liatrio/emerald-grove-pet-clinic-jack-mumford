@@ -4,7 +4,13 @@ This comprehensive guide covers the testing strategy, implementation patterns, a
 
 ## Overview
 
-The Spring PetClinic application employs a multi-layered testing approach following the test pyramid principle. The test suite ensures code quality, prevents regressions, and validates application behavior across different layers and environments.
+The Spring PetClinic application employs a **Strict Test-Driven Development (TDD)** methodology with a multi-layered testing approach following the test pyramid principle. All feature implementations must follow the **Red-Green-Refactor** cycle:
+
+1. **RED**: Write a failing test that defines the desired behavior
+2. **GREEN**: Write the minimum code required to make the test pass
+3. **REFACTOR**: Improve the code while maintaining test coverage
+
+The test suite ensures code quality, prevents regressions, and validates application behavior across different layers and environments.
 
 ## Test Structure
 
@@ -260,7 +266,89 @@ class MySqlIntegrationTests {
 - **@ServiceConnection**: Auto-configures database connection
 - **@ActiveProfiles**: Activates MySQL-specific configuration
 
-## Testing Patterns and Best Practices
+## TDD Implementation Patterns
+
+### Red-Green-Refactor Cycle
+
+```mermaid
+flowchart LR
+    RED[RED Phase<br/>Write Failing Test] --> GREEN[GREEN Phase<br/>Make Test Pass]
+    GREEN --> REFACTOR[REFACTOR Phase<br/>Improve Code]
+    REFACTOR --> RED
+    
+    style RED fill:#ffcdd2,stroke:#c62828,color:#c62828
+    style GREEN fill:#c8e6c9,stroke:#2e7d32,color:#2e7d32
+    style REFACTOR fill:#fff3e0,stroke:#ef6c00,color:#ef6c00
+```
+
+#### RED Phase - Write Failing Test
+
+- **Define Behavior**: Write a test that clearly specifies what the code should do
+- **Ensure Failure**: Verify the test fails for the correct reason
+- **Single Responsibility**: Each test focuses on one specific behavior
+
+#### GREEN Phase - Make Test Pass
+
+- **Minimal Implementation**: Write only the code needed to pass the test
+- **No Extra Features**: Avoid adding functionality beyond the test requirements
+- **Quick Success**: Focus on making the test pass as quickly as possible
+
+#### REFACTOR Phase - Improve Code
+
+- **Maintain Green**: All tests must continue passing during refactoring
+- **Improve Design**: Enhance code structure, readability, and maintainability
+- **Eliminate Duplication**: Remove redundant code and improve abstractions
+
+### TDD Test Structure
+
+#### Arrange-Act-Assert Pattern
+
+```java
+@Test
+@DisplayName("should create owner with valid data")
+void shouldCreateOwnerWithValidData() {
+    // Arrange
+    Owner owner = new Owner();
+    owner.setFirstName("John");
+    owner.setLastName("Doe");
+    owner.setAddress("123 Main St");
+    owner.setCity("Anytown");
+    owner.setTelephone("555-1234");
+    
+    // Act
+    Owner savedOwner = ownerService.save(owner);
+    
+    // Assert
+    assertThat(savedOwner.getId()).isNotNull();
+    assertThat(savedOwner.getFirstName()).isEqualTo("John");
+    assertThat(savedOwner.getLastName()).isEqualTo("Doe");
+}
+```
+
+#### Test-First Example
+
+```java
+// 1. RED: Write failing test first
+@Test
+void shouldFindOwnerByEmailWhenEmailExists() {
+    // Test fails because findByEmail doesn't exist yet
+    Optional<Owner> result = ownerService.findByEmail("john@example.com");
+    assertThat(result).isPresent();
+}
+
+// 2. GREEN: Implement minimal method
+public Optional<Owner> findByEmail(String email) {
+    return ownerRepository.findByEmail(email);
+}
+
+// 3. REFACTOR: Improve implementation with validation
+public Optional<Owner> findByEmail(String email) {
+    if (email == null || email.trim().isEmpty()) {
+        return Optional.empty();
+    }
+    return ownerRepository.findByEmail(email.toLowerCase());
+}
+```
 
 ### Test Data Management
 
