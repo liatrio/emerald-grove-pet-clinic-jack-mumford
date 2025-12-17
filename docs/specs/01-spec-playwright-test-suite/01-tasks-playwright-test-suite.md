@@ -73,7 +73,7 @@ This task list breaks down the implementation of a comprehensive Playwright test
 - [x] 3.9 Create responsive design tests for owner forms
 - [x] 3.10 Implement performance and timing tests for owner workflows
 
-### [ ] 4.0 Pet Management Workflow Tests
+### [x] 4.0 Pet Management Workflow Tests
 
 #### 4.0 Proof Artifact(s)
 
@@ -85,16 +85,16 @@ This task list breaks down the implementation of a comprehensive Playwright test
 
 #### 4.0 Tasks
 
-- [ ] 4.1 Create test data factory for pet information and types
-- [ ] 4.2 Implement pet addition to existing owner tests
-- [ ] 4.3 Create pet information editing tests
-- [ ] 4.4 Implement pet type selection and validation tests
-- [ ] 4.5 Add birth date validation and format tests
-- [ ] 4.6 Create pet deletion and management tests
-- [ ] 4.7 Implement pet-owner relationship verification tests
-- [ ] 4.8 Add pet photo and attachment tests (if applicable)
-- [ ] 4.9 Create pet search and filtering tests
-- [ ] 4.10 Implement pet medical history integration tests
+- [x] 4.1 Create test data factory for pet information and types
+- [x] 4.2 Implement pet addition to existing owner tests
+- [x] 4.3 Create pet information editing tests
+- [x] 4.4 Implement pet type selection and validation tests
+- [x] 4.5 Add birth date validation and format tests
+- [x] 4.6 Create pet deletion and management tests
+- [x] 4.7 Implement pet-owner relationship verification tests
+- [x] 4.8 Add pet photo and attachment tests (if applicable)
+- [x] 4.9 Create pet search and filtering tests
+- [x] 4.10 Implement pet medical history integration tests
 
 ### [ ] 5.0 Veterinarian Directory and Visit Scheduling Tests
 
