@@ -24,7 +24,7 @@ export default defineConfig({
   },
   globalSetup: './tests/global-setup.ts',
   webServer: {
-    command: '../mvnw spring-boot:run',
+    command: '../mvnw -f ../pom.xml spring-boot:run',
     url: process.env.E2E_BASE_URL ?? 'http://localhost:8080',
     reuseExistingServer: true,
     timeout: 120_000,
