@@ -40,8 +40,8 @@ test.describe('Pet Management', () => {
     await page.getByRole('button', { name: /Add Visit/i }).click();
 
     await expect(page.getByRole('heading', { name: /Pets and Visits/i })).toBeVisible();
-    await expect(page.getByText('2024-01-01')).toBeVisible();
-    await expect(page.getByText('Annual checkup')).toBeVisible();
+    await expect(petRow.getByRole('cell', { name: '2024-01-01', exact: true })).toBeVisible();
+    await expect(petRow.getByRole('cell', { name: 'Annual checkup', exact: true })).toBeVisible();
 
     await page.screenshot({ path: 'test-results/pet-details-with-visit-history.png', fullPage: true });
   });

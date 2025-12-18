@@ -18,5 +18,6 @@ test('BasePage navigation links route to expected pages', async ({ page }) => {
   await expect(vetPage.heading()).toBeVisible();
 
   await vetPage.goHome();
-  await expect(page).toHaveURL(/\/$/);
+  const { pathname } = new URL(page.url());
+  expect(pathname).toBe('/');
 });

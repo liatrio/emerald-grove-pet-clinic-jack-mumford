@@ -28,9 +28,12 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
   await waitForHttpOk(url, 120_000);
 
   const browser = await chromium.launch();
-  const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'domcontentloaded' });
-  await page.setViewportSize({ width: 1280, height: 720 });
-  await page.screenshot({ path: 'test-results/home-page.png', fullPage: true });
-  await browser.close();
+  try {
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'domcontentloaded' });
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.screenshot({ path: 'test-results/home-page.png', fullPage: true });
+  } finally {
+    await browser.close();
+  }
 }
