@@ -9,12 +9,18 @@ test.describe('Vet Directory', () => {
     await vetPage.open();
 
     await expect(vetPage.vetsTable()).toBeVisible();
-    const rowCount = await vetPage.vetsTable().locator('tbody tr').count();
-    expect(rowCount).toBeGreaterThan(0);
+
+    // This test relies on Petclinic's startup seed data providing vets.
+    const rows = vetPage.vetsTable().locator('tbody tr');
+    const rowCount = await rows.count();
+    expect(rowCount, 'Expected seeded veterinarians to be present').toBeGreaterThan(0);
 
     await page.screenshot({ path: testInfo.outputPath('vet-directory.png'), fullPage: true });
 
-    // Basic specialty presence assertion: either a specialty name or the word 'none'
-    await expect(vetPage.vetsTable()).toContainText(/none|surgery|dentistry|radiology|medicine/i);
+    // Validate each row's specialty cell contains a known specialty or "none".
+    for (let i = 0; i < rowCount; i++) {
+      const specialtyCell = rows.nth(i).locator('td').nth(1);
+      await expect(specialtyCell).toContainText(/none|surgery|dentistry|radiology|medicine/i);
+    }
   });
 });
