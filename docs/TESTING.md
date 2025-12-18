@@ -812,4 +812,96 @@ Load testing with JMeter:
 ./mvnw verify -Pperformance
 ```
 
+## End-to-End (E2E) Browser Tests (Playwright)
+
+This repository includes a standalone Playwright + TypeScript E2E suite under `e2e-tests/`. These tests validate critical user journeys through a real browser and are intentionally separate from the Java unit/integration tests.
+
+### Prerequisites
+
+- Java 17+
+- Node.js + npm
+- (Recommended) Docker if you run DB profiles, though default H2 works fine
+
+### Running Locally
+
+1. **Start the app (optional)**
+
+    The Playwright config is set to start Spring Boot automatically via Maven:
+
+    ```bash
+    ./mvnw spring-boot:run
+    ```
+
+    If you already have the app running, Playwright will reuse it.
+
+2. **Install E2E dependencies**
+
+    ```bash
+    cd e2e-tests
+    npm ci
+    npx playwright install
+    ```
+
+    Note: On some Linux distros Playwright may require additional system libraries. If browsers fail to launch, install deps via:
+
+    ```bash
+    sudo npx playwright install-deps
+    ```
+
+3. **Run tests**
+
+    ```bash
+    npm test
+    ```
+
+### Scripts
+
+The E2E suite is a standalone Node.js project. To run package scripts, use `npm run <script>`.
+
+- **`npm test`**: Run the full E2E suite.
+- **`npm run test:ui`**: Run tests using Playwright's interactive UI mode.
+- **`npm run test:headed`**: Run tests in headed mode.
+- **`npm run test:debug`**: Run tests in headed mode with Playwright debugging enabled.
+- **`npm run report`**: Open the Playwright HTML report.
+
+### Targeted runs
+
+```bash
+npm test -- --grep "Owner Management"
+npm test -- --grep "Pet Management"
+npm test -- --grep "Vet Directory|Visit Scheduling"
+```
+
+### Debugging
+
+```bash
+npm run test:ui
+npm run test:headed
+npm run test:debug
+```
+
+### Reports & Artifacts
+
+- HTML report: `e2e-tests/test-results/html-report/index.html`
+- JUnit: `e2e-tests/test-results/junit.xml`
+- JSON: `e2e-tests/test-results/results.json`
+- Artifacts (traces/videos/screenshots on failure): `e2e-tests/test-results/artifacts/`
+
+Open the report:
+
+```bash
+cd e2e-tests
+npm run report
+```
+
+### Accessibility
+
+A lightweight accessibility scan is available in `e2e-tests/tests/a11y/` and uses `axe-core` injected into the page.
+
+### CI
+
+GitHub Actions workflow: `.github/workflows/e2e-tests.yml`
+
+CI uploads the Playwright HTML report and artifacts as workflow run artifacts.
+
 This comprehensive testing strategy ensures the Spring PetClinic application maintains high code quality and reliability across different environments and use cases.

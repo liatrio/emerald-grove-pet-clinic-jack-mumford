@@ -46,6 +46,7 @@ Access the application at `http://localhost:8080`
 - **[Development Guide](docs/DEVELOPMENT.md)** - Setup, testing, and contribution guidelines
 - **[Architecture Guide](docs/ARCHITECTURE.md)** - System design and technical decisions
 - **[Testing Guide](docs/TESTING.md)** - Comprehensive testing strategies and patterns
+- **[E2E Tests (Playwright)](docs/TESTING.md#end-to-end-e2e-browser-tests-playwright)** - How to run browser-based end-to-end tests
 
 ## Development Standards
 
