@@ -4,7 +4,7 @@ import { OwnerPage } from '@pages/owner-page';
 import { createPet } from '@utils/pet-factory';
 
 test.describe('Pet Management', () => {
-  test('can add a pet to an existing owner and see it on owner details', async ({ page }) => {
+  test('can add a pet to an existing owner and see it on owner details', async ({ page }, testInfo) => {
     const ownerPage = new OwnerPage(page);
     const pet = createPet({ type: 'cat' });
 
@@ -19,7 +19,7 @@ test.describe('Pet Management', () => {
     await page.locator('input#birthDate').fill(pet.birthDate);
     await page.locator('select#type').selectOption({ label: pet.type });
 
-    await page.screenshot({ path: 'test-results/pet-add-form-filled.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('pet-add-form-filled.png'), fullPage: true });
 
     await page.getByRole('button', { name: /Add Pet/i }).click();
 
@@ -36,14 +36,14 @@ test.describe('Pet Management', () => {
 
     await page.locator('input#date').fill('2024-01-01');
     await page.locator('input#description').fill('Annual checkup');
-    await page.screenshot({ path: 'test-results/visit-add-form-filled.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('visit-add-form-filled.png'), fullPage: true });
     await page.getByRole('button', { name: /Add Visit/i }).click();
 
     await expect(page.getByRole('heading', { name: /Pets and Visits/i })).toBeVisible();
     await expect(petRow.getByRole('cell', { name: '2024-01-01', exact: true })).toBeVisible();
     await expect(petRow.getByRole('cell', { name: 'Annual checkup', exact: true })).toBeVisible();
 
-    await page.screenshot({ path: 'test-results/pet-details-with-visit-history.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('pet-details-with-visit-history.png'), fullPage: true });
   });
 
   test('validates pet type selection and birth date format', async ({ page }) => {
@@ -59,6 +59,6 @@ test.describe('Pet Management', () => {
     await page.locator('select#type').selectOption({ index: 0 });
     await page.getByRole('button', { name: /Add Pet/i }).click();
 
-    await expect(page.locator('.help-inline').filter({ hasText: /is required/i })).toHaveCount(2);
+    await expect(page.getByText(/is required/i)).toHaveCount(2);
   });
 });

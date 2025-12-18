@@ -2,7 +2,7 @@ import { test, expect } from '../fixtures/base-test';
 
 import { OwnerPage } from '../pages/owner-page';
 
-test('OwnerPage can search owners by last name and open owner details', async ({ page }) => {
+test('OwnerPage can search owners by last name and open owner details', async ({ page }, testInfo) => {
   const ownerPage = new OwnerPage(page);
 
   await ownerPage.openFindOwners();
@@ -15,5 +15,5 @@ test('OwnerPage can search owners by last name and open owner details', async ({
   await ownerPage.openOwnerDetailsByName('Betty Davis');
   await expect(ownerPage.heading().filter({ hasText: /Owner Information/i })).toBeVisible();
 
-  await page.screenshot({ path: 'test-results/owner-details.png', fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath('owner-details.png'), fullPage: true });
 });

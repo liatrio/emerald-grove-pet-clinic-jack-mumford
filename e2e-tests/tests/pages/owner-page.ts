@@ -45,6 +45,10 @@ export class OwnerPage extends BasePage {
     await this.page.getByLabel(/Telephone/i).fill(owner.telephone);
   }
 
+  async fillCity(city: string): Promise<void> {
+    await this.page.getByLabel(/City/i).fill(city);
+  }
+
   async submitOwnerForm(): Promise<void> {
     await this.page.getByRole('button', { name: /Add Owner|Update Owner/i }).click();
   }
