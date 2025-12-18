@@ -24,7 +24,7 @@ The Spring PetClinic application manages the core operations of a veterinary cli
 ```bash
 # Clone the repository
 git clone https://github.com/liatrio-labs/spring-petclinic-enhanced
-cd spring-petclinic
+cd spring-petclinic-enhanced
 
 # Run with Maven
 ./mvnw spring-boot:run
@@ -60,7 +60,7 @@ See the [Development Guide](docs/DEVELOPMENT.md) for detailed TDD requirements a
 
 ## Technology Stack
 
-- **Spring Boot 4.0.0** - Modern Java application framework
+- **Spring Boot (3.x)** - Modern Java application framework
 - **Spring MVC** - Web layer with Thymeleaf templating
 - **Spring Data JPA** - Data persistence layer
 - **Hibernate** - ORM implementation
