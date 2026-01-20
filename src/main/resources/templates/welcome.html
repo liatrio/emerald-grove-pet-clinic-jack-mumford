@@ -4,12 +4,49 @@
 
 <body>
 
-  <h2 th:text="#{welcome}">Welcome</h2>
-  <div class="row">
-    <div class="col-md-12">
-      <img class="img-responsive" src="../static/resources/images/pets.png" th:src="@{/resources/images/pets.png}" />
+  <section class="liatrio-hero" data-testid="liatrio-hero">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <p class="liatrio-eyebrow" th:text="#{layoutTitle}">Emerald Grove Veterinary Clinic</p>
+        <h1 class="liatrio-hero-title">Care made modern.</h1>
+        <p class="liatrio-hero-subtitle">
+          Trusted veterinarians, streamlined owner records, and a simple way to
+          keep pets healthy.
+        </p>
+        <div class="liatrio-hero-actions">
+          <a class="btn btn-primary" th:href="@{/owners/find}">Find owners</a>
+          <a class="btn liatrio-btn-secondary" th:href="@{/vets.html}">Meet the vets</a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <img class="img-responsive liatrio-hero-image" src="../static/resources/images/pets.png"
+          th:src="@{/resources/images/pets.png}" alt="Pets at the clinic" />
+      </div>
     </div>
-  </div>
+  </section>
+
+  <section class="liatrio-section">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="liatrio-feature-card">
+          <h3>Owner-first workflows</h3>
+          <p>Quickly locate, update, and manage owner records with confidence.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="liatrio-feature-card">
+          <h3>Care team visibility</h3>
+          <p>See veterinarians, specialties, and schedules in one clear place.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="liatrio-feature-card">
+          <h3>Reliable operations</h3>
+          <p>Stay organized with modern UI patterns inspired by Liatrio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </body>
 

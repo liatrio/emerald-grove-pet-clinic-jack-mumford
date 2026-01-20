@@ -8,18 +8,21 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/liatrio-logomark-square.png}">
+  <link rel="shortcut icon" type="image/x-icon" th:href="@{/resources/images/liatrio-labs-green.png}">
   <title th:text="#{layoutTitle}">PetClinic :: a Spring Framework demonstration</title>
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
 
 </head>
 
-<body>
+<body class="liatrio-app">
 
   <nav class="navbar navbar-expand-lg navbar-dark" role="navigation">
     <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{/}"><span></span></a>
+      <a class="navbar-brand" th:href="@{/}">
+        <span class="navbar-brand-logo" aria-hidden="true"></span>
+        <span class="navbar-brand-text" th:text="#{layoutTitle}">Emerald Forge Veterinary Clinic</span>
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -36,7 +39,7 @@
 
         </ul>
 
-        <ul class="nav navbar-nav me-auto">
+        <ul class="nav navbar-nav ms-auto">
 
           <li th:replace="~{::menuItem ('/','home','home page','home',#{home})}">
             <span class="fa fa-home" aria-hidden="true"></span>
@@ -64,21 +67,18 @@
     </div>
   </nav>
   <div class="container-fluid">
-    <div class="container xd-container">
-
+    <main class="container xd-container liatrio-main">
       <th:block th:insert="${template}" />
 
-      <br />
-      <br />
-      <div class="container">
+      <div class="liatrio-footer">
         <div class="row">
           <div class="col-12 text-center">
-            <img src="../static/images/liatrio-logo.svg" th:src="@{/resources/images/liatrio-logo.svg}"
-              alt="Liatrio Logo" class="logo">
+            <img src="../static/images/emerald-grove-logo-with-text-dark.png" th:src="@{/resources/images/emerald-grove-logo-with-text-dark.png}"
+              alt="Emerald Grove Veterinary Clinic logo" class="logo">
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
   <script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>

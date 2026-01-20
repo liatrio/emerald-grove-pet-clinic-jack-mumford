@@ -19,10 +19,28 @@ $spring-green:      #24AE1D;
 $spring-dark-green: #24AE1D;
 $spring-brown:      #111111;
 $spring-grey:       #666666;
-$spring-light-grey: #f8f9fa;
+$spring-light-grey: #1E2327;
 
-$body-bg:                           #ffffff;
-$text-color:                        $spring-brown;
+$liatrio-shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.08);
+$liatrio-shadow-md: 0 8px 24px rgba(17, 17, 17, 0.12);
+
+:root {
+  --liatrio-space-1: 4px;
+  --liatrio-space-2: 8px;
+  --liatrio-space-3: 12px;
+  --liatrio-space-4: 16px;
+  --liatrio-space-6: 24px;
+  --liatrio-space-8: 32px;
+  --liatrio-space-12: 48px;
+  --liatrio-radius-sm: 4px;
+  --liatrio-radius-md: 8px;
+  --liatrio-radius-lg: 16px;
+  --liatrio-shadow-sm: #{$liatrio-shadow-sm};
+  --liatrio-shadow-md: #{$liatrio-shadow-md};
+}
+
+$body-bg:                           #1a1f23;
+$text-color:                        #f8f9fa;
 $link-color:                        $spring-green;
 $link-hover-color:                  $spring-green;
 
@@ -48,24 +66,29 @@ $pagination-active-border:                $spring-green;
 $table-border-color:                      $spring-brown;
 
 .table > thead > tr > th {
-  background-color: #1e1e1e;
-  color: #ffffff;
+  background-color: #1E2327;
+  color: #f8f9fa;
+}
+
+.table td,
+.table th {
+  color: #f8f9fa;
 }
 
 .table-filter {
-  background-color: $spring-brown;
+  background-color: #1E2327;
   padding: 9px 12px;
 }
 
 .nav > li > a {
-  color: $spring-grey;
+  color: #cccccc;
 }
 
 .btn-primary {
   margin-top: 12px;
   border-width: 2px;
   transition: border 0.15s;
-  color: #ffffff;
+  color: #111111;
   background: $spring-green;
   border-color: $spring-green;
   -webkit-transition: border 0.15s;
@@ -156,7 +179,7 @@ table td.action-column {
 }
 
 .help-block {
-  color: lighten($text-color, 50%); // lighten the text some for contrast
+  color: #999999;
 }
 
 .xd-containers {
@@ -180,12 +203,12 @@ table td.action-column {
 }
 
 .container-details-table th {
-  background-color: #1e1e1e;
-  color: #ffffff;
+  background-color: #1E2327;
+  color: #f8f9fa;
 }
 
 .status-help-content-table td {
-  color: $spring-brown;
+  color: #f8f9fa;
 }
 
 .logo {
@@ -207,6 +230,210 @@ table td.action-column {
 
 hr {
   border-top: 1px dotted $spring-brown;
+}
+
+.liatrio-main {
+  padding-top: var(--liatrio-space-8);
+  padding-bottom: var(--liatrio-space-12);
+}
+
+.liatrio-footer {
+  margin-top: var(--liatrio-space-12);
+  padding-top: var(--liatrio-space-6);
+  border-top: 1px solid #333333;
+}
+
+.liatrio-footer .logo {
+  max-width: 180px;
+  opacity: 0.9;
+}
+
+.liatrio-section {
+  margin-top: var(--liatrio-space-8);
+}
+
+.liatrio-hero {
+  background: #111111;
+  color: #ffffff;
+  padding: var(--liatrio-space-8);
+  border-radius: var(--liatrio-radius-lg);
+  box-shadow: var(--liatrio-shadow-md);
+}
+
+.liatrio-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  color: #89df00;
+  margin-bottom: var(--liatrio-space-2);
+}
+
+.liatrio-hero-title {
+  font-size: 40px;
+  line-height: 1.1;
+  margin-bottom: var(--liatrio-space-3);
+}
+
+.liatrio-hero-subtitle {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #cccccc;
+  margin-bottom: var(--liatrio-space-4);
+}
+
+.liatrio-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--liatrio-space-3);
+}
+
+.liatrio-hero-actions .btn,
+.liatrio-form-actions .btn {
+  min-width: 140px;
+  height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.liatrio-form-actions.col-sm-offset-2 {
+  margin-left: 0;
+}
+
+.liatrio-form-actions.col-sm-10 {
+  width: 100%;
+}
+
+.liatrio-hero-image {
+  margin-top: var(--liatrio-space-4);
+  display: block;
+  max-width: 100%;
+  border-radius: var(--liatrio-radius-md);
+  box-shadow: var(--liatrio-shadow-sm);
+}
+
+.liatrio-feature-card,
+.liatrio-form-card,
+.liatrio-table-card,
+.liatrio-error-card {
+  background: #1E2327;
+  border: 1px solid #333333;
+  border-radius: var(--liatrio-radius-lg);
+  padding: var(--liatrio-space-6);
+  box-shadow: var(--liatrio-shadow-sm);
+}
+
+.liatrio-feature-card h3 {
+  margin-bottom: var(--liatrio-space-2);
+}
+
+.liatrio-form-card {
+  max-width: 820px;
+}
+
+.liatrio-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--liatrio-space-3);
+  margin-top: var(--liatrio-space-3);
+}
+
+.liatrio-form label,
+.liatrio-form .control-label {
+  color: #f8f9fa;
+}
+
+.liatrio-form .form-control {
+  background: #111111;
+  border: 1px solid #333333;
+  color: #f8f9fa;
+}
+
+.liatrio-form .form-control::placeholder {
+  color: #666666;
+}
+
+.liatrio-form .form-control:focus {
+  border-color: #24AE1D;
+  box-shadow: 0 0 0 0.2rem rgba(36, 174, 29, 0.2);
+}
+
+.liatrio-muted {
+  color: #999999;
+}
+
+.liatrio-btn-secondary {
+  border: 1px solid #24AE1D;
+  color: #24AE1D;
+  background: transparent;
+  padding: 10px 18px;
+}
+
+.liatrio-hero .liatrio-btn-secondary {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.liatrio-table thead th {
+  background-color: #111111;
+  color: #f8f9fa;
+}
+
+.liatrio-table tbody tr {
+  background-color: #1E2327;
+}
+
+.liatrio-table td,
+.liatrio-table th {
+  color: #f8f9fa;
+  border-color: #333333;
+}
+
+.liatrio-table tbody td {
+  color: #f8f9fa !important;
+}
+
+.liatrio-table a {
+  color: #89df00;
+}
+
+.liatrio-table a:hover,
+.liatrio-table a:focus {
+  color: #24AE1D;
+}
+
+.liatrio-table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #1a1f23;
+}
+
+.liatrio-table.table-striped > tbody > tr:nth-of-type(even) {
+  background-color: #1E2327;
+}
+
+.liatrio-pagination {
+  margin-top: var(--liatrio-space-4);
+  padding: var(--liatrio-space-3) var(--liatrio-space-4);
+  border-radius: var(--liatrio-radius-md);
+  background: #1E2327;
+  color: #cccccc;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--liatrio-space-2);
+}
+
+.liatrio-pagination a,
+.liatrio-pagination span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #f8f9fa;
+}
+
+.liatrio-pagination .fa {
+  font-size: 12px;
 }
 
 @import "typography.scss";

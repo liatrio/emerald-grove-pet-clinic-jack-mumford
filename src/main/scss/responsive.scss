@@ -7,13 +7,13 @@
   }
 
   .navbar a.navbar-brand {
-    display: block;
-    margin: 0 auto 0 auto;
-    width: 140px;
-    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px auto 0 auto;
     float: none;
-    background: url("../images/liatrio-logo-reverse.svg") center no-repeat;
-    background-size: contain;
   }
 
   .homepage-billboard .homepage-subtitle {
@@ -21,8 +21,9 @@
     line-height: 21px;
   }
 
-  .navbar a.navbar-brand span {
-    display: none;
+  .navbar a.navbar-brand .navbar-brand-text {
+    font-size: 14px;
+    text-align: center;
   }
 
   .navbar {
