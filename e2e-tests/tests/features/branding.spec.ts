@@ -9,11 +9,11 @@ test('Branding uses Liatrio logo, colors, and typography', async ({ page }) => {
 
   await homePage.open();
 
-  const brandLogo = page.locator('a.navbar-brand');
+  const brandLogo = page.locator('.navbar-brand-logo');
   const brandBackgroundImage = await brandLogo.evaluate((element) => {
     return window.getComputedStyle(element).backgroundImage;
   });
-  expect(brandBackgroundImage.toLowerCase()).toContain('liatrio');
+  expect(brandBackgroundImage.toLowerCase()).toContain('emerald-grove');
 
   const bodyFontFamily = await page.locator('body').evaluate((element) => {
     return window.getComputedStyle(element).fontFamily;
@@ -23,7 +23,7 @@ test('Branding uses Liatrio logo, colors, and typography', async ({ page }) => {
   const bodyTextColor = await page.locator('body').evaluate((element) => {
     return window.getComputedStyle(element).color;
   });
-  expect(bodyTextColor).toBe('rgb(17, 17, 17)');
+  expect(bodyTextColor).toBe('rgb(248, 249, 250)');
 
   await ownerPage.openFindOwners();
 
@@ -41,5 +41,5 @@ test('Branding uses Liatrio logo, colors, and typography', async ({ page }) => {
   const buttonTextColor = await primaryButton.evaluate((element) => {
     return window.getComputedStyle(element).color;
   });
-  expect(buttonTextColor).toBe('rgb(255, 255, 255)');
+  expect(buttonTextColor).toBe('rgb(17, 17, 17)');
 });

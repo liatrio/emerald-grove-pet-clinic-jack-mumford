@@ -7,7 +7,7 @@
   <section class="liatrio-section">
     <div class="liatrio-form-card">
       <h2 th:text="#{findOwners}">Find Owners</h2>
-      <p class="liatrio-muted">Search by last name to locate an owner record.</p>
+      <p class="liatrio-muted" th:text="#{home.findOwners.help}">Search by last name to locate an owner record.</p>
 
       <form th:object="${owner}" th:action="@{/owners}" method="get" class="form-horizontal liatrio-form"
         id="search-owner-form">

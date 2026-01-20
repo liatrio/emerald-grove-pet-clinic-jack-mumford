@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'home')}">
+<html xmlns:th="https://www.thymeleaf.org" lang="en" th:lang="${#locale.language}"
+  th:replace="~{fragments/layout :: layout (~{::body},'home')}">
 
 <body>
 
@@ -8,19 +9,16 @@
     <div class="row align-items-center">
       <div class="col-lg-6">
         <p class="liatrio-eyebrow" th:text="#{layoutTitle}">Emerald Grove Veterinary Clinic</p>
-        <h1 class="liatrio-hero-title">Care made modern.</h1>
-        <p class="liatrio-hero-subtitle">
-          Trusted veterinarians, streamlined owner records, and a simple way to
-          keep pets healthy.
-        </p>
+        <h1 class="liatrio-hero-title" th:text="#{home.hero.title}">Care made modern.</h1>
+        <p class="liatrio-hero-subtitle" th:text="#{home.hero.subtitle}"></p>
         <div class="liatrio-hero-actions">
-          <a class="btn btn-primary" th:href="@{/owners/find}">Find owners</a>
-          <a class="btn liatrio-btn-secondary" th:href="@{/vets.html}">Meet the vets</a>
+          <a class="btn btn-primary" th:href="@{/owners/find}" th:text="#{home.hero.cta.owners}">Find owners</a>
+          <a class="btn liatrio-btn-secondary" th:href="@{/vets.html}" th:text="#{home.hero.cta.vets}">Meet the vets</a>
         </div>
       </div>
       <div class="col-lg-6">
         <img class="img-responsive liatrio-hero-image" src="../static/resources/images/pets.png"
-          th:src="@{/resources/images/pets.png}" alt="Pets at the clinic" />
+          th:src="@{/resources/images/pets.png}" th:alt="#{home.pets.alt}" alt="Pets at the clinic" />
       </div>
     </div>
   </section>
@@ -29,20 +27,20 @@
     <div class="row g-4">
       <div class="col-md-4">
         <div class="liatrio-feature-card">
-          <h3>Owner-first workflows</h3>
-          <p>Quickly locate, update, and manage owner records with confidence.</p>
+          <h3 th:text="#{home.feature.owners.title}">Owner-first workflows</h3>
+          <p th:text="#{home.feature.owners.body}">Quickly locate, update, and manage owner records with confidence.</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="liatrio-feature-card">
-          <h3>Care team visibility</h3>
-          <p>See veterinarians, specialties, and schedules in one clear place.</p>
+          <h3 th:text="#{home.feature.vets.title}">Care team visibility</h3>
+          <p th:text="#{home.feature.vets.body}">See veterinarians, specialties, and schedules in one clear place.</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="liatrio-feature-card">
-          <h3>Reliable operations</h3>
-          <p>Stay organized with modern UI patterns inspired by Liatrio.</p>
+          <h3 th:text="#{home.feature.ops.title}">Reliable operations</h3>
+          <p th:text="#{home.feature.ops.body}">Stay organized with modern UI patterns inspired by Liatrio.</p>
         </div>
       </div>
     </div>

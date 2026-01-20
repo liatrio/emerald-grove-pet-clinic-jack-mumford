@@ -43,7 +43,7 @@ test('Dark theme and new clinic name are applied', async ({ page }) => {
   await homePage.open();
 
   const hero = page.getByTestId('liatrio-hero');
-  await expect(hero).toContainText('Emerald Forge Veterinary Clinic');
+  await expect(hero).toContainText('Emerald Grove Veterinary Clinic');
 
   const bodyBackground = await page.evaluate(() => {
     return getComputedStyle(document.body).backgroundColor;

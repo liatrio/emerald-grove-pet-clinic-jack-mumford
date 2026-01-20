@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html th:fragment="layout (template, menu)" xmlns:th="https://www.thymeleaf.org">
+<html th:fragment="layout (template, menu)" xmlns:th="https://www.thymeleaf.org" lang="en" th:lang="${#locale.language}">
 
 <head>
 
@@ -74,7 +74,7 @@
         <div class="row">
           <div class="col-12 text-center">
             <img src="../static/images/emerald-grove-logo-with-text-dark.png" th:src="@{/resources/images/emerald-grove-logo-with-text-dark.png}"
-              alt="Emerald Grove Veterinary Clinic logo" class="logo">
+              th:alt="#{layout.footer.logo.alt}" alt="Emerald Grove Veterinary Clinic logo" class="logo">
           </div>
         </div>
       </div>
