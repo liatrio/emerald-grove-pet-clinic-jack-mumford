@@ -2,12 +2,13 @@ docker_compose('docker-compose.yml')
 
 local_resource(
     'petclinic',
-    cmd='true',
+    cmd='./mvnw spring-javaformat:apply',
     serve_cmd='./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres',
     deps=[
         'pom.xml',
         'src/main/java',
         'src/main/resources',
+        'src/test/java',
     ],
     ignore=[
         '**/target/**',
