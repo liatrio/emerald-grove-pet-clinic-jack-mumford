@@ -1,5 +1,5 @@
 ================================================================================
-===        Spring PetClinic sample application - MySQL Configuration         ===
+===        Emerald Grove Veterinary Clinic sample application - MySQL Configuration         ===
 ================================================================================
 
 @author Sam Brannen

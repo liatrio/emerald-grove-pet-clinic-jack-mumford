@@ -2,7 +2,7 @@
 
 ## Overview
 
-This task list breaks down the implementation of a comprehensive Playwright test suite for the Spring PetClinic application into manageable, demoable units of work. Each task represents a complete vertical slice that can be demonstrated and validated.
+This task list breaks down the implementation of a comprehensive Playwright test suite for the Emerald Grove Veterinary Clinic application into manageable, demoable units of work. Each task represents a complete vertical slice that can be demonstrated and validated.
 
 ## Tasks
 

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Pre-commit setup script for Spring PetClinic
+# Pre-commit setup script for Emerald Grove Veterinary Clinic
 # This script installs and configures pre-commit hooks
 
 set -e
 
-echo "🚀 Setting up pre-commit hooks for Spring PetClinic..."
+echo "🚀 Setting up pre-commit hooks for Emerald Grove Veterinary Clinic..."
 
 # Check if pre-commit is installed
 if ! command -v pre-commit &> /dev/null; then

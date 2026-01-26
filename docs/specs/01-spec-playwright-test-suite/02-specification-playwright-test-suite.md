@@ -2,11 +2,11 @@
 
 ## Overview
 
-This specification defines the implementation of a comprehensive Playwright test suite for the Spring PetClinic application. The test suite will provide end-to-end browser automation testing that complements the existing unit and integration test infrastructure while following the project's strict TDD methodology. **Technology Choice: JavaScript/TypeScript Playwright** for maximum feature access and tooling support.
+This specification defines the implementation of a comprehensive Playwright test suite for the Emerald Grove Veterinary Clinic application. The test suite will provide end-to-end browser automation testing that complements the existing unit and integration test infrastructure while following the project's strict TDD methodology. **Technology Choice: JavaScript/TypeScript Playwright** for maximum feature access and tooling support.
 
 ## Context
 
-- **Application**: Spring PetClinic - Veterinary clinic management system
+- **Application**: Emerald Grove Veterinary Clinic - Veterinary clinic management system
 - **Technology Stack**: Spring Boot 4.0.0, Maven, Java 17, Thymeleaf, Bootstrap 5
 - **Existing Testing**: JUnit 5, Mockito, TestContainers, JaCoCo with 90%+ coverage requirements
 - **Testing Philosophy**: Strict TDD with Red-Green-Refactor cycle
@@ -620,4 +620,4 @@ setup('global setup', async ({ page }) => {
 
 ---
 
-This specification provides the foundation for implementing a comprehensive Playwright test suite using JavaScript/TypeScript that enhances the Spring PetClinic application's testing capabilities while maintaining alignment with existing development practices and TDD methodology.
+This specification provides the foundation for implementing a comprehensive Playwright test suite using JavaScript/TypeScript that enhances the Emerald Grove Veterinary Clinic application's testing capabilities while maintaining alignment with existing development practices and TDD methodology.

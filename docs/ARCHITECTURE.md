@@ -1,10 +1,10 @@
 # Architecture Guide
 
-This document describes the architecture, design patterns, and technical decisions of the Spring PetClinic application.
+This document describes the architecture, design patterns, and technical decisions of the Emerald Grove Veterinary Clinic application.
 
 ## Overview
 
-Spring PetClinic is a classic three-tier web application demonstrating Spring Boot best practices. It follows a clean architecture with clear separation of concerns, making it an ideal reference implementation for enterprise applications.
+Emerald Grove Veterinary Clinic is a classic three-tier web application demonstrating Spring Boot best practices. It follows a clean architecture with clear separation of concerns, making it an ideal reference implementation for enterprise applications.
 
 ## Technology Stack
 

@@ -1,6 +1,6 @@
 # AI Agent Development Guide
 
-This document provides essential guidance for AI agents working on the Spring PetClinic application.
+This document provides essential guidance for AI agents working on the Emerald Grove Veterinary Clinic application.
 
 ## Context Marker
 
@@ -89,4 +89,4 @@ Before committing code:
 - [ ] Proper error handling
 - [ ] Documentation updated
 
-This guide ensures consistent, high-quality TDD practices for AI contributors to the Spring PetClinic application.
+This guide ensures consistent, high-quality TDD practices for AI contributors to the Emerald Grove Veterinary Clinic application.

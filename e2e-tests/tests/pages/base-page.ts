@@ -12,7 +12,7 @@ export abstract class BasePage {
   }
 
   navLink(name: string | RegExp): Locator {
-    return this.page.getByRole('link', { name });
+    return this.page.locator('nav.navbar').getByRole('link', { name });
   }
 
   async goHome(): Promise<void> {

@@ -47,3 +47,6 @@ _site/
 *.css
 !petclinic.css
 temp
+
+### Local Dev ###
+.local/

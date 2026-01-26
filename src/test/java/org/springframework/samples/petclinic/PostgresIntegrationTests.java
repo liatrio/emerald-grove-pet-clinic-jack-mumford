@@ -36,6 +36,7 @@ import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -46,13 +47,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.DockerClientFactory;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = { "spring.docker.compose.skip.in-tests=false", //
-		"spring.docker.compose.start.arguments=--force-recreate,--renew-anon-volumes,postgres" })
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "spring.docker.compose.enabled=false")
 @ActiveProfiles("postgres")
+@Testcontainers(disabledWithoutDocker = true)
 @DisabledInNativeImage
 public class PostgresIntegrationTests {
+
+	@ServiceConnection
+	@Container
+	private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>(
+			DockerImageName.parse("postgres:18.1"));
 
 	@LocalServerPort
 	int port;

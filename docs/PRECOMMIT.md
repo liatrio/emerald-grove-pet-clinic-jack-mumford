@@ -1,6 +1,6 @@
 # Pre-commit Hooks Guide
 
-This guide covers the pre-commit hooks configuration for the Spring PetClinic application.
+This guide covers the pre-commit hooks configuration for the Emerald Grove Veterinary Clinic application.
 
 ## Overview
 
@@ -330,4 +330,4 @@ pre-commit validate-config
 - [Available hooks](https://pre-commit.com/hooks.html)
 - [Configuration guide](https://pre-commit.com/#configuration)
 
-This guide ensures consistent code quality and development practices across the Spring PetClinic project.
+This guide ensures consistent code quality and development practices across the Emerald Grove Veterinary Clinic project.

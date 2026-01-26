@@ -4,26 +4,34 @@
 
 <body>
 
-  <h2 th:text="#{vets}">Veterinarians</h2>
+  <section class="liatrio-section">
+    <div class="liatrio-table-card">
+      <div class="liatrio-card-header">
+        <h2 th:text="#{vets}">Veterinarians</h2>
+        <p class="liatrio-muted" th:text="#{vets.subtitle}">A snapshot of the care team and specialties.</p>
+      </div>
 
-  <table id="vets" class="table table-striped">
-    <thead>
-      <tr>
-        <th th:text="#{name}">Name</th>
-        <th th:text="#{specialties}">Specialties</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="vet : ${listVets}">
-        <td th:text="${vet.firstName + ' ' + vet.lastName}"></td>
-        <td>
-          <span th:each="specialty : ${vet.specialties}" th:text="${specialty.name + ' '}" /> <span
-            th:if="${vet.nrOfSpecialties == 0}" th:text="#{none}">none</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div th:if="${totalPages > 1}">
+      <table id="vets" class="table table-striped liatrio-table">
+        <thead>
+          <tr>
+            <th th:text="#{name}">Name</th>
+            <th th:text="#{specialties}">Specialties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="vet : ${listVets}">
+            <td th:text="${vet.firstName + ' ' + vet.lastName}"></td>
+            <td>
+              <span th:each="specialty : ${vet.specialties}" th:text="${specialty.name + ' '}" /> <span
+                th:if="${vet.nrOfSpecialties == 0}" th:text="#{none}">none</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div th:if="${totalPages > 1}" class="liatrio-pagination">
     <span th:text="#{pages}">Pages:</span>
     <span>[</span>
     <span th:each="i: ${#numbers.sequence(1, totalPages)}">

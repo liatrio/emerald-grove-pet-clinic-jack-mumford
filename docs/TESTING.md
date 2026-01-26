@@ -1,10 +1,10 @@
 # Testing Guide
 
-This comprehensive guide covers the testing strategy, implementation patterns, and best practices used in the Spring PetClinic application.
+This comprehensive guide covers the testing strategy, implementation patterns, and best practices used in the Emerald Grove Veterinary Clinic application.
 
 ## Overview
 
-The Spring PetClinic application employs a **Strict Test-Driven Development (TDD)** methodology with a multi-layered testing approach following the test pyramid principle. All feature implementations must follow the **Red-Green-Refactor** cycle:
+The Emerald Grove Veterinary Clinic application employs a **Strict Test-Driven Development (TDD)** methodology with a multi-layered testing approach following the test pyramid principle. All feature implementations must follow the **Red-Green-Refactor** cycle:
 
 1. **RED**: Write a failing test that defines the desired behavior
 2. **GREEN**: Write the minimum code required to make the test pass
@@ -42,7 +42,7 @@ src/test/java/org/springframework/samples/petclinic/
 
 ## Testing Types
 
-The Spring PetClinic follows the test pyramid principle with different testing levels:
+The Emerald Grove Veterinary Clinic follows the test pyramid principle with different testing levels:
 
 ```mermaid
 flowchart TD
@@ -904,4 +904,4 @@ GitHub Actions workflow: `.github/workflows/e2e-tests.yml`
 
 CI uploads the Playwright HTML report and artifacts as workflow run artifacts.
 
-This comprehensive testing strategy ensures the Spring PetClinic application maintains high code quality and reliability across different environments and use cases.
+This comprehensive testing strategy ensures the Emerald Grove Veterinary Clinic application maintains high code quality and reliability across different environments and use cases.

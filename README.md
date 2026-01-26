@@ -1,10 +1,10 @@
-# Spring PetClinic Application
+# Emerald Grove Veterinary Clinic
 
 A comprehensive veterinary clinic management system built with Spring Boot. This application demonstrates modern Java web development practices and serves as a reference implementation for enterprise-grade applications.
 
 ## Overview
 
-The Spring PetClinic application manages the core operations of a veterinary clinic, including:
+The Emerald Grove Veterinary Clinic application manages the core operations of a veterinary clinic, including:
 
 - **Owner Management**: Register and manage pet owners with contact information
 - **Pet Management**: Track pets, their types, and medical records
