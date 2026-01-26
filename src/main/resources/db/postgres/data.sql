@@ -51,3 +51,10 @@ INSERT INTO visits (pet_id, visit_date, description) SELECT 7, '2010-03-04', 'ra
 INSERT INTO visits (pet_id, visit_date, description) SELECT 8, '2011-03-04', 'rabies shot' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=2);
 INSERT INTO visits (pet_id, visit_date, description) SELECT 8, '2009-06-04', 'neutered' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=3);
 INSERT INTO visits (pet_id, visit_date, description) SELECT 7, '2008-09-04', 'spayed' WHERE NOT EXISTS (SELECT * FROM visits WHERE id=4);
+
+SELECT setval(pg_get_serial_sequence('vets', 'id'), COALESCE((SELECT MAX(id) FROM vets), 0));
+SELECT setval(pg_get_serial_sequence('specialties', 'id'), COALESCE((SELECT MAX(id) FROM specialties), 0));
+SELECT setval(pg_get_serial_sequence('types', 'id'), COALESCE((SELECT MAX(id) FROM types), 0));
+SELECT setval(pg_get_serial_sequence('owners', 'id'), COALESCE((SELECT MAX(id) FROM owners), 0));
+SELECT setval(pg_get_serial_sequence('pets', 'id'), COALESCE((SELECT MAX(id) FROM pets), 0));
+SELECT setval(pg_get_serial_sequence('visits', 'id'), COALESCE((SELECT MAX(id) FROM visits), 0));

@@ -61,7 +61,8 @@ public class PostgresIntegrationTests {
 
 	@ServiceConnection
 	@Container
-	static PostgreSQLContainer container = new PostgreSQLContainer(DockerImageName.parse("postgres:18.1"));
+	private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>(
+			DockerImageName.parse("postgres:18.1"));
 
 	@LocalServerPort
 	int port;
