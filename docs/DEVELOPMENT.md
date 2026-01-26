@@ -141,6 +141,26 @@ docker compose up mysql
 docker compose up postgres
 ```
 
+### Tilt (PostgreSQL + local app)
+
+```bash
+tilt up
+```
+
+Tilt uses Docker Compose to start PostgreSQL and runs the app locally with the `postgres` profile. The database data is persisted under `.local/postgres-data`.
+
+DBHub connection string:
+
+```text
+postgres://petclinic:petclinic@localhost:5432/petclinic
+```
+
+To stop Tilt:
+
+```bash
+tilt down
+```
+
 ## Testing
 
 ### Run Tests
