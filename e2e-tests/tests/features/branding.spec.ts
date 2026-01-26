@@ -10,36 +10,17 @@ test('Branding uses Emerald Grove logo, colors, and typography', async ({ page }
   await homePage.open();
 
   const brandLogo = page.locator('.navbar-brand-logo');
-  const brandBackgroundImage = await brandLogo.evaluate((element) => {
-    return window.getComputedStyle(element).backgroundImage;
-  });
-  expect(brandBackgroundImage.toLowerCase()).toContain('emerald-grove');
+  await expect(brandLogo).toHaveCSS('background-image', /emerald-grove/);
 
-  const bodyFontFamily = await page.locator('body').evaluate((element) => {
-    return window.getComputedStyle(element).fontFamily;
-  });
-  expect(bodyFontFamily).toContain('DM Sans');
-
-  const bodyTextColor = await page.locator('body').evaluate((element) => {
-    return window.getComputedStyle(element).color;
-  });
-  expect(bodyTextColor).toBe('rgb(248, 249, 250)');
+  const body = page.locator('body');
+  await expect(body).toHaveCSS('font-family', /DM Sans/);
+  await expect(body).toHaveCSS('color', 'rgb(248, 249, 250)');
 
   await ownerPage.openFindOwners();
 
-  const headingFontFamily = await page.locator('h2').first().evaluate((element) => {
-    return window.getComputedStyle(element).fontFamily;
-  });
-  expect(headingFontFamily).toContain('DM Sans');
+  await expect(page.locator('h2').first()).toHaveCSS('font-family', /DM Sans/);
 
   const primaryButton = page.getByRole('button', { name: /Find Owner/i });
-  const buttonBackgroundColor = await primaryButton.evaluate((element) => {
-    return window.getComputedStyle(element).backgroundColor;
-  });
-  expect(buttonBackgroundColor).toBe('rgb(36, 174, 29)');
-
-  const buttonTextColor = await primaryButton.evaluate((element) => {
-    return window.getComputedStyle(element).color;
-  });
-  expect(buttonTextColor).toBe('rgb(17, 17, 17)');
+  await expect(primaryButton).toHaveCSS('background-color', 'rgb(36, 174, 29)');
+  await expect(primaryButton).toHaveCSS('color', 'rgb(17, 17, 17)');
 });
