@@ -105,7 +105,7 @@
 - [x] 3.16 Take screenshot of 404 page and save to `docs/specs/02-spec-friendly-404-pages/proof-artifacts/404-page-screenshot.png`
 - [x] 3.17 Commit template with message: `feat(error-handling): add user-friendly notFound template with navigation`
 
-### [ ] 4.0 Add Internationalization Support (GREEN Phase)
+### [~] 4.0 Add Internationalization Support (GREEN Phase)
 
 #### 4.0 Proof Artifact(s)
 
@@ -115,39 +115,39 @@
 
 #### 4.0 Tasks
 
-- [ ] 4.1 Open `src/main/resources/messages/messages.properties` (default/English)
-- [ ] 4.2 Add key: `error.owner.notFound=We couldn't find that owner. Please search again or verify the ID.`
-- [ ] 4.3 Add key: `error.pet.notFound=We couldn't find that pet. Please search again or verify the ID.`
-- [ ] 4.4 Add key: `error.notFound.action=You can search for owners using the button below.`
-- [ ] 4.5 Open `src/main/resources/messages/messages_en.properties` and add same three keys
-- [ ] 4.6 Open `src/main/resources/messages/messages_de.properties` (German) and add: `error.owner.notFound=Wir konnten diesen Besitzer nicht finden. Bitte suchen Sie erneut oder überprüfen Sie die ID.`
-- [ ] 4.7 Add German keys: `error.pet.notFound=Wir konnten dieses Haustier nicht finden. Bitte suchen Sie erneut oder überprüfen Sie die ID.`
-- [ ] 4.8 Add German key: `error.notFound.action=Sie können mit der Schaltfläche unten nach Besitzern suchen.`
-- [ ] 4.9 Open `src/main/resources/messages/messages_es.properties` (Spanish) and add: `error.owner.notFound=No pudimos encontrar ese propietario. Por favor, busque nuevamente o verifique el ID.`
-- [ ] 4.10 Add Spanish keys: `error.pet.notFound=No pudimos encontrar esa mascota. Por favor, busque nuevamente o verifique el ID.`
-- [ ] 4.11 Add Spanish key: `error.notFound.action=Puede buscar propietarios usando el botón de abajo.`
-- [ ] 4.12 Open `src/main/resources/messages/messages_ko.properties` (Korean) and add: `error.owner.notFound=해당 소유자를 찾을 수 없습니다. 다시 검색하거나 ID를 확인해 주세요.`
-- [ ] 4.13 Add Korean keys: `error.pet.notFound=해당 반려동물을 찾을 수 없습니다. 다시 검색하거나 ID를 확인해 주세요.`
-- [ ] 4.14 Add Korean key: `error.notFound.action=아래 버튼을 사용하여 소유자를 검색할 수 있습니다.`
-- [ ] 4.15 Open `src/main/resources/messages/messages_fa.properties` (Persian) and add: `error.owner.notFound=ما نتوانستیم آن مالک را پیدا کنیم. لطفاً دوباره جستجو کنید یا شناسه را بررسی کنید.`
-- [ ] 4.16 Add Persian keys: `error.pet.notFound=ما نتوانستیم آن حیوان خانگی را پیدا کنیم. لطفاً دوباره جستجو کنید یا شناسه را بررسی کنید.`
-- [ ] 4.17 Add Persian key: `error.notFound.action=می‌توانید با استفاده از دکمه زیر مالکان را جستجو کنید.`
-- [ ] 4.18 Open `src/main/resources/messages/messages_pt.properties` (Portuguese) and add: `error.owner.notFound=Não conseguimos encontrar esse proprietário. Por favor, pesquise novamente ou verifique o ID.`
-- [ ] 4.19 Add Portuguese keys: `error.pet.notFound=Não conseguimos encontrar esse animal de estimação. Por favor, pesquise novamente ou verifique o ID.`
-- [ ] 4.20 Add Portuguese key: `error.notFound.action=Você pode pesquisar proprietários usando o botão abaixo.`
-- [ ] 4.21 Open `src/main/resources/messages/messages_ru.properties` (Russian) and add: `error.owner.notFound=Мы не смогли найти этого владельца. Пожалуйста, повторите поиск или проверьте ID.`
-- [ ] 4.22 Add Russian keys: `error.pet.notFound=Мы не смогли найти этого питомца. Пожалуйста, повторите поиск или проверьте ID.`
-- [ ] 4.23 Add Russian key: `error.notFound.action=Вы можете искать владельцев с помощью кнопки ниже.`
-- [ ] 4.24 Open `src/main/resources/messages/messages_tr.properties` (Turkish) and add: `error.owner.notFound=Bu sahip bulunamadı. Lütfen tekrar arayın veya ID'yi doğrulayın.`
-- [ ] 4.25 Add Turkish keys: `error.pet.notFound=Bu evcil hayvan bulunamadı. Lütfen tekrar arayın veya ID'yi doğrulayın.`
-- [ ] 4.26 Add Turkish key: `error.notFound.action=Aşağıdaki düğmeyi kullanarak sahipleri arayabilirsiniz.`
-- [ ] 4.27 Update `notFound.html` template to use i18n keys instead of hardcoded text
-- [ ] 4.28 Replace hardcoded error message with: `<p th:text="#{error.owner.notFound}">Default message</p>` (use conditional logic based on error type if needed)
-- [ ] 4.29 Add action message: `<p class="liatrio-muted" th:text="#{error.notFound.action}">Action guidance</p>`
-- [ ] 4.30 Test with English locale by navigating to `http://localhost:8080/owners/99999`
-- [ ] 4.31 Test with another locale (e.g., German) by adding `?lang=de` to URL or setting browser locale
-- [ ] 4.32 Verify error messages display in the correct language
-- [ ] 4.33 Run `git diff src/main/resources/messages/` to review all i18n changes
+- [x] 4.1 Open `src/main/resources/messages/messages.properties` (default/English)
+- [x] 4.2 Add key: `error.owner.notFound=We couldn't find that owner. Please search again or verify the ID.`
+- [x] 4.3 Add key: `error.pet.notFound=We couldn't find that pet. Please search again or verify the ID.`
+- [x] 4.4 Add key: `error.notFound.action=You can search for owners using the button below.`
+- [x] 4.5 Open `src/main/resources/messages/messages_en.properties` and add same three keys
+- [x] 4.6 Open `src/main/resources/messages/messages_de.properties` (German) and add: `error.owner.notFound=Wir konnten diesen Besitzer nicht finden. Bitte suchen Sie erneut oder überprüfen Sie die ID.`
+- [x] 4.7 Add German keys: `error.pet.notFound=Wir konnten dieses Haustier nicht finden. Bitte suchen Sie erneut oder überprüfen Sie die ID.`
+- [x] 4.8 Add German key: `error.notFound.action=Sie können mit der Schaltfläche unten nach Besitzern suchen.`
+- [x] 4.9 Open `src/main/resources/messages/messages_es.properties` (Spanish) and add: `error.owner.notFound=No pudimos encontrar ese propietario. Por favor, busque nuevamente o verifique el ID.`
+- [x] 4.10 Add Spanish keys: `error.pet.notFound=No pudimos encontrar esa mascota. Por favor, busque nuevamente o verifique el ID.`
+- [x] 4.11 Add Spanish key: `error.notFound.action=Puede buscar propietarios usando el botón de abajo.`
+- [x] 4.12 Open `src/main/resources/messages/messages_ko.properties` (Korean) and add: `error.owner.notFound=해당 소유자를 찾을 수 없습니다. 다시 검색하거나 ID를 확인해 주세요.`
+- [x] 4.13 Add Korean keys: `error.pet.notFound=해당 반려동물을 찾을 수 없습니다. 다시 검색하거나 ID를 확인해 주세요.`
+- [x] 4.14 Add Korean key: `error.notFound.action=아래 버튼을 사용하여 소유자를 검색할 수 있습니다.`
+- [x] 4.15 Open `src/main/resources/messages/messages_fa.properties` (Persian) and add: `error.owner.notFound=ما نتوانستیم آن مالک را پیدا کنیم. لطفاً دوباره جستجو کنید یا شناسه را بررسی کنید.`
+- [x] 4.16 Add Persian keys: `error.pet.notFound=ما نتوانستیم آن حیوان خانگی را پیدا کنیم. لطفاً دوباره جستجو کنید یا شناسه را بررسی کنید.`
+- [x] 4.17 Add Persian key: `error.notFound.action=می‌توانید با استفاده از دکمه زیر مالکان را جستجو کنید.`
+- [x] 4.18 Open `src/main/resources/messages/messages_pt.properties` (Portuguese) and add: `error.owner.notFound=Não conseguimos encontrar esse proprietário. Por favor, pesquise novamente ou verifique o ID.`
+- [x] 4.19 Add Portuguese keys: `error.pet.notFound=Não conseguimos encontrar esse animal de estimação. Por favor, pesquise novamente ou verifique o ID.`
+- [x] 4.20 Add Portuguese key: `error.notFound.action=Você pode pesquisar proprietários usando o botão abaixo.`
+- [x] 4.21 Open `src/main/resources/messages/messages_ru.properties` (Russian) and add: `error.owner.notFound=Мы не смогли найти этого владельца. Пожалуйста, повторите поиск или проверьте ID.`
+- [x] 4.22 Add Russian keys: `error.pet.notFound=Мы не смогли найти этого питомца. Пожалуйста, повторите поиск или проверьте ID.`
+- [x] 4.23 Add Russian key: `error.notFound.action=Вы можете искать владельцев с помощью кнопки ниже.`
+- [x] 4.24 Open `src/main/resources/messages/messages_tr.properties` (Turkish) and add: `error.owner.notFound=Bu sahip bulunamadı. Lütfen tekrar arayın veya ID'yi doğrulayın.`
+- [x] 4.25 Add Turkish keys: `error.pet.notFound=Bu evcil hayvan bulunamadı. Lütfen tekrar arayın veya ID'yi doğrulayın.`
+- [x] 4.26 Add Turkish key: `error.notFound.action=Aşağıdaki düğmeyi kullanarak sahipleri arayabilirsiniz.`
+- [x] 4.27 Update `notFound.html` template to use i18n keys instead of hardcoded text
+- [x] 4.28 Replace hardcoded error message with: `<p th:text="#{error.owner.notFound}">Default message</p>` (use conditional logic based on error type if needed)
+- [x] 4.29 Add action message: `<p class="liatrio-muted" th:text="#{error.notFound.action}">Action guidance</p>`
+- [x] 4.30 Test with English locale by navigating to `http://localhost:8080/owners/99999`
+- [x] 4.31 Test with another locale (e.g., German) by adding `?lang=de` to URL or setting browser locale
+- [x] 4.32 Verify error messages display in the correct language
+- [x] 4.33 Run `git diff src/main/resources/messages/` to review all i18n changes
 - [ ] 4.34 Commit i18n changes with message: `feat(error-handling): add i18n support for 404 error messages in 8 languages`
 
 ### [ ] 5.0 Implement Playwright End-to-End Tests

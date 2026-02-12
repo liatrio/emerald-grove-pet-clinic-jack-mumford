@@ -11,7 +11,7 @@
 
       <p th:text="${errorMessage}">The requested resource was not found.</p>
 
-      <p class="liatrio-muted">You can search for owners using the button below.</p>
+      <p class="liatrio-muted" th:text="#{error.notFound.action}">You can search for owners using the button below.</p>
 
       <a th:href="@{/owners/find}" class="btn btn-primary">Find Owners</a>
     </div>

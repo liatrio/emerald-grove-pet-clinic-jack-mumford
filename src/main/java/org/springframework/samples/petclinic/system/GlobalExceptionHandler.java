@@ -16,6 +16,8 @@
 
 package org.springframework.samples.petclinic.system;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,31 +32,41 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+	private final MessageSource messageSource;
+
+	public GlobalExceptionHandler(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 	/**
 	 * Handles IllegalArgumentException for resource not found scenarios (missing owners
-	 * or pets). Returns a user-friendly 404 page instead of exposing stack traces.
+	 * or pets). Returns a user-friendly 404 page instead of exposing stack traces. Uses
+	 * internationalized messages for multi-language support.
 	 * @param ex the exception thrown by the controller
-	 * @return ModelAndView with 404 status and user-friendly error message
+	 * @return ModelAndView with 404 status and internationalized error message
 	 */
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ModelAndView handleNotFound(IllegalArgumentException ex) {
 		ModelAndView mav = new ModelAndView("notFound");
 		mav.setStatus(HttpStatus.NOT_FOUND);
 
-		// Parse exception message to provide context-specific error message
+		// Parse exception message to determine resource type
 		String exceptionMessage = ex.getMessage();
-		String userFriendlyMessage;
+		String messageKey;
 
 		if (exceptionMessage != null && exceptionMessage.contains("Owner")) {
-			userFriendlyMessage = "We couldn't find that owner. Please search again or verify the ID.";
+			messageKey = "error.owner.notFound";
 		}
 		else if (exceptionMessage != null && exceptionMessage.contains("Pet")) {
-			userFriendlyMessage = "We couldn't find that pet. Please search again or verify the ID.";
+			messageKey = "error.pet.notFound";
 		}
 		else {
 			// Fallback for any other IllegalArgumentException
-			userFriendlyMessage = "The requested resource was not found.";
+			messageKey = "error.404";
 		}
+
+		// Get internationalized message based on current locale
+		String userFriendlyMessage = messageSource.getMessage(messageKey, null, LocaleContextHolder.getLocale());
 
 		mav.addObject("errorMessage", userFriendlyMessage);
 		mav.addObject("status", 404);
