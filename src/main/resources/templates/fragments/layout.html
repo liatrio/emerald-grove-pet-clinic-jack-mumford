@@ -71,41 +71,32 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="languageDropdown">
             <li><a class="dropdown-item" th:href="@{''(lang='en')}"
-                   th:classappend="${#locale.language == 'en'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇺🇸</span> English
-            </a></li>
+                   th:classappend="${#locale.language == 'en'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇺🇸</span> English'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='de')}"
-                   th:classappend="${#locale.language == 'de'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇩🇪</span> Deutsch
-            </a></li>
+                   th:classappend="${#locale.language == 'de'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇩🇪</span> Deutsch'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='es')}"
-                   th:classappend="${#locale.language == 'es'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇪🇸</span> Español
-            </a></li>
+                   th:classappend="${#locale.language == 'es'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇪🇸</span> Español'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='ko')}"
-                   th:classappend="${#locale.language == 'ko'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇰🇷</span> 한국어
-            </a></li>
+                   th:classappend="${#locale.language == 'ko'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇰🇷</span> 한국어'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='fa')}"
-                   th:classappend="${#locale.language == 'fa'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇮🇷</span> فارسی
-            </a></li>
+                   th:classappend="${#locale.language == 'fa'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇮🇷</span> فارسی'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='pt')}"
-                   th:classappend="${#locale.language == 'pt'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇵🇹</span> Português
-            </a></li>
+                   th:classappend="${#locale.language == 'pt'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇵🇹</span> Português'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='ru')}"
-                   th:classappend="${#locale.language == 'ru'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇷🇺</span> Русский
-            </a></li>
+                   th:classappend="${#locale.language == 'ru'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇷🇺</span> Русский'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='tr')}"
-                   th:classappend="${#locale.language == 'tr'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇹🇷</span> Türkçe
-            </a></li>
+                   th:classappend="${#locale.language == 'tr'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇹🇷</span> Türkçe'"></a></li>
             <li><a class="dropdown-item" th:href="@{''(lang='zh')}"
-                   th:classappend="${#locale.language == 'zh'} ? 'active fw-bold' : ''">
-                <span aria-hidden="true">🇨🇳</span> 中文
-            </a></li>
+                   th:classappend="${#locale.language == 'zh'} ? 'active fw-bold' : ''"
+                   th:utext="'<span aria-hidden=&quot;true&quot;>🇨🇳</span> 中文'"></a></li>
           </ul>
         </div>
       </div>
