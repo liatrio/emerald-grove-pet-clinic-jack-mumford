@@ -159,6 +159,7 @@ class OwnerController {
 		}
 
 		// multiple owners found
+		model.addAttribute("lastName", lastName);
 		return addPaginationModel(page, model, ownersResults);
 	}
 
