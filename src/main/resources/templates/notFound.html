@@ -7,13 +7,13 @@
     <div class="liatrio-error-card">
       <img src="../static/resources/images/pets.png" th:src="@{/resources/images/pets.png}"
         alt="Pets at the clinic" />
-      <h2>We couldn't find what you're looking for</h2>
+      <h2 th:text="#{error.notFound.title}">We couldn't find what you're looking for</h2>
 
       <p th:text="${errorMessage}">The requested resource was not found.</p>
 
       <p class="liatrio-muted" th:text="#{error.notFound.action}">You can search for owners using the button below.</p>
 
-      <a th:href="@{/owners/find}" class="btn btn-primary">Find Owners</a>
+      <a th:href="@{/owners/find}" class="btn btn-primary" th:text="#{findOwners}">Find Owners</a>
     </div>
   </section>
 </body>
