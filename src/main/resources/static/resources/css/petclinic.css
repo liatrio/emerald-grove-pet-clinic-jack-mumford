@@ -16,6 +16,7 @@
    * Copyright 2011-2025 The Bootstrap Authors
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
    */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
 :root,
 [data-bs-theme="light"] {
   --bs-blue: #0d6efd;
@@ -83,40 +84,40 @@
   --bs-dark-border-subtle: #adb5bd;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-font-sans-serif: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #f8f9fa;
-  --bs-body-color-rgb: 248, 249, 250;
-  --bs-body-bg: #1a1f23;
-  --bs-body-bg-rgb: 26, 31, 35;
-  --bs-emphasis-color: #f8f9fa;
-  --bs-emphasis-color-rgb: 248, 249, 250;
-  --bs-secondary-color: rgba(248, 249, 250, 0.75);
-  --bs-secondary-color-rgb: 248, 249, 250;
+  --bs-body-color: #212529;
+  --bs-body-color-rgb: 33, 37, 41;
+  --bs-body-bg: #fff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-emphasis-color: #000;
+  --bs-emphasis-color-rgb: 0, 0, 0;
+  --bs-secondary-color: rgba(33, 37, 41, 0.75);
+  --bs-secondary-color-rgb: 33, 37, 41;
   --bs-secondary-bg: #e9ecef;
   --bs-secondary-bg-rgb: 233, 236, 239;
-  --bs-tertiary-color: rgba(248, 249, 250, 0.5);
-  --bs-tertiary-color-rgb: 248, 249, 250;
+  --bs-tertiary-color: rgba(33, 37, 41, 0.5);
+  --bs-tertiary-color-rgb: 33, 37, 41;
   --bs-tertiary-bg: #f8f9fa;
   --bs-tertiary-bg-rgb: 248, 249, 250;
   --bs-heading-color: inherit;
-  --bs-link-color: #24AE1D;
-  --bs-link-color-rgb: 36, 174, 29;
+  --bs-link-color: #0d6efd;
+  --bs-link-color-rgb: 13, 110, 253;
   --bs-link-decoration: underline;
-  --bs-link-hover-color: #24AE1D;
-  --bs-link-hover-color-rgb: 36, 174, 29;
+  --bs-link-hover-color: #0a58ca;
+  --bs-link-hover-color-rgb: 10, 88, 202;
   --bs-code-color: #d63384;
   --bs-highlight-color: #212529;
   --bs-highlight-bg: #fff3cd;
   --bs-border-width: 1px;
   --bs-border-style: solid;
-  --bs-border-color: #333333;
-  --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
+  --bs-border-color: #dee2e6;
+  --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
   --bs-border-radius: 0.375rem;
   --bs-border-radius-sm: 0.25rem;
   --bs-border-radius-lg: 0.5rem;
@@ -127,18 +128,6 @@
   --bs-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   --bs-box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-  --liatrio-space-1: 4px;
-  --liatrio-space-2: 8px;
-  --liatrio-space-3: 12px;
-  --liatrio-space-4: 16px;
-  --liatrio-space-6: 24px;
-  --liatrio-space-8: 32px;
-  --liatrio-space-12: 48px;
-  --liatrio-radius-sm: 4px;
-  --liatrio-radius-md: 8px;
-  --liatrio-radius-lg: 16px;
-  --liatrio-shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.08);
-  --liatrio-shadow-md: 0 8px 24px rgba(17, 17, 17, 0.12);
   --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.075);
   --bs-focus-ring-width: 0.25rem;
   --bs-focus-ring-opacity: 0.25;
@@ -9285,6 +9274,28 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important; } }
 
+:root {
+  --liatrio-space-1: 4px;
+  --liatrio-space-2: 8px;
+  --liatrio-space-3: 12px;
+  --liatrio-space-4: 16px;
+  --liatrio-space-6: 24px;
+  --liatrio-space-8: 32px;
+  --liatrio-space-12: 48px;
+  --liatrio-radius-sm: 4px;
+  --liatrio-radius-md: 8px;
+  --liatrio-radius-lg: 16px;
+  --liatrio-shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.08);
+  --liatrio-shadow-md: 0 8px 24px rgba(17, 17, 17, 0.12);
+  --bs-emphasis-color: #f8f9fa;
+  --bs-emphasis-color-rgb: 248, 249, 250;
+  --bs-secondary-color: rgba(248, 249, 250, 0.75);
+  --bs-secondary-color-rgb: 248, 249, 250;
+  --bs-tertiary-color: rgba(248, 249, 250, 0.5);
+  --bs-tertiary-color-rgb: 248, 249, 250;
+  --bs-border-color: #333333;
+  --bs-border-color-translucent: rgba(255, 255, 255, 0.15); }
+
 .table > thead > tr > th {
   background-color: #1E2327;
   color: #f8f9fa; }
@@ -9421,133 +9432,6 @@ table td.action-column {
 hr {
   border-top: 1px dotted var(--bs-border-color); }
 
-body, h1, .h1, h2, .h2, h3, .h3, p, input {
-  margin: 0;
-  font-weight: 400;
-  font-family: "DM Sans", sans-serif;
-  color: #f8f9fa; }
-
-h1, .h1 {
-  font-size: 24px;
-  line-height: 30px;
-  font-weight: 700;
-  font-family: "DM Sans", sans-serif; }
-
-h2, .h2 {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 24px;
-  margin-bottom: 10px;
-  font-family: "DM Sans", sans-serif; }
-
-h3, .h3 {
-  font-size: 16px;
-  line-height: 24px;
-  margin-bottom: 10px;
-  font-weight: 600; }
-
-strong {
-  font-weight: 700;
-  font-family: "DM Sans", sans-serif; }
-
-.navbar {
-  border-top: 4px solid #24AE1D;
-  background-color: #111111;
-  margin-bottom: 0px;
-  border-bottom: 0;
-  border-left: 0;
-  border-right: 0; }
-
-.navbar a.navbar-brand {
-  margin: 12px 0 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  padding: 0; }
-
-.navbar a.navbar-brand .navbar-brand-logo {
-  display: block;
-  width: 32px;
-  height: 32px;
-  background: url("../images/emerald-grove-logo-dark.png") center no-repeat;
-  background-size: contain; }
-
-.navbar a.navbar-brand .navbar-brand-text {
-  color: #ffffff;
-  font-family: "DM Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1.2; }
-
-.navbar li > a, .navbar-text {
-  font-family: "DM Sans", sans-serif;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-shadow: none;
-  font-size: 14px;
-  /* line-height: 14px; */
-  padding: 28px 20px;
-  transition: all 0.15s;
-  -webkit-transition: all 0.15s;
-  -moz-transition: all 0.15s;
-  -o-transition: all 0.15s;
-  -ms-transition: all 0.15s; }
-
-.navbar li > a {
-  text-transform: uppercase; }
-
-.navbar li > a .fa {
-  font-size: 12px; }
-
-.navbar .navbar-text {
-  margin-top: 0;
-  margin-bottom: 0; }
-
-.navbar li:hover > a {
-  color: #ffffff;
-  background-color: #24AE1D; }
-
-.navbar-toggle {
-  border-width: 0; }
-  .navbar-toggle .icon-bar + .icon-bar {
-    margin-top: 3px; }
-  .navbar-toggle .icon-bar {
-    width: 19px;
-    height: 3px; }
-
-@media (max-width: 768px) {
-  .navbar-toggle {
-    position: absolute;
-    z-index: 9999;
-    left: 0px;
-    top: 0px; }
-  .navbar a.navbar-brand {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 8px auto 0 auto;
-    float: none; }
-  .homepage-billboard .homepage-subtitle {
-    font-size: 21px;
-    line-height: 21px; }
-  .navbar a.navbar-brand .navbar-brand-text {
-    font-size: 14px;
-    text-align: center; }
-  .navbar {
-    border-top-width: 0; }
-  .xd-container {
-    margin-top: 20px;
-    margin-bottom: 30px; }
-  .index-page--subtitle {
-    margin-top: 10px;
-    margin-bottom: 30px; } }
-
 .liatrio-main {
   padding-top: var(--liatrio-space-8);
   padding-bottom: var(--liatrio-space-12); }
@@ -9628,7 +9512,7 @@ strong {
   padding: var(--liatrio-space-6);
   box-shadow: var(--liatrio-shadow-sm); }
 
-.liatrio-feature-card h3 {
+.liatrio-feature-card h3, .liatrio-feature-card .h3 {
   margin-bottom: var(--liatrio-space-2); }
 
 .liatrio-form-card {
@@ -9716,5 +9600,164 @@ strong {
 
 .liatrio-pagination .fa {
   font-size: 12px; }
+
+.language-selector {
+  margin-right: 16px; }
+
+.language-selector .dropdown-toggle {
+  border-color: rgba(255, 255, 255, 0.5); }
+
+.language-selector .dropdown-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.1); }
+
+.language-selector .dropdown-toggle:focus {
+  outline: 2px solid #24AE1D; }
+
+.language-selector .dropdown-menu {
+  background-color: #1E2327;
+  border-color: #333333; }
+
+.language-selector .dropdown-item {
+  color: #f8f9fa; }
+
+.language-selector .dropdown-item:hover {
+  background-color: rgba(36, 174, 29, 0.1);
+  color: #ffffff; }
+
+.language-selector .dropdown-item:focus {
+  background-color: rgba(36, 174, 29, 0.1);
+  color: #ffffff; }
+
+.language-selector .dropdown-item.active {
+  background-color: rgba(36, 174, 29, 0.2);
+  color: #24AE1D; }
+
+.language-selector .dropdown-item.fw-bold {
+  font-weight: 600; }
+
+body, h1, .h1, h2, .h2, h3, .h3, p, input {
+  margin: 0;
+  font-weight: 400;
+  font-family: "DM Sans", sans-serif;
+  color: #f8f9fa; }
+
+h1, .h1 {
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 700; }
+
+h2, .h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  margin-bottom: 10px; }
+
+h3, .h3 {
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 10px;
+  font-weight: 600; }
+
+strong {
+  font-weight: 700; }
+
+.navbar {
+  border-top: 4px solid #24AE1D;
+  background-color: #111111;
+  margin-bottom: 0px;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0; }
+
+.navbar a.navbar-brand {
+  margin: 12px 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  padding: 0; }
+
+.navbar a.navbar-brand .navbar-brand-logo {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: url("../images/emerald-grove-logo-dark.png") center no-repeat;
+  background-size: contain; }
+
+.navbar a.navbar-brand .navbar-brand-text {
+  color: #ffffff;
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2; }
+
+.navbar li > a, .navbar-text {
+  font-family: "DM Sans", sans-serif;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: none;
+  font-size: 14px;
+  /* line-height: 14px; */
+  padding: 28px 20px;
+  transition: all 0.15s;
+  -webkit-transition: all 0.15s;
+  -moz-transition: all 0.15s;
+  -o-transition: all 0.15s;
+  -ms-transition: all 0.15s; }
+
+.navbar li > a {
+  text-transform: uppercase; }
+
+.navbar li > a .fa {
+  font-size: 12px; }
+
+.navbar .navbar-text {
+  margin-top: 0;
+  margin-bottom: 0; }
+
+.navbar li:hover > a {
+  color: #eeeeee;
+  background-color: #6db33f; }
+
+.navbar-toggle {
+  border-width: 0; }
+  .navbar-toggle .icon-bar + .icon-bar {
+    margin-top: 3px; }
+  .navbar-toggle .icon-bar {
+    width: 19px;
+    height: 3px; }
+
+@media (max-width: 768px) {
+  .navbar-toggle {
+    position: absolute;
+    z-index: 9999;
+    left: 0px;
+    top: 0px; }
+  .navbar a.navbar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px auto 0 auto;
+    float: none; }
+  .homepage-billboard .homepage-subtitle {
+    font-size: 21px;
+    line-height: 21px; }
+  .navbar a.navbar-brand .navbar-brand-text {
+    font-size: 14px;
+    text-align: center; }
+  .navbar {
+    border-top-width: 0; }
+  .xd-container {
+    margin-top: 20px;
+    margin-bottom: 30px; }
+  .index-page--subtitle {
+    margin-top: 10px;
+    margin-bottom: 30px; } }
 
 /*# sourceMappingURL=../../../../../../target/petclinic.css.map */

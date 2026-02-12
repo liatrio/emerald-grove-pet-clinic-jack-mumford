@@ -15,6 +15,40 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap">
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
+  <style>
+    .language-selector {
+      margin-right: 16px;
+    }
+    .language-selector .dropdown-toggle {
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .language-selector .dropdown-toggle:hover {
+      border-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .language-selector .dropdown-toggle:focus {
+      outline: 2px solid #24AE1D;
+    }
+    .language-selector .dropdown-menu {
+      background-color: #1E2327;
+      border-color: #333333;
+    }
+    .language-selector .dropdown-item {
+      color: #f8f9fa;
+    }
+    .language-selector .dropdown-item:hover,
+    .language-selector .dropdown-item:focus {
+      background-color: rgba(36, 174, 29, 0.1);
+      color: #ffffff;
+    }
+    .language-selector .dropdown-item.active {
+      background-color: rgba(36, 174, 29, 0.2);
+      color: #24AE1D;
+    }
+    .language-selector .dropdown-item.fw-bold {
+      font-weight: 600;
+    }
+  </style>
 
 </head>
 
@@ -26,6 +60,56 @@
         <span class="navbar-brand-logo" aria-hidden="true"></span>
         <span class="navbar-brand-text" th:text="#{layoutTitle}">Emerald Grove Veterinary Clinic</span>
       </a>
+
+      <!-- Language Selector Dropdown -->
+      <div class="language-selector">
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button"
+                  id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                  aria-label="Language selector">
+            <i class="fa fa-globe" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+            <li><a class="dropdown-item" th:href="@{''(lang='en')}"
+                   th:classappend="${#locale.language == 'en'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇺🇸</span> English
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='de')}"
+                   th:classappend="${#locale.language == 'de'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇩🇪</span> Deutsch
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='es')}"
+                   th:classappend="${#locale.language == 'es'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇪🇸</span> Español
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='ko')}"
+                   th:classappend="${#locale.language == 'ko'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇰🇷</span> 한국어
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='fa')}"
+                   th:classappend="${#locale.language == 'fa'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇮🇷</span> فارسی
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='pt')}"
+                   th:classappend="${#locale.language == 'pt'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇵🇹</span> Português
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='ru')}"
+                   th:classappend="${#locale.language == 'ru'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇷🇺</span> Русский
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='tr')}"
+                   th:classappend="${#locale.language == 'tr'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇹🇷</span> Türkçe
+            </a></li>
+            <li><a class="dropdown-item" th:href="@{''(lang='zh')}"
+                   th:classappend="${#locale.language == 'zh'} ? 'active fw-bold' : ''">
+                <span aria-hidden="true">🇨🇳</span> 中文
+            </a></li>
+          </ul>
+        </div>
+      </div>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navbar">
         <span class="navbar-toggler-icon"></span>
       </button>
