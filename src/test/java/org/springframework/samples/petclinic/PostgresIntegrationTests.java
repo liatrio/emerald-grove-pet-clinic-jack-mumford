@@ -53,7 +53,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "spring.docker.compose.enabled=false")
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		properties = { "spring.docker.compose.enabled=false", "user.timezone=America/Los_Angeles" })
 @ActiveProfiles("postgres")
 @Testcontainers(disabledWithoutDocker = true)
 @DisabledInNativeImage
@@ -62,7 +63,8 @@ public class PostgresIntegrationTests {
 	@ServiceConnection
 	@Container
 	private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>(
-			DockerImageName.parse("postgres:18.1"));
+			DockerImageName.parse("postgres:18.1"))
+		.withEnv("TZ", "America/Los_Angeles");
 
 	@LocalServerPort
 	int port;
@@ -76,6 +78,9 @@ public class PostgresIntegrationTests {
 	@BeforeAll
 	static void available() {
 		assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available");
+		// Set timezone to a format PostgreSQL recognizes
+		System.setProperty("user.timezone", "America/Los_Angeles");
+		java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/Los_Angeles"));
 	}
 
 	public static void main(String[] args) {
