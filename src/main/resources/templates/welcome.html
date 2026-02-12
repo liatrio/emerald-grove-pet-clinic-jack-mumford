@@ -12,8 +12,8 @@
         <h1 class="liatrio-hero-title" th:text="#{home.hero.title}">Care made modern.</h1>
         <p class="liatrio-hero-subtitle" th:text="#{home.hero.subtitle}"></p>
         <div class="liatrio-hero-actions">
-          <a class="btn btn-primary" th:href="@{/owners/find}" th:text="#{home.hero.cta.owners}">Find owners</a>
-          <a class="btn liatrio-btn-secondary" th:href="@{/vets.html}" th:text="#{home.hero.cta.vets}">Meet the vets</a>
+          <a class="btn btn-primary" th:href="@{/owners/find(lang=${#locale.language})}" th:text="#{home.hero.cta.owners}">Find owners</a>
+          <a class="btn liatrio-btn-secondary" th:href="@{/vets.html(lang=${#locale.language})}" th:text="#{home.hero.cta.vets}">Meet the vets</a>
         </div>
       </div>
       <div class="col-lg-6">

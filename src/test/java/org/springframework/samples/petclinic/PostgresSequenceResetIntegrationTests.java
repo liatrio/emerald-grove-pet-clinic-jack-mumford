@@ -40,7 +40,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(properties = "spring.docker.compose.enabled=false")
+@SpringBootTest(properties = { "spring.docker.compose.enabled=false", "user.timezone=America/Los_Angeles" })
 @ActiveProfiles("postgres")
 @Testcontainers(disabledWithoutDocker = true)
 @DisabledInNativeImage
@@ -48,7 +48,8 @@ class PostgresSequenceResetIntegrationTests {
 
 	@ServiceConnection
 	@Container
-	static PostgreSQLContainer container = new PostgreSQLContainer(DockerImageName.parse("postgres:18.1"));
+	static PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse("postgres:18.1"))
+		.withEnv("TZ", "America/Los_Angeles");
 
 	@Autowired
 	private DataSource dataSource;
@@ -59,6 +60,9 @@ class PostgresSequenceResetIntegrationTests {
 	@BeforeAll
 	static void available() {
 		assumeTrue(DockerClientFactory.instance().isDockerAvailable(), "Docker not available");
+		// Set timezone to a format PostgreSQL recognizes
+		System.setProperty("user.timezone", "America/Los_Angeles");
+		java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/Los_Angeles"));
 	}
 
 	@Test

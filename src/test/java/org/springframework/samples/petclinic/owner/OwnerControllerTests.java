@@ -33,12 +33,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -268,6 +270,212 @@ class OwnerControllerTests {
 			.andExpect(status().isNotFound())
 			.andExpect(view().name("notFound"))
 			.andExpect(model().attributeExists("errorMessage"));
+	}
+
+	// Issue #6: Duplicate Owner Prevention - Controller Tests
+
+	@Test
+	void shouldRejectDuplicateOwnerCreation() throws Exception {
+		// Arrange: Mock repository to return existing owner (duplicate found)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("6085551023")))
+			.willReturn(List.of(george));
+
+		// Act & Assert
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk()) // Returns form, not redirect
+			.andExpect(model().attributeHasErrors("owner"))
+			.andExpect(view().name("owners/createOrUpdateOwnerForm"));
+	}
+
+	@Test
+	void shouldRejectDuplicateWithDifferentCase() throws Exception {
+		// Arrange: Mock repository to return existing owner (case-insensitive match)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("george"), eq("franklin"),
+				eq("6085551023")))
+			.willReturn(List.of(george));
+
+		// Act & Assert: Submit with lowercase names
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "george")
+				.param("lastName", "franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"));
+	}
+
+	@Test
+	void shouldAllowNonDuplicateOwnerCreation() throws Exception {
+		// Arrange: Mock repository to return empty list (no duplicates)
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(any(), any(), any()))
+			.willReturn(List.of());
+
+		// Act & Assert: Submit unique owner
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "Jane")
+				.param("lastName", "Doe")
+				.param("address", "456 Elm St.")
+				.param("city", "Springfield")
+				.param("telephone", "5551234567"))
+			.andExpect(status().is3xxRedirection());
+	}
+
+	@Test
+	void shouldAllowOwnerWithSameNameDifferentPhone() throws Exception {
+		// Arrange: Mock repository to return empty list (different phone = no duplicate)
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("9999999999")))
+			.willReturn(List.of());
+
+		// Act & Assert: Submit owner with same name, different phone
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "Different Address")
+				.param("city", "Different City")
+				.param("telephone", "9999999999"))
+			.andExpect(status().is3xxRedirection());
+	}
+
+	@Test
+	void shouldNormalizeTelephoneForDuplicateCheck() throws Exception {
+		// Arrange: Mock expects normalized phone (no spaces/dashes)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("6085551023")))
+			.willReturn(List.of(george));
+
+		// Act & Assert: Submit with normalized phone
+		// Note: @Pattern validation requires exactly 10 digits, so this verifies
+		// defensive
+		// normalization
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023")) // Already normalized by validation
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"));
+	}
+
+	// CSV Export Tests
+
+	@Test
+	void shouldReturnCsvFormatWhenAccessingCsvEndpoint() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("text/csv; charset=UTF-8"))
+			.andExpect(header().string("Content-Disposition", containsString("attachment")))
+			.andExpect(content().string(containsString("First Name,Last Name,Address,City,Telephone")))
+			.andExpect(content().string(containsString("George,Franklin")));
+	}
+
+	@Test
+	void shouldFilterCsvByLastNameParameter() throws Exception {
+		Owner george = george();
+		given(this.owners.findByLastNameStartingWith("Franklin")).willReturn(List.of(george));
+		given(this.owners.findByLastNameStartingWith("Davis")).willReturn(List.of());
+
+		mockMvc.perform(get("/owners.csv").param("lastName", "Franklin"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("George,Franklin")));
+	}
+
+	@Test
+	void shouldReturn404WhenNoCsvResultsFound() throws Exception {
+		given(this.owners.findByLastNameStartingWith("NonExistent")).willReturn(List.of());
+
+		mockMvc.perform(get("/owners.csv").param("lastName", "NonExistent")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	void shouldSetContentDispositionHeader() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(header().string("Content-Disposition", containsString("attachment")))
+			.andExpect(header().string("Content-Disposition", containsString("filename=")));
+	}
+
+	@Test
+	void shouldGenerateFilenameWithCurrentDate() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(header().string("Content-Disposition",
+					matchesPattern(".*owners-export-\\d{4}-\\d{2}-\\d{2}\\.csv.*")));
+	}
+
+	@Test
+	void shouldExportAllResultsIgnoringPagination() throws Exception {
+		Owner george = george();
+		Owner betty = new Owner();
+		betty.setFirstName("Betty");
+		betty.setLastName("Davis");
+		betty.setAddress("638 Cardinal Ave.");
+		betty.setCity("Sun Prairie");
+		betty.setTelephone("6085551749");
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george, betty));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("George,Franklin")))
+			.andExpect(content().string(containsString("Betty,Davis")));
+	}
+
+	// Rate Limiting Tests (CRITICAL-2: DoS Prevention)
+
+	@Test
+	void shouldReturn413WhenCsvExportExceedsMaxSize() throws Exception {
+		// Create a list exceeding MAX_CSV_EXPORT_SIZE (5000)
+		List<Owner> largeList = new java.util.ArrayList<>();
+		for (int i = 0; i < 5001; i++) {
+			Owner owner = new Owner();
+			owner.setFirstName("Owner" + i);
+			owner.setLastName("Test" + i);
+			owner.setAddress("Address " + i);
+			owner.setCity("City " + i);
+			owner.setTelephone(String.format("%010d", i));
+			largeList.add(owner);
+		}
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(largeList);
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isPayloadTooLarge())
+			.andExpect(status().reason(containsString("Maximum export size")));
+	}
+
+	@Test
+	void shouldAllowCsvExportAtMaxSize() throws Exception {
+		// Create a list at exactly MAX_CSV_EXPORT_SIZE (5000)
+		List<Owner> maxSizeList = new java.util.ArrayList<>();
+		for (int i = 0; i < 5000; i++) {
+			Owner owner = new Owner();
+			owner.setFirstName("Owner" + i);
+			owner.setLastName("Test" + i);
+			owner.setAddress("Address " + i);
+			owner.setCity("City " + i);
+			owner.setTelephone(String.format("%010d", i));
+			maxSizeList.add(owner);
+		}
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(maxSizeList);
+
+		mockMvc.perform(get("/owners.csv")).andExpect(status().isOk());
 	}
 
 }

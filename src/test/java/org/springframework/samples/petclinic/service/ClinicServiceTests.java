@@ -94,6 +94,21 @@ class ClinicServiceTests {
 	}
 
 	@Test
+	void shouldFindOwnersByLastNameUnpaginated() {
+		Collection<Owner> owners = this.owners.findByLastNameStartingWith("Davis");
+		assertThat(owners).hasSize(2);
+
+		owners = this.owners.findByLastNameStartingWith("Daviss");
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldReturnEmptyListWhenNoMatchUnpaginated() {
+		Collection<Owner> owners = this.owners.findByLastNameStartingWith("NonExistentName");
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
 	void shouldFindSingleOwnerWithPet() {
 		Optional<Owner> optionalOwner = this.owners.findById(1);
 		assertThat(optionalOwner).isPresent();
@@ -246,6 +261,86 @@ class ClinicServiceTests {
 			.element(0)
 			.extracting(Visit::getDate)
 			.isNotNull();
+	}
+
+	// Issue #6: Duplicate Owner Prevention - Repository Tests
+
+	@Test
+	void shouldFindOwnerByFirstLastAndTelephone() {
+		// Arrange: Use existing test data (George Franklin with ID 1, telephone
+		// 6085551023)
+
+		// Act
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Franklin", "6085551023");
+
+		// Assert
+		assertThat(owners).hasSize(1);
+		assertThat(owners.get(0).getFirstName()).isEqualTo("George");
+		assertThat(owners.get(0).getLastName()).isEqualTo("Franklin");
+		assertThat(owners.get(0).getTelephone()).isEqualTo("6085551023");
+	}
+
+	@Test
+	void shouldFindOwnerCaseInsensitive() {
+		// Arrange: Query with lowercase names
+
+		// Act
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("george",
+				"franklin", "6085551023");
+
+		// Assert
+		assertThat(owners).hasSize(1);
+		assertThat(owners.get(0).getFirstName()).isEqualToIgnoringCase("George");
+		assertThat(owners.get(0).getLastName()).isEqualToIgnoringCase("Franklin");
+	}
+
+	@Test
+	void shouldReturnEmptyListWhenNoOwnerMatches() {
+		// Arrange: Query with non-existent owner details
+
+		// Act
+		java.util.List<Owner> owners = this.owners
+			.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("NonExistent", "Owner", "0000000000");
+
+		// Assert
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldNotFindOwnerWithDifferentTelephone() {
+		// Arrange: Same name, different phone
+
+		// Act
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Franklin", "9999999999");
+
+		// Assert
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldNotFindOwnerWithDifferentFirstName() {
+		// Arrange: Different first name, same last name and phone
+
+		// Act
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("Jane",
+				"Franklin", "6085551023");
+
+		// Assert
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldNotFindOwnerWithDifferentLastName() {
+		// Arrange: Same first name, different last name
+
+		// Act
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Smith", "6085551023");
+
+		// Assert
+		assertThat(owners).isEmpty();
 	}
 
 }

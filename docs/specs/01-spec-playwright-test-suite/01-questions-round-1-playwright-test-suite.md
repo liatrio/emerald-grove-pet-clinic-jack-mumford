@@ -46,7 +46,7 @@ Which browsers and devices should be prioritized?
 
 When and how should Playwright tests run?
 
-- [ ] (A) **On Every Commit** - Part of pre-commit hooks or CI checks
+- [x] (A) **On Every Commit** - Part of pre-commit hooks or CI checks
 - [ ] (B) **Nightly Build** - Scheduled execution for comprehensive testing
 - [ ] (C) **Manual Trigger** - Run on-demand before releases
 - [ ] (D) **Pull Request Only** - Run only on PR validation

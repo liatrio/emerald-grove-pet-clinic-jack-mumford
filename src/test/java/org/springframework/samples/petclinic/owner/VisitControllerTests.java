@@ -28,10 +28,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -41,6 +43,7 @@ import java.util.Optional;
  * @author Wick Dynex
  */
 @WebMvcTest(VisitController.class)
+@Import(VisitValidator.class)
 @DisabledInNativeImage
 @DisabledInAotMode
 class VisitControllerTests {
@@ -89,6 +92,43 @@ class VisitControllerTests {
 			.andExpect(model().attributeHasErrors("visit"))
 			.andExpect(status().isOk())
 			.andExpect(view().name("pets/createOrUpdateVisitForm"));
+	}
+
+	@Test
+	void shouldRejectVisitWithPastDate() throws Exception {
+		LocalDate yesterday = LocalDate.now().minusDays(1);
+
+		mockMvc
+			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
+				.param("date", yesterday.toString())
+				.param("description", "Checkup"))
+			.andExpect(status().isOk()) // Returns form with errors
+			.andExpect(model().attributeHasFieldErrors("visit", "date"))
+			.andExpect(view().name("pets/createOrUpdateVisitForm"));
+	}
+
+	@Test
+	void shouldAcceptVisitWithTodayDate() throws Exception {
+		LocalDate today = LocalDate.now();
+
+		mockMvc
+			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
+				.param("date", today.toString())
+				.param("description", "Checkup"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/{ownerId}"));
+	}
+
+	@Test
+	void shouldAcceptVisitWithFutureDate() throws Exception {
+		LocalDate nextWeek = LocalDate.now().plusWeeks(1);
+
+		mockMvc
+			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
+				.param("date", nextWeek.toString())
+				.param("description", "Vaccination"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(view().name("redirect:/owners/{ownerId}"));
 	}
 
 }

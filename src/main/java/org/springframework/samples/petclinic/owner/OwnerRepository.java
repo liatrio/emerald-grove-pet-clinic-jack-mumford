@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -45,6 +46,16 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	Page<Owner> findByLastNameStartingWith(String lastName, Pageable pageable);
 
 	/**
+	 * Retrieve all {@link Owner}s from the data store by last name (unpaginated),
+	 * returning all owners whose last name <i>starts</i> with the given name. This method
+	 * is intended for CSV export where all results are needed.
+	 * @param lastName Value to search for
+	 * @return a Collection of matching {@link Owner}s (or an empty Collection if none
+	 * found)
+	 */
+	List<Owner> findByLastNameStartingWith(String lastName);
+
+	/**
 	 * Retrieve an {@link Owner} from the data store by id.
 	 * <p>
 	 * This method returns an {@link Optional} containing the {@link Owner} if found. If
@@ -58,5 +69,16 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 * input for id)
 	 */
 	Optional<Owner> findById(Integer id);
+
+	/**
+	 * Find owners by first name, last name, and telephone (case-insensitive). Used for
+	 * duplicate detection during owner creation.
+	 * @param firstName the owner's first name (case-insensitive)
+	 * @param lastName the owner's last name (case-insensitive)
+	 * @param telephone the owner's telephone number
+	 * @return list of owners matching all three fields (empty if none found)
+	 */
+	List<Owner> findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(String firstName, String lastName,
+			String telephone);
 
 }

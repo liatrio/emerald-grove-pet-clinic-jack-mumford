@@ -43,13 +43,21 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	public VisitController(OwnerRepository owners) {
+	private final VisitValidator visitValidator;
+
+	public VisitController(OwnerRepository owners, VisitValidator visitValidator) {
 		this.owners = owners;
+		this.visitValidator = visitValidator;
 	}
 
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
+	}
+
+	@InitBinder("visit")
+	public void initVisitBinder(WebDataBinder dataBinder) {
+		dataBinder.addValidators(visitValidator);
 	}
 
 	/**

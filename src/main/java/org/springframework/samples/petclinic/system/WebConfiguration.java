@@ -1,14 +1,15 @@
 package org.springframework.samples.petclinic.system;
 
+import java.time.Duration;
+import java.util.Locale;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import java.util.Locale;
 
 /**
  * Configures internationalization (i18n) support for the application.
@@ -25,14 +26,15 @@ import java.util.Locale;
 public class WebConfiguration implements WebMvcConfigurer {
 
 	/**
-	 * Uses session storage to remember the user’s language setting across requests.
-	 * Defaults to English if nothing is specified.
-	 * @return session-based {@link LocaleResolver}
+	 * Uses cookie storage to remember the user's language setting across requests.
+	 * Defaults to English if nothing is specified. Cookie persists for 30 days.
+	 * @return cookie-based {@link LocaleResolver}
 	 */
 	@Bean
 	public LocaleResolver localeResolver() {
-		SessionLocaleResolver resolver = new SessionLocaleResolver();
+		CookieLocaleResolver resolver = new CookieLocaleResolver("petclinic-locale");
 		resolver.setDefaultLocale(Locale.ENGLISH);
+		resolver.setCookieMaxAge(Duration.ofDays(30)); // 30 days
 		return resolver;
 	}
 

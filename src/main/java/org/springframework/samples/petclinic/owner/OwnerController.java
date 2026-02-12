@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,6 +24,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +38,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
@@ -49,6 +56,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 class OwnerController {
 
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
+
+	/**
+	 * Maximum number of owners that can be exported in a single CSV request. This limit
+	 * prevents memory exhaustion and DoS attacks. Users should refine their search if
+	 * they exceed this limit.
+	 * <p>
+	 * Note: Proper rate limiting (request-based throttling) will be implemented in Phase
+	 * 2 using Spring Security or a dedicated rate limiting solution.
+	 */
+	private static final int MAX_CSV_EXPORT_SIZE = 5000;
 
 	private final OwnerRepository owners;
 
@@ -81,9 +98,46 @@ class OwnerController {
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 
+		// Check for duplicates
+		if (isDuplicate(owner)) {
+			result.reject("owner.alreadyExists", "An owner with this information already exists");
+			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+		}
+
 		this.owners.save(owner);
 		redirectAttributes.addFlashAttribute("message", "New Owner Created");
 		return "redirect:/owners/" + owner.getId();
+	}
+
+	/**
+	 * Check if an owner with the same first name, last name, and telephone already
+	 * exists.
+	 * @param owner the owner to check for duplicates
+	 * @return true if duplicate exists, false otherwise
+	 */
+	private boolean isDuplicate(Owner owner) {
+		String firstName = owner.getFirstName() != null ? owner.getFirstName().trim() : "";
+		String lastName = owner.getLastName() != null ? owner.getLastName().trim() : "";
+		String telephone = normalizeTelephone(owner.getTelephone());
+
+		List<Owner> duplicates = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(firstName,
+				lastName, telephone);
+
+		return !duplicates.isEmpty();
+	}
+
+	/**
+	 * Normalize telephone number by removing spaces and dashes. Defensive measure for
+	 * consistent comparison, though @Pattern validation should already enforce 10-digit
+	 * format.
+	 * @param telephone the telephone number to normalize
+	 * @return normalized telephone number (spaces and dashes removed)
+	 */
+	private String normalizeTelephone(String telephone) {
+		if (telephone == null) {
+			return "";
+		}
+		return telephone.replaceAll("[\\s-]", "");
 	}
 
 	@GetMapping("/owners/find")
@@ -115,6 +169,7 @@ class OwnerController {
 		}
 
 		// multiple owners found
+		model.addAttribute("lastName", lastName);
 		return addPaginationModel(page, model, ownersResults);
 	}
 
@@ -171,6 +226,42 @@ class OwnerController {
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
 		mav.addObject(owner);
 		return mav;
+	}
+
+	/**
+	 * Exports owners as CSV file. Filters by lastName parameter if provided.
+	 * @param lastName optional filter for owner last name (starts with)
+	 * @return CSV file as ResponseEntity with appropriate headers
+	 * @throws ResponseStatusException with HTTP 413 if result set exceeds
+	 * MAX_CSV_EXPORT_SIZE
+	 */
+	@GetMapping("/owners.csv")
+	public ResponseEntity<String> exportOwnersCsv(@RequestParam(defaultValue = "") String lastName) {
+		List<Owner> ownerList = this.owners.findByLastNameStartingWith(lastName);
+
+		if (ownerList.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No owners found matching the search criteria");
+		}
+
+		// Prevent memory exhaustion from large exports (DoS protection)
+		if (ownerList.size() > MAX_CSV_EXPORT_SIZE) {
+			throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "Too many results (" + ownerList.size()
+					+ "). Maximum export size is " + MAX_CSV_EXPORT_SIZE + ". Please refine your search.");
+		}
+
+		String csv = CsvBuilder.buildOwnersCsv(ownerList);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
+
+		String filename = "owners-export-" + LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".csv";
+		headers.setContentDispositionFormData("attachment", filename);
+
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0);
+
+		return ResponseEntity.ok().headers(headers).body(csv);
 	}
 
 }

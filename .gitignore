@@ -50,3 +50,4 @@ temp
 
 ### Local Dev ###
 .local/
+e2e-tests/test-results/
