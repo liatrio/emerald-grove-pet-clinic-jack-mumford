@@ -436,4 +436,46 @@ class OwnerControllerTests {
 			.andExpect(content().string(containsString("Betty,Davis")));
 	}
 
+	// Rate Limiting Tests (CRITICAL-2: DoS Prevention)
+
+	@Test
+	void shouldReturn413WhenCsvExportExceedsMaxSize() throws Exception {
+		// Create a list exceeding MAX_CSV_EXPORT_SIZE (5000)
+		List<Owner> largeList = new java.util.ArrayList<>();
+		for (int i = 0; i < 5001; i++) {
+			Owner owner = new Owner();
+			owner.setFirstName("Owner" + i);
+			owner.setLastName("Test" + i);
+			owner.setAddress("Address " + i);
+			owner.setCity("City " + i);
+			owner.setTelephone(String.format("%010d", i));
+			largeList.add(owner);
+		}
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(largeList);
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isPayloadTooLarge())
+			.andExpect(status().reason(containsString("Maximum export size")));
+	}
+
+	@Test
+	void shouldAllowCsvExportAtMaxSize() throws Exception {
+		// Create a list at exactly MAX_CSV_EXPORT_SIZE (5000)
+		List<Owner> maxSizeList = new java.util.ArrayList<>();
+		for (int i = 0; i < 5000; i++) {
+			Owner owner = new Owner();
+			owner.setFirstName("Owner" + i);
+			owner.setLastName("Test" + i);
+			owner.setAddress("Address " + i);
+			owner.setCity("City " + i);
+			owner.setTelephone(String.format("%010d", i));
+			maxSizeList.add(owner);
+		}
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(maxSizeList);
+
+		mockMvc.perform(get("/owners.csv")).andExpect(status().isOk());
+	}
+
 }

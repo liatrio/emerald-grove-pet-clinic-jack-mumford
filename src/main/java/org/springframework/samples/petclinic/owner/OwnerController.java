@@ -57,6 +57,16 @@ class OwnerController {
 
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
+	/**
+	 * Maximum number of owners that can be exported in a single CSV request. This limit
+	 * prevents memory exhaustion and DoS attacks. Users should refine their search if
+	 * they exceed this limit.
+	 * <p>
+	 * Note: Proper rate limiting (request-based throttling) will be implemented in Phase
+	 * 2 using Spring Security or a dedicated rate limiting solution.
+	 */
+	private static final int MAX_CSV_EXPORT_SIZE = 5000;
+
 	private final OwnerRepository owners;
 
 	public OwnerController(OwnerRepository owners) {
@@ -222,6 +232,8 @@ class OwnerController {
 	 * Exports owners as CSV file. Filters by lastName parameter if provided.
 	 * @param lastName optional filter for owner last name (starts with)
 	 * @return CSV file as ResponseEntity with appropriate headers
+	 * @throws ResponseStatusException with HTTP 413 if result set exceeds
+	 * MAX_CSV_EXPORT_SIZE
 	 */
 	@GetMapping("/owners.csv")
 	public ResponseEntity<String> exportOwnersCsv(@RequestParam(defaultValue = "") String lastName) {
@@ -229,6 +241,12 @@ class OwnerController {
 
 		if (ownerList.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No owners found matching the search criteria");
+		}
+
+		// Prevent memory exhaustion from large exports (DoS protection)
+		if (ownerList.size() > MAX_CSV_EXPORT_SIZE) {
+			throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "Too many results (" + ownerList.size()
+					+ "). Maximum export size is " + MAX_CSV_EXPORT_SIZE + ". Please refine your search.");
 		}
 
 		String csv = CsvBuilder.buildOwnersCsv(ownerList);
