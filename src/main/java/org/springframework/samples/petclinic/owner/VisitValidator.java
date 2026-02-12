@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.owner;
 
 import java.time.LocalDate;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -25,6 +26,7 @@ import org.springframework.validation.Validator;
  *
  * @author AI Agent
  */
+@Component
 public class VisitValidator implements Validator {
 
 	private static final String DATE_FIELD = "date";

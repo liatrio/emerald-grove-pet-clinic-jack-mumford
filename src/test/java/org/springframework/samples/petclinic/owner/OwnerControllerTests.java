@@ -277,7 +277,8 @@ class OwnerControllerTests {
 		// Arrange: Mock repository to return existing owner (duplicate found)
 		Owner george = george();
 		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
-				eq("6085551023"))).willReturn(List.of(george));
+				eq("6085551023")))
+			.willReturn(List.of(george));
 
 		// Act & Assert
 		mockMvc
@@ -296,7 +297,8 @@ class OwnerControllerTests {
 		// Arrange: Mock repository to return existing owner (case-insensitive match)
 		Owner george = george();
 		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("george"), eq("franklin"),
-				eq("6085551023"))).willReturn(List.of(george));
+				eq("6085551023")))
+			.willReturn(List.of(george));
 
 		// Act & Assert: Submit with lowercase names
 		mockMvc
@@ -329,7 +331,8 @@ class OwnerControllerTests {
 	void shouldAllowOwnerWithSameNameDifferentPhone() throws Exception {
 		// Arrange: Mock repository to return empty list (different phone = no duplicate)
 		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
-				eq("9999999999"))).willReturn(List.of());
+				eq("9999999999")))
+			.willReturn(List.of());
 
 		// Act & Assert: Submit owner with same name, different phone
 		mockMvc
@@ -346,10 +349,12 @@ class OwnerControllerTests {
 		// Arrange: Mock expects normalized phone (no spaces/dashes)
 		Owner george = george();
 		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
-				eq("6085551023"))).willReturn(List.of(george));
+				eq("6085551023")))
+			.willReturn(List.of(george));
 
 		// Act & Assert: Submit with normalized phone
-		// Note: @Pattern validation requires exactly 10 digits, so this verifies defensive
+		// Note: @Pattern validation requires exactly 10 digits, so this verifies
+		// defensive
 		// normalization
 		mockMvc
 			.perform(post("/owners/new").param("firstName", "George")

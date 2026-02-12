@@ -252,11 +252,12 @@ class ClinicServiceTests {
 
 	@Test
 	void shouldFindOwnerByFirstLastAndTelephone() {
-		// Arrange: Use existing test data (George Franklin with ID 1, telephone 6085551023)
+		// Arrange: Use existing test data (George Franklin with ID 1, telephone
+		// 6085551023)
 
 		// Act
-		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(
-				"George", "Franklin", "6085551023");
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Franklin", "6085551023");
 
 		// Assert
 		assertThat(owners).hasSize(1);
@@ -270,8 +271,8 @@ class ClinicServiceTests {
 		// Arrange: Query with lowercase names
 
 		// Act
-		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(
-				"george", "franklin", "6085551023");
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("george",
+				"franklin", "6085551023");
 
 		// Assert
 		assertThat(owners).hasSize(1);
@@ -284,8 +285,8 @@ class ClinicServiceTests {
 		// Arrange: Query with non-existent owner details
 
 		// Act
-		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(
-				"NonExistent", "Owner", "0000000000");
+		java.util.List<Owner> owners = this.owners
+			.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("NonExistent", "Owner", "0000000000");
 
 		// Assert
 		assertThat(owners).isEmpty();
@@ -296,8 +297,8 @@ class ClinicServiceTests {
 		// Arrange: Same name, different phone
 
 		// Act
-		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(
-				"George", "Franklin", "9999999999");
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Franklin", "9999999999");
 
 		// Assert
 		assertThat(owners).isEmpty();
@@ -320,8 +321,8 @@ class ClinicServiceTests {
 		// Arrange: Same first name, different last name
 
 		// Act
-		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(
-				"George", "Smith", "6085551023");
+		java.util.List<Owner> owners = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone("George",
+				"Smith", "6085551023");
 
 		// Assert
 		assertThat(owners).isEmpty();
