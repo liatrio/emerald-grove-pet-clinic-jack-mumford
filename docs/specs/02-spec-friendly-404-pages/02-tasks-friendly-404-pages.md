@@ -32,7 +32,7 @@
 
 ## Tasks
 
-### [~] 1.0 Write Failing JUnit Tests for 404 Handling (RED Phase)
+### [x] 1.0 Write Failing JUnit Tests for 404 Handling (RED Phase)
 
 #### 1.0 Proof Artifact(s)
 
@@ -51,7 +51,7 @@
 - [x] 1.8 Add test method `testShowPetNotFound()` for missing pet scenario
 - [x] 1.9 Run `./mvnw test -Dtest=OwnerControllerTests,PetControllerTests` and verify tests fail as expected (no exception handler exists yet)
 - [x] 1.10 Review test output and confirm failure reasons align with expectations (likely seeing 500 error or exception instead of 404)
-- [ ] 1.11 Commit failing tests with message: `test(error-handling): add failing tests for 404 owner/pet scenarios`
+- [x] 1.11 Commit failing tests with message: `test(error-handling): add failing tests for 404 owner/pet scenarios`
 
 ### [ ] 2.0 Implement Global Exception Handler (GREEN Phase)
 
