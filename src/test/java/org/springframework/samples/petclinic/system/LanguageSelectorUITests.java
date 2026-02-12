@@ -76,15 +76,15 @@ class LanguageSelectorUITests {
 		String html = response.getBody();
 
 		// Verify all 9 language options
-		assertThat(html).contains("lang='en'").contains("English");
-		assertThat(html).contains("lang='de'").contains("Deutsch");
-		assertThat(html).contains("lang='es'").contains("Español");
-		assertThat(html).contains("lang='ko'").contains("한국어");
-		assertThat(html).contains("lang='fa'").contains("فارسی");
-		assertThat(html).contains("lang='pt'").contains("Português");
-		assertThat(html).contains("lang='ru'").contains("Русский");
-		assertThat(html).contains("lang='tr'").contains("Türkçe");
-		assertThat(html).contains("lang='zh'").contains("中文");
+		assertThat(html).contains("?lang=en").contains("English");
+		assertThat(html).contains("?lang=de").contains("Deutsch");
+		assertThat(html).contains("?lang=es").contains("Español");
+		assertThat(html).contains("?lang=ko").contains("한국어");
+		assertThat(html).contains("?lang=fa").contains("فارسی");
+		assertThat(html).contains("?lang=pt").contains("Português");
+		assertThat(html).contains("?lang=ru").contains("Русский");
+		assertThat(html).contains("?lang=tr").contains("Türkçe");
+		assertThat(html).contains("?lang=zh").contains("中文");
 	}
 
 	@Test
@@ -97,7 +97,7 @@ class LanguageSelectorUITests {
 		String html = response.getBody();
 
 		// Verify active class is applied to German option
-		assertThat(html).containsPattern("lang='de'.*active fw-bold");
+		assertThat(html).contains("active fw-bold\" href=\"?lang=de\"");
 	}
 
 }
