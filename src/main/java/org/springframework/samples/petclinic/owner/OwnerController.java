@@ -81,9 +81,46 @@ class OwnerController {
 			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 		}
 
+		// Check for duplicates
+		if (isDuplicate(owner)) {
+			result.reject("owner.alreadyExists", "An owner with this information already exists");
+			return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
+		}
+
 		this.owners.save(owner);
 		redirectAttributes.addFlashAttribute("message", "New Owner Created");
 		return "redirect:/owners/" + owner.getId();
+	}
+
+	/**
+	 * Check if an owner with the same first name, last name, and telephone already
+	 * exists.
+	 * @param owner the owner to check for duplicates
+	 * @return true if duplicate exists, false otherwise
+	 */
+	private boolean isDuplicate(Owner owner) {
+		String firstName = owner.getFirstName() != null ? owner.getFirstName().trim() : "";
+		String lastName = owner.getLastName() != null ? owner.getLastName().trim() : "";
+		String telephone = normalizeTelephone(owner.getTelephone());
+
+		List<Owner> duplicates = this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(firstName,
+				lastName, telephone);
+
+		return !duplicates.isEmpty();
+	}
+
+	/**
+	 * Normalize telephone number by removing spaces and dashes. Defensive measure for
+	 * consistent comparison, though @Pattern validation should already enforce 10-digit
+	 * format.
+	 * @param telephone the telephone number to normalize
+	 * @return normalized telephone number (spaces and dashes removed)
+	 */
+	private String normalizeTelephone(String telephone) {
+		if (telephone == null) {
+			return "";
+		}
+		return telephone.replaceAll("[\\s-]", "");
 	}
 
 	@GetMapping("/owners/find")

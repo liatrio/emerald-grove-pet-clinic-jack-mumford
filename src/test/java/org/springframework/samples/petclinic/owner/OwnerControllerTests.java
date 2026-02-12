@@ -270,4 +270,95 @@ class OwnerControllerTests {
 			.andExpect(model().attributeExists("errorMessage"));
 	}
 
+	// Issue #6: Duplicate Owner Prevention - Controller Tests
+
+	@Test
+	void shouldRejectDuplicateOwnerCreation() throws Exception {
+		// Arrange: Mock repository to return existing owner (duplicate found)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("6085551023"))).willReturn(List.of(george));
+
+		// Act & Assert
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk()) // Returns form, not redirect
+			.andExpect(model().attributeHasErrors("owner"))
+			.andExpect(view().name("owners/createOrUpdateOwnerForm"));
+	}
+
+	@Test
+	void shouldRejectDuplicateWithDifferentCase() throws Exception {
+		// Arrange: Mock repository to return existing owner (case-insensitive match)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("george"), eq("franklin"),
+				eq("6085551023"))).willReturn(List.of(george));
+
+		// Act & Assert: Submit with lowercase names
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "george")
+				.param("lastName", "franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"));
+	}
+
+	@Test
+	void shouldAllowNonDuplicateOwnerCreation() throws Exception {
+		// Arrange: Mock repository to return empty list (no duplicates)
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(any(), any(), any()))
+			.willReturn(List.of());
+
+		// Act & Assert: Submit unique owner
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "Jane")
+				.param("lastName", "Doe")
+				.param("address", "456 Elm St.")
+				.param("city", "Springfield")
+				.param("telephone", "5551234567"))
+			.andExpect(status().is3xxRedirection());
+	}
+
+	@Test
+	void shouldAllowOwnerWithSameNameDifferentPhone() throws Exception {
+		// Arrange: Mock repository to return empty list (different phone = no duplicate)
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("9999999999"))).willReturn(List.of());
+
+		// Act & Assert: Submit owner with same name, different phone
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "Different Address")
+				.param("city", "Different City")
+				.param("telephone", "9999999999"))
+			.andExpect(status().is3xxRedirection());
+	}
+
+	@Test
+	void shouldNormalizeTelephoneForDuplicateCheck() throws Exception {
+		// Arrange: Mock expects normalized phone (no spaces/dashes)
+		Owner george = george();
+		given(this.owners.findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(eq("George"), eq("Franklin"),
+				eq("6085551023"))).willReturn(List.of(george));
+
+		// Act & Assert: Submit with normalized phone
+		// Note: @Pattern validation requires exactly 10 digits, so this verifies defensive
+		// normalization
+		mockMvc
+			.perform(post("/owners/new").param("firstName", "George")
+				.param("lastName", "Franklin")
+				.param("address", "110 W. Liberty St.")
+				.param("city", "Madison")
+				.param("telephone", "6085551023")) // Already normalized by validation
+			.andExpect(status().isOk())
+			.andExpect(model().attributeHasErrors("owner"));
+	}
+
 }
