@@ -105,7 +105,7 @@
 - [x] 3.16 Take screenshot of 404 page and save to `docs/specs/02-spec-friendly-404-pages/proof-artifacts/404-page-screenshot.png`
 - [x] 3.17 Commit template with message: `feat(error-handling): add user-friendly notFound template with navigation`
 
-### [~] 4.0 Add Internationalization Support (GREEN Phase)
+### [x] 4.0 Add Internationalization Support (GREEN Phase)
 
 #### 4.0 Proof Artifact(s)
 
@@ -148,7 +148,7 @@
 - [x] 4.31 Test with another locale (e.g., German) by adding `?lang=de` to URL or setting browser locale
 - [x] 4.32 Verify error messages display in the correct language
 - [x] 4.33 Run `git diff src/main/resources/messages/` to review all i18n changes
-- [ ] 4.34 Commit i18n changes with message: `feat(error-handling): add i18n support for 404 error messages in 8 languages`
+- [x] 4.34 Commit i18n changes with message: `feat(error-handling): add i18n support for 404 error messages in 8 languages`
 
 ### [ ] 5.0 Implement Playwright End-to-End Tests
 
