@@ -94,6 +94,21 @@ class ClinicServiceTests {
 	}
 
 	@Test
+	void shouldFindOwnersByLastNameUnpaginated() {
+		Collection<Owner> owners = this.owners.findByLastNameStartingWith("Davis");
+		assertThat(owners).hasSize(2);
+
+		owners = this.owners.findByLastNameStartingWith("Daviss");
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldReturnEmptyListWhenNoMatchUnpaginated() {
+		Collection<Owner> owners = this.owners.findByLastNameStartingWith("NonExistentName");
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
 	void shouldFindSingleOwnerWithPet() {
 		Optional<Owner> optionalOwner = this.owners.findById(1);
 		assertThat(optionalOwner).isPresent();
