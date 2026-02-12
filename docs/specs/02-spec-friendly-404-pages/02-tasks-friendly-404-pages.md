@@ -53,7 +53,7 @@
 - [x] 1.10 Review test output and confirm failure reasons align with expectations (likely seeing 500 error or exception instead of 404)
 - [x] 1.11 Commit failing tests with message: `test(error-handling): add failing tests for 404 owner/pet scenarios`
 
-### [ ] 2.0 Implement Global Exception Handler (GREEN Phase)
+### [~] 2.0 Implement Global Exception Handler (GREEN Phase)
 
 #### 2.0 Proof Artifact(s)
 
@@ -63,18 +63,18 @@
 
 #### 2.0 Tasks
 
-- [ ] 2.1 Create new file `GlobalExceptionHandler.java` in `src/main/java/org/springframework/samples/petclinic/system/` package
-- [ ] 2.2 Add Apache License header (copy from existing files like `CacheConfiguration.java`)
-- [ ] 2.3 Add class declaration with `@ControllerAdvice` annotation to enable global exception handling
-- [ ] 2.4 Add `@ExceptionHandler(IllegalArgumentException.class)` method with signature `public ModelAndView handleNotFound(IllegalArgumentException ex)`
-- [ ] 2.5 Inside handler, parse exception message using `ex.getMessage()` to determine if it contains "Owner" or "Pet"
-- [ ] 2.6 Create `ModelAndView` object with view name "notFound"
-- [ ] 2.7 Set HTTP status to `HttpStatus.NOT_FOUND` using `mav.setStatus(HttpStatus.NOT_FOUND)`
-- [ ] 2.8 Add error context to model: `mav.addObject("errorMessage", userFriendlyMessage)`, `mav.addObject("status", 404)`
-- [ ] 2.9 Add fallback logic if message parsing fails (generic "Resource not found" message)
-- [ ] 2.10 Run `./mvnw test -Dtest=OwnerControllerTests,PetControllerTests` and verify all 404 tests now pass
-- [ ] 2.11 Run `./mvnw test jacoco:report` to generate code coverage report
-- [ ] 2.12 Verify GlobalExceptionHandler has 100% line coverage in JaCoCo report at `target/site/jacoco/index.html`
+- [x] 2.1 Create new file `GlobalExceptionHandler.java` in `src/main/java/org/springframework/samples/petclinic/system/` package
+- [x] 2.2 Add Apache License header (copy from existing files like `CacheConfiguration.java`)
+- [x] 2.3 Add class declaration with `@ControllerAdvice` annotation to enable global exception handling
+- [x] 2.4 Add `@ExceptionHandler(IllegalArgumentException.class)` method with signature `public ModelAndView handleNotFound(IllegalArgumentException ex)`
+- [x] 2.5 Inside handler, parse exception message using `ex.getMessage()` to determine if it contains "Owner" or "Pet"
+- [x] 2.6 Create `ModelAndView` object with view name "notFound"
+- [x] 2.7 Set HTTP status to `HttpStatus.NOT_FOUND` using `mav.setStatus(HttpStatus.NOT_FOUND)`
+- [x] 2.8 Add error context to model: `mav.addObject("errorMessage", userFriendlyMessage)`, `mav.addObject("status", 404)`
+- [x] 2.9 Add fallback logic if message parsing fails (generic "Resource not found" message)
+- [x] 2.10 Run `./mvnw test -Dtest=OwnerControllerTests,PetControllerTests` and verify all 404 tests now pass
+- [x] 2.11 Run `./mvnw test jacoco:report` to generate code coverage report
+- [x] 2.12 Verify GlobalExceptionHandler has 100% line coverage in JaCoCo report at `target/site/jacoco/index.html`
 - [ ] 2.13 Commit exception handler with message: `feat(error-handling): add global exception handler for 404 responses`
 
 ### [ ] 3.0 Create User-Friendly Not Found Template (GREEN Phase)

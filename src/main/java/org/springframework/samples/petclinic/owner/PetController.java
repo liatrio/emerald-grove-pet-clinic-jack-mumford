@@ -82,7 +82,12 @@ class PetController {
 		Optional<Owner> optionalOwner = this.owners.findById(ownerId);
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
-		return owner.getPet(petId);
+		Pet pet = owner.getPet(petId);
+		if (pet == null) {
+			throw new IllegalArgumentException(
+					"Pet not found with id: " + petId + " for owner " + ownerId + ". Please ensure the ID is correct");
+		}
+		return pet;
 	}
 
 	@InitBinder("owner")
