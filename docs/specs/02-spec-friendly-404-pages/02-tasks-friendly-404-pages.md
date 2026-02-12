@@ -150,7 +150,7 @@
 - [x] 4.33 Run `git diff src/main/resources/messages/` to review all i18n changes
 - [x] 4.34 Commit i18n changes with message: `feat(error-handling): add i18n support for 404 error messages in 8 languages`
 
-### [ ] 5.0 Implement Playwright End-to-End Tests
+### [x] 5.0 Implement Playwright End-to-End Tests
 
 #### 5.0 Proof Artifact(s)
 
@@ -160,26 +160,26 @@
 
 #### 5.0 Tasks
 
-- [ ] 5.1 Read existing `e2e-tests/tests/smoke.spec.ts` to understand Playwright test patterns and setup
-- [ ] 5.2 Create new file `404-error-handling.spec.ts` in `e2e-tests/tests/` directory
-- [ ] 5.3 Add import statements: `import { test, expect } from '@playwright/test';`
-- [ ] 5.4 Create test suite: `test.describe('404 Error Handling', () => { ... });`
-- [ ] 5.5 Add test case: `test('should show friendly 404 page for non-existent owner', async ({ page }) => { ... });`
-- [ ] 5.6 Navigate to non-existent owner: `await page.goto('/owners/99999');`
-- [ ] 5.7 Wait for page load and verify URL: `await page.waitForLoadState('networkidle');`
-- [ ] 5.8 Assert friendly error message is visible: `await expect(page.locator('text=couldn\\'t find')).toBeVisible();`
-- [ ] 5.9 Assert no stack trace is visible: `await expect(page.locator('text=Exception')).not.toBeVisible();`
-- [ ] 5.10 Assert "Find Owners" link exists: `await expect(page.locator('a:has-text("Find Owners")')).toBeVisible();`
-- [ ] 5.11 Add test case for clicking "Find Owners" link: `test('should navigate to owner search from 404 page', async ({ page }) => { ... });`
-- [ ] 5.12 In second test, navigate to 404 page then click link: `await page.click('a:has-text("Find Owners")');`
-- [ ] 5.13 Assert navigation to search page: `await expect(page).toHaveURL('/owners/find');`
-- [ ] 5.14 Add test case for missing pet: `test('should show friendly 404 page for non-existent pet', async ({ page }) => { ... });`
-- [ ] 5.15 Navigate to non-existent pet (use valid owner ID + invalid pet ID): `await page.goto('/owners/1/pets/99999/edit');`
-- [ ] 5.16 Verify friendly error message displays for pet scenario
-- [ ] 5.17 Run Playwright tests: `cd e2e-tests && npm test -- --grep "404"`
-- [ ] 5.18 Verify all 404 tests pass in console output
-- [ ] 5.19 Review Playwright HTML report: `cd e2e-tests && npm run report`
-- [ ] 5.20 Check test artifacts (screenshots/traces) in `e2e-tests/test-results/` directory
-- [ ] 5.21 Commit E2E tests with message: `test(error-handling): add Playwright E2E tests for 404 error handling`
-- [ ] 5.22 Create final proof artifact showing all tests passing: run `./mvnw test && cd e2e-tests && npm test` and capture output
-- [ ] 5.23 Update issue #12 with completion status and link to committed proof artifacts
+- [x] 5.1 Read existing `e2e-tests/tests/smoke.spec.ts` to understand Playwright test patterns and setup
+- [x] 5.2 Create new file `404-error-handling.spec.ts` in `e2e-tests/tests/` directory
+- [x] 5.3 Add import statements: `import { test, expect } from '@playwright/test';`
+- [x] 5.4 Create test suite: `test.describe('404 Error Handling', () => { ... });`
+- [x] 5.5 Add test case: `test('should show friendly 404 page for non-existent owner', async ({ page }) => { ... });`
+- [x] 5.6 Navigate to non-existent owner: `await page.goto('/owners/99999');`
+- [x] 5.7 Wait for page load and verify URL: `await page.waitForLoadState('networkidle');`
+- [x] 5.8 Assert friendly error message is visible: `await expect(page.locator('text=couldn\\'t find')).toBeVisible();`
+- [x] 5.9 Assert no stack trace is visible: `await expect(page.locator('text=Exception')).not.toBeVisible();`
+- [x] 5.10 Assert "Find Owners" link exists: `await expect(page.locator('a:has-text("Find Owners")')).toBeVisible();`
+- [x] 5.11 Add test case for clicking "Find Owners" link: `test('should navigate to owner search from 404 page', async ({ page }) => { ... });`
+- [x] 5.12 In second test, navigate to 404 page then click link: `await page.click('a:has-text("Find Owners")');`
+- [x] 5.13 Assert navigation to search page: `await expect(page).toHaveURL('/owners/find');`
+- [x] 5.14 Add test case for missing pet: `test('should show friendly 404 page for non-existent pet', async ({ page }) => { ... });`
+- [x] 5.15 Navigate to non-existent pet (use valid owner ID + invalid pet ID): `await page.goto('/owners/1/pets/99999/edit');`
+- [x] 5.16 Verify friendly error message displays for pet scenario
+- [x] 5.17 Run Playwright tests: `cd e2e-tests && npm test -- --grep "404"`
+- [x] 5.18 Verify all 404 tests pass in console output
+- [x] 5.19 Review Playwright HTML report: `cd e2e-tests && npm run report`
+- [x] 5.20 Check test artifacts (screenshots/traces) in `e2e-tests/test-results/` directory
+- [x] 5.21 Commit E2E tests with message: `test(error-handling): add Playwright E2E tests for 404 error handling`
+- [x] 5.22 Create final proof artifact showing all tests passing: run `./mvnw test && cd e2e-tests && npm test` and capture output
+- [x] 5.23 Update issue #12 with completion status and link to committed proof artifacts
