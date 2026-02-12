@@ -33,12 +33,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -364,6 +366,74 @@ class OwnerControllerTests {
 				.param("telephone", "6085551023")) // Already normalized by validation
 			.andExpect(status().isOk())
 			.andExpect(model().attributeHasErrors("owner"));
+	}
+
+	// CSV Export Tests
+
+	@Test
+	void shouldReturnCsvFormatWhenAccessingCsvEndpoint() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("text/csv; charset=UTF-8"))
+			.andExpect(header().string("Content-Disposition", containsString("attachment")))
+			.andExpect(content().string(containsString("First Name,Last Name,Address,City,Telephone")))
+			.andExpect(content().string(containsString("George,Franklin")));
+	}
+
+	@Test
+	void shouldFilterCsvByLastNameParameter() throws Exception {
+		Owner george = george();
+		given(this.owners.findByLastNameStartingWith("Franklin")).willReturn(List.of(george));
+		given(this.owners.findByLastNameStartingWith("Davis")).willReturn(List.of());
+
+		mockMvc.perform(get("/owners.csv").param("lastName", "Franklin"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("George,Franklin")));
+	}
+
+	@Test
+	void shouldReturn404WhenNoCsvResultsFound() throws Exception {
+		given(this.owners.findByLastNameStartingWith("NonExistent")).willReturn(List.of());
+
+		mockMvc.perform(get("/owners.csv").param("lastName", "NonExistent")).andExpect(status().isNotFound());
+	}
+
+	@Test
+	void shouldSetContentDispositionHeader() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(header().string("Content-Disposition", containsString("attachment")))
+			.andExpect(header().string("Content-Disposition", containsString("filename=")));
+	}
+
+	@Test
+	void shouldGenerateFilenameWithCurrentDate() throws Exception {
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george()));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(header().string("Content-Disposition",
+					matchesPattern(".*owners-export-\\d{4}-\\d{2}-\\d{2}\\.csv.*")));
+	}
+
+	@Test
+	void shouldExportAllResultsIgnoringPagination() throws Exception {
+		Owner george = george();
+		Owner betty = new Owner();
+		betty.setFirstName("Betty");
+		betty.setLastName("Davis");
+		betty.setAddress("638 Cardinal Ave.");
+		betty.setCity("Sun Prairie");
+		betty.setTelephone("6085551749");
+
+		given(this.owners.findByLastNameStartingWith("")).willReturn(List.of(george, betty));
+
+		mockMvc.perform(get("/owners.csv"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("George,Franklin")))
+			.andExpect(content().string(containsString("Betty,Davis")));
 	}
 
 }

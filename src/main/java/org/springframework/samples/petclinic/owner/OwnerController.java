@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,6 +24,10 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +38,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.validation.Valid;
@@ -208,6 +215,34 @@ class OwnerController {
 				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
 		mav.addObject(owner);
 		return mav;
+	}
+
+	/**
+	 * Exports owners as CSV file. Filters by lastName parameter if provided.
+	 * @param lastName optional filter for owner last name (starts with)
+	 * @return CSV file as ResponseEntity with appropriate headers
+	 */
+	@GetMapping("/owners.csv")
+	public ResponseEntity<String> exportOwnersCsv(@RequestParam(defaultValue = "") String lastName) {
+		List<Owner> ownerList = this.owners.findByLastNameStartingWith(lastName);
+
+		if (ownerList.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No owners found matching the search criteria");
+		}
+
+		String csv = CsvBuilder.buildOwnersCsv(ownerList);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
+
+		String filename = "owners-export-" + LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE) + ".csv";
+		headers.setContentDispositionFormData("attachment", filename);
+
+		headers.setCacheControl("no-cache, no-store, must-revalidate");
+		headers.setPragma("no-cache");
+		headers.setExpires(0);
+
+		return ResponseEntity.ok().headers(headers).body(csv);
 	}
 
 }
