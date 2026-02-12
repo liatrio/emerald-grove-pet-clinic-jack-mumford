@@ -208,4 +208,13 @@ class PetControllerTests {
 
 	}
 
+	@Test
+	void testShowPetNotFound() throws Exception {
+		int nonExistentPetId = 999;
+		mockMvc.perform(get("/owners/{ownerId}/pets/{petId}/edit", TEST_OWNER_ID, nonExistentPetId))
+			.andExpect(status().isNotFound())
+			.andExpect(view().name("notFound"))
+			.andExpect(model().attributeExists("errorMessage"));
+	}
+
 }
