@@ -53,7 +53,7 @@
 - [x] 1.10 Review test output and confirm failure reasons align with expectations (likely seeing 500 error or exception instead of 404)
 - [x] 1.11 Commit failing tests with message: `test(error-handling): add failing tests for 404 owner/pet scenarios`
 
-### [~] 2.0 Implement Global Exception Handler (GREEN Phase)
+### [x] 2.0 Implement Global Exception Handler (GREEN Phase)
 
 #### 2.0 Proof Artifact(s)
 
@@ -75,7 +75,7 @@
 - [x] 2.10 Run `./mvnw test -Dtest=OwnerControllerTests,PetControllerTests` and verify all 404 tests now pass
 - [x] 2.11 Run `./mvnw test jacoco:report` to generate code coverage report
 - [x] 2.12 Verify GlobalExceptionHandler has 100% line coverage in JaCoCo report at `target/site/jacoco/index.html`
-- [ ] 2.13 Commit exception handler with message: `feat(error-handling): add global exception handler for 404 responses`
+- [x] 2.13 Commit exception handler with message: `feat(error-handling): add global exception handler for 404 responses`
 
 ### [ ] 3.0 Create User-Friendly Not Found Template (GREEN Phase)
 
