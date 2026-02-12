@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Not Found</title>
-</head>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'error')}">
+
 <body>
-    <h1>Not Found</h1>
-    <p th:text="${errorMessage}">Resource not found</p>
+  <section class="liatrio-section">
+    <div class="liatrio-error-card">
+      <img src="../static/resources/images/pets.png" th:src="@{/resources/images/pets.png}"
+        alt="Pets at the clinic" />
+      <h2>We couldn't find what you're looking for</h2>
+
+      <p th:text="${errorMessage}">The requested resource was not found.</p>
+
+      <p class="liatrio-muted">You can search for owners using the button below.</p>
+
+      <a th:href="@{/owners/find}" class="btn btn-primary">Find Owners</a>
+    </div>
+  </section>
 </body>
+
 </html>

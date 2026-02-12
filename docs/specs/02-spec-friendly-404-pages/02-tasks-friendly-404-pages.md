@@ -77,7 +77,7 @@
 - [x] 2.12 Verify GlobalExceptionHandler has 100% line coverage in JaCoCo report at `target/site/jacoco/index.html`
 - [x] 2.13 Commit exception handler with message: `feat(error-handling): add global exception handler for 404 responses`
 
-### [ ] 3.0 Create User-Friendly Not Found Template (GREEN Phase)
+### [~] 3.0 Create User-Friendly Not Found Template (GREEN Phase)
 
 #### 3.0 Proof Artifact(s)
 
@@ -87,22 +87,22 @@
 
 #### 3.0 Tasks
 
-- [ ] 3.1 Read existing `error.html` template to understand Liatrio branding patterns (liatrio-section, liatrio-error-card classes)
-- [ ] 3.2 Create new file `notFound.html` in `src/main/resources/templates/` directory
-- [ ] 3.3 Add DOCTYPE declaration: `<!DOCTYPE html>`
-- [ ] 3.4 Add HTML tag with Thymeleaf namespace: `<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'error')}">`
-- [ ] 3.5 Create body section with `<section class="liatrio-section">` wrapper
-- [ ] 3.6 Add `<div class="liatrio-error-card">` container for error content
-- [ ] 3.7 Include pets image: `<img th:src="@{/resources/images/pets.png}" alt="Pets at the clinic" />`
-- [ ] 3.8 Add heading: `<h2>We couldn't find what you're looking for</h2>`
-- [ ] 3.9 Add dynamic error message paragraph: `<p th:text="${errorMessage}">Resource not found</p>`
-- [ ] 3.10 Add "Find Owners" button with proper styling: `<a th:href="@{/owners/find}" class="btn btn-primary">Find Owners</a>`
-- [ ] 3.11 Start application with `./mvnw spring-boot:run`
-- [ ] 3.12 Navigate to `http://localhost:8080/owners/99999` in browser
-- [ ] 3.13 Verify friendly error message displays (no stack trace)
-- [ ] 3.14 Verify "Find Owners" button/link is visible and styled
-- [ ] 3.15 Click "Find Owners" link and verify navigation to `/owners/find` works
-- [ ] 3.16 Take screenshot of 404 page and save to `docs/specs/02-spec-friendly-404-pages/proof-artifacts/404-page-screenshot.png`
+- [x] 3.1 Read existing `error.html` template to understand Liatrio branding patterns (liatrio-section, liatrio-error-card classes)
+- [x] 3.2 Create new file `notFound.html` in `src/main/resources/templates/` directory
+- [x] 3.3 Add DOCTYPE declaration: `<!DOCTYPE html>`
+- [x] 3.4 Add HTML tag with Thymeleaf namespace: `<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'error')}">`
+- [x] 3.5 Create body section with `<section class="liatrio-section">` wrapper
+- [x] 3.6 Add `<div class="liatrio-error-card">` container for error content
+- [x] 3.7 Include pets image: `<img th:src="@{/resources/images/pets.png}" alt="Pets at the clinic" />`
+- [x] 3.8 Add heading: `<h2>We couldn't find what you're looking for</h2>`
+- [x] 3.9 Add dynamic error message paragraph: `<p th:text="${errorMessage}">Resource not found</p>`
+- [x] 3.10 Add "Find Owners" button with proper styling: `<a th:href="@{/owners/find}" class="btn btn-primary">Find Owners</a>`
+- [x] 3.11 Start application with `./mvnw spring-boot:run`
+- [x] 3.12 Navigate to `http://localhost:8080/owners/99999` in browser
+- [x] 3.13 Verify friendly error message displays (no stack trace)
+- [x] 3.14 Verify "Find Owners" button/link is visible and styled
+- [x] 3.15 Click "Find Owners" link and verify navigation to `/owners/find` works
+- [x] 3.16 Take screenshot of 404 page and save to `docs/specs/02-spec-friendly-404-pages/proof-artifacts/404-page-screenshot.png`
 - [ ] 3.17 Commit template with message: `feat(error-handling): add user-friendly notFound template with navigation`
 
 ### [ ] 4.0 Add Internationalization Support (GREEN Phase)
