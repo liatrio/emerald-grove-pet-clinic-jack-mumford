@@ -77,7 +77,7 @@
 - [x] 2.12 Verify GlobalExceptionHandler has 100% line coverage in JaCoCo report at `target/site/jacoco/index.html`
 - [x] 2.13 Commit exception handler with message: `feat(error-handling): add global exception handler for 404 responses`
 
-### [~] 3.0 Create User-Friendly Not Found Template (GREEN Phase)
+### [x] 3.0 Create User-Friendly Not Found Template (GREEN Phase)
 
 #### 3.0 Proof Artifact(s)
 
@@ -103,7 +103,7 @@
 - [x] 3.14 Verify "Find Owners" button/link is visible and styled
 - [x] 3.15 Click "Find Owners" link and verify navigation to `/owners/find` works
 - [x] 3.16 Take screenshot of 404 page and save to `docs/specs/02-spec-friendly-404-pages/proof-artifacts/404-page-screenshot.png`
-- [ ] 3.17 Commit template with message: `feat(error-handling): add user-friendly notFound template with navigation`
+- [x] 3.17 Commit template with message: `feat(error-handling): add user-friendly notFound template with navigation`
 
 ### [ ] 4.0 Add Internationalization Support (GREEN Phase)
 
