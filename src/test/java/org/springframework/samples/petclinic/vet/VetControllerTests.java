@@ -76,7 +76,8 @@ class VetControllerTests {
 		given(this.vets.findAll()).willReturn(Lists.newArrayList(james(), helen()));
 		given(this.vets.findAll(any(Pageable.class)))
 			.willReturn(new PageImpl<Vet>(Lists.newArrayList(james(), helen())));
-
+		given(this.vets.findBySpecialtiesNameIgnoreCase(any(String.class), any(Pageable.class)))
+			.willReturn(new PageImpl<Vet>(Lists.newArrayList(helen())));
 	}
 
 	@Test
@@ -95,6 +96,36 @@ class VetControllerTests {
 			.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.vetList[0].id").value(1));
+	}
+
+	@Test
+	void testShowVetListHtmlWithSpecialtyFilter() throws Exception {
+		// Arrange & Act
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html?page=1&specialty=radiology"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("specialty", "radiology"))
+			.andExpect(view().name("vets/vetList"));
+	}
+
+	@Test
+	void testShowVetListHtmlWithoutSpecialtyFilter() throws Exception {
+		// Arrange & Act
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html?page=1"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attributeDoesNotExist("specialty"))
+			.andExpect(view().name("vets/vetList"));
+	}
+
+	@Test
+	void testShowVetListHtmlWithSpecialtyFilterCaseInsensitive() throws Exception {
+		// Arrange & Act
+		mockMvc.perform(MockMvcRequestBuilders.get("/vets.html?page=1&specialty=RADIOLOGY"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("listVets"))
+			.andExpect(model().attribute("specialty", "RADIOLOGY"))
+			.andExpect(view().name("vets/vetList"));
 	}
 
 }
