@@ -12,6 +12,41 @@
         <p class="liatrio-muted">All scheduled future visits sorted chronologically</p>
       </div>
 
+      <!-- Filter Form -->
+      <form method="get" action="#" th:action="@{/visits/upcoming}" class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="fromDate" class="form-label">From Date</label>
+            <input type="date" class="form-control" id="fromDate" name="fromDate"
+              th:value="${param.fromDate}">
+          </div>
+          <div class="col-md-3">
+            <label for="toDate" class="form-label">To Date</label>
+            <input type="date" class="form-control" id="toDate" name="toDate"
+              th:value="${param.toDate}">
+          </div>
+          <div class="col-md-3">
+            <label for="petType" class="form-label">Pet Type</label>
+            <select class="form-select" id="petType" name="petType">
+              <option value="">All Types</option>
+              <option th:each="type : ${petTypes}" th:value="${type.name}" th:text="${type.name}"
+                th:selected="${param.petType != null and param.petType[0] == type.name}"></option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="ownerLastName" class="form-label">Owner Last Name</label>
+            <input type="text" class="form-control" id="ownerLastName" name="ownerLastName"
+              placeholder="Search by last name" th:value="${param.ownerLastName}">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a th:href="@{/visits/upcoming}" class="btn btn-secondary ms-2">Clear Filters</a>
+          </div>
+        </div>
+      </form>
+
       <div th:if="${#lists.isEmpty(visits)}" class="liatrio-empty-state">
         <p class="liatrio-muted">No upcoming visits scheduled</p>
       </div>

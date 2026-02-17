@@ -112,7 +112,7 @@
 
 ---
 
-### [ ] 3.0 Implement Visit Filtering System with Date, Pet Type, and Owner Name Filters
+### [x] 3.0 Implement Visit Filtering System with Date, Pet Type, and Owner Name Filters
 
 **Description**: Add a filter panel to the Upcoming Visits page that allows users to filter visits by date range (from/to dates), pet type (dropdown), and owner last name (text search). Filters can be applied independently or in combination, with filter values preserved after submission.
 

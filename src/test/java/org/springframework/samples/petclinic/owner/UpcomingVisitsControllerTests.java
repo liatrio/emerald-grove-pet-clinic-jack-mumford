@@ -47,10 +47,16 @@ class UpcomingVisitsControllerTests {
 	@MockitoBean
 	private VisitRepository visitRepository;
 
+	@MockitoBean
+	private PetTypeRepository petTypeRepository;
+
 	private List<Visit> testVisits;
 
 	@BeforeEach
 	void setup() {
+		// Setup pet type mock
+		given(this.petTypeRepository.findAll()).willReturn(new ArrayList<>());
+
 		// Create test owner
 		Owner owner = new Owner();
 		owner.setFirstName("John");
@@ -108,6 +114,62 @@ class UpcomingVisitsControllerTests {
 			.willReturn(new ArrayList<>());
 
 		this.mockMvc.perform(get("/visits/upcoming"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("visits"));
+	}
+
+	@Test
+	void testGetUpcomingVisits_withFromDateFilter() throws Exception {
+		given(this.visitRepository.findUpcomingVisitsWithFilters(any(LocalDate.class), any(), any(), any()))
+			.willReturn(this.testVisits);
+
+		this.mockMvc.perform(get("/visits/upcoming").param("fromDate", "2026-02-15"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("visits"));
+	}
+
+	@Test
+	void testGetUpcomingVisits_withDateRangeFilter() throws Exception {
+		given(this.visitRepository.findUpcomingVisitsWithFilters(any(LocalDate.class), any(LocalDate.class), any(),
+				any()))
+			.willReturn(this.testVisits);
+
+		this.mockMvc.perform(get("/visits/upcoming").param("fromDate", "2026-02-15").param("toDate", "2026-02-20"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("visits"));
+	}
+
+	@Test
+	void testGetUpcomingVisits_withPetTypeFilter() throws Exception {
+		given(this.visitRepository.findUpcomingVisitsWithFilters(any(LocalDate.class), any(), any(String.class), any()))
+			.willReturn(this.testVisits);
+
+		this.mockMvc.perform(get("/visits/upcoming").param("petType", "dog"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("visits"));
+	}
+
+	@Test
+	void testGetUpcomingVisits_withOwnerNameFilter() throws Exception {
+		given(this.visitRepository.findUpcomingVisitsWithFilters(any(LocalDate.class), any(), any(), any(String.class)))
+			.willReturn(this.testVisits);
+
+		this.mockMvc.perform(get("/visits/upcoming").param("ownerLastName", "smith"))
+			.andExpect(status().isOk())
+			.andExpect(model().attributeExists("visits"));
+	}
+
+	@Test
+	void testGetUpcomingVisits_withAllFilters() throws Exception {
+		given(this.visitRepository.findUpcomingVisitsWithFilters(any(LocalDate.class), any(LocalDate.class),
+				any(String.class), any(String.class)))
+			.willReturn(this.testVisits);
+
+		this.mockMvc
+			.perform(get("/visits/upcoming").param("fromDate", "2026-02-15")
+				.param("toDate", "2026-02-20")
+				.param("petType", "dog")
+				.param("ownerLastName", "smith"))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("visits"));
 	}
