@@ -161,7 +161,7 @@
 
 ---
 
-### [ ] 4.0 Add Internationalization Support for Upcoming Visits Page
+### [x] 4.0 Add Internationalization Support for Upcoming Visits Page
 
 **Description**: Add English message keys to `messages_en.properties` for all text on the Upcoming Visits page (page title, column headers, filter labels, button text, empty state message). Update the Thymeleaf template to use `th:text="#{key}"` for all user-visible text, preparing for future multi-language support.
 
