@@ -71,12 +71,45 @@
           <tr>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/edit(lang=${#locale.language})}" th:text="#{editPet}">Edit Pet</a></td>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/visits/new(lang=${#locale.language})}" th:text="#{addVisit}">Add Visit</a></td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deletePetModal"
+                      th:attr="data-pet-id=${pet.id}, data-pet-name=${pet.name}, data-visit-count=${#lists.size(pet.visits)}"
+                      th:text="#{deletePet}">
+                Delete Pet
+              </button>
+            </td>
           </tr>
         </table>
       </td>
     </tr>
 
   </table>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deletePetModal" tabindex="-1" aria-labelledby="deletePetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletePetModalLabel" th:text="#{deletePet.confirm}">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p th:text="#{deletePet.confirmation}">Are you sure you want to delete this pet? All associated visits will also be deleted.</p>
+          <p><strong id="modalPetName"></strong></p>
+          <p id="modalVisitCount"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">Cancel</button>
+          <form id="deletePetForm" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger" th:text="#{deletePet}">Delete Pet</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Function to hide the success and error messages after 3 seconds
     function hideMessages() {
@@ -94,6 +127,28 @@
 
     // Call the function to hide messages
     hideMessages();
+
+    // Populate modal with pet details
+    var deletePetModal = document.getElementById('deletePetModal');
+    if (deletePetModal) {
+      deletePetModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var petId = button.getAttribute('data-pet-id');
+        var petName = button.getAttribute('data-pet-name');
+        var visitCount = button.getAttribute('data-visit-count');
+        
+        var modalPetName = document.getElementById('modalPetName');
+        var modalVisitCount = document.getElementById('modalVisitCount');
+        var deletePetForm = document.getElementById('deletePetForm');
+        
+        modalPetName.textContent = petName;
+        modalVisitCount.textContent = 'This pet has ' + visitCount + ' visit(s) recorded.';
+        
+        // Set the form action to the delete endpoint
+        var ownerId = window.location.pathname.split('/')[2];
+        deletePetForm.action = '/owners/' + ownerId + '/pets/' + petId + '/delete';
+      });
+    }
   </script>
 
 </body>
