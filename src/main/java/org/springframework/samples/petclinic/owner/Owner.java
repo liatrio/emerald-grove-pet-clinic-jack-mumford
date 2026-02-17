@@ -161,6 +161,16 @@ public class Owner extends Person {
 	 * @param petId the identifier of the {@link Pet}, must not be {@literal null}.
 	 * @param visit the visit to add, must not be {@literal null}.
 	 */
+
+	/**
+	 * Removes the given {@link Pet} from this owner.
+	 * @param pet the pet to remove, must not be {@literal null}.
+	 */
+	public void removePet(Pet pet) {
+		Assert.notNull(pet, "Pet must not be null!");
+		getPets().remove(pet);
+	}
+
 	public void addVisit(Integer petId, Visit visit) {
 
 		Assert.notNull(petId, "Pet identifier must not be null!");
