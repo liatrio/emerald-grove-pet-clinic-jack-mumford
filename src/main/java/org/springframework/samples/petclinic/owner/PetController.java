@@ -183,4 +183,23 @@ class PetController {
 		this.owners.save(owner);
 	}
 
+	@PostMapping("/pets/{petId}/delete")
+	public String processDeletionForm(@PathVariable("ownerId") int ownerId, @PathVariable("petId") int petId,
+			RedirectAttributes redirectAttributes) {
+		Owner owner = this.owners.findById(ownerId).orElseThrow(() -> new IllegalArgumentException("Owner not found"));
+
+		Pet pet = owner.getPet(petId);
+		if (pet == null) {
+			redirectAttributes.addFlashAttribute("error", "Pet not found");
+			return "redirect:/owners/{ownerId}";
+		}
+
+		String petName = pet.getName();
+		owner.removePet(pet);
+		this.owners.save(owner);
+
+		redirectAttributes.addFlashAttribute("message", "Pet \"" + petName + "\" has been successfully deleted");
+		return "redirect:/owners/{ownerId}";
+	}
+
 }

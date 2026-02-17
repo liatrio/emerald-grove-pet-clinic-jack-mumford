@@ -231,8 +231,9 @@ class PetControllerTests {
 		void testProcessDeletionFormWithNonExistentPet() throws Exception {
 			int nonExistentPetId = 999;
 			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, nonExistentPetId))
-				.andExpect(status().is3xxRedirection())
-				.andExpect(view().name("redirect:/owners/{ownerId}"));
+				.andExpect(status().isNotFound())
+				.andExpect(view().name("notFound"))
+				.andExpect(model().attributeExists("errorMessage"));
 		}
 
 		@Test
