@@ -73,7 +73,7 @@
 
 ---
 
-### [ ] 2.0 Create Basic Upcoming Visits Page with Navigation Integration
+### [x] 2.0 Create Basic Upcoming Visits Page with Navigation Integration
 
 **Description**: Create a functional page at `/visits/upcoming` that displays all future visits (date >= today) in chronological order. Integrate the page into the main navigation bar and implement the controller, view template, and basic styling following existing patterns.
 
@@ -88,27 +88,27 @@
 
 #### 2.0 Tasks
 
-- [ ] 2.1 **RED**: Create `UpcomingVisitsControllerTests.java` with test for GET `/visits/upcoming` endpoint returning 200 OK (should fail - controller doesn't exist)
-- [ ] 2.2 **GREEN**: Create `UpcomingVisitsController.java` with `@Controller` annotation and constructor injecting `VisitRepository`
-- [ ] 2.3 **GREEN**: Add `@GetMapping("/visits/upcoming")` method that returns "visits/upcomingVisits" view name
-- [ ] 2.4 **RED**: Add test verifying model contains "visits" attribute with list of Visit objects (should fail - not added to model yet)
-- [ ] 2.5 **GREEN**: In controller method, call `visitRepository.findByDateGreaterThanEqualOrderByDateAsc(LocalDate.now())` and add to model
-- [ ] 2.6 **RED**: Add test for empty state when no upcoming visits exist (should pass if model handling is correct)
-- [ ] 2.7 Create directory: `src/main/resources/templates/visits/`
-- [ ] 2.8 **GREEN**: Create `upcomingVisits.html` template using `fragments/layout.html` layout with placeholder content
-- [ ] 2.9 Add page title `<h2>Upcoming Visits</h2>` and basic table structure with Bootstrap classes
-- [ ] 2.10 Add Thymeleaf iteration: `<tr th:each="visit : ${visits}">` to display visit data in table rows
-- [ ] 2.11 Add table columns: Visit Date (`th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"`), Pet Name, Owner Name, Description
-- [ ] 2.12 Add empty state: `<div th:if="${#lists.isEmpty(visits)}">No upcoming visits scheduled</div>`
-- [ ] 2.13 Apply Bootstrap responsive classes: `table`, `table-striped`, `liatrio-table`, `table-responsive` for mobile compatibility
-- [ ] 2.14 Modify `layout.html` to add navigation link: `<li th:replace="~{::menuItem ('/visits/upcoming','upcomingVisits','upcoming visits','calendar',#{upcomingVisits})}">`
-- [ ] 2.15 Insert navigation link after "Veterinarians" line (line ~135) and before "Error" line
-- [ ] 2.16 **RED**: Add controller test verifying default fromDate is `LocalDate.now()` when no parameter provided
+- [x] 2.1 **RED**: Create `UpcomingVisitsControllerTests.java` with test for GET `/visits/upcoming` endpoint returning 200 OK (should fail - controller doesn't exist)
+- [x] 2.2 **GREEN**: Create `UpcomingVisitsController.java` with `@Controller` annotation and constructor injecting `VisitRepository`
+- [x] 2.3 **GREEN**: Add `@GetMapping("/visits/upcoming")` method that returns "visits/upcomingVisits" view name
+- [x] 2.4 **RED**: Add test verifying model contains "visits" attribute with list of Visit objects (should fail - not added to model yet)
+- [x] 2.5 **GREEN**: In controller method, call `visitRepository.findByDateGreaterThanEqualOrderByDateAsc(LocalDate.now())` and add to model
+- [x] 2.6 **RED**: Add test for empty state when no upcoming visits exist (should pass if model handling is correct)
+- [x] 2.7 Create directory: `src/main/resources/templates/visits/`
+- [x] 2.8 **GREEN**: Create `upcomingVisits.html` template using `fragments/layout.html` layout with placeholder content
+- [x] 2.9 Add page title `<h2>Upcoming Visits</h2>` and basic table structure with Bootstrap classes
+- [x] 2.10 Add Thymeleaf iteration: `<tr th:each="visit : ${visits}">` to display visit data in table rows
+- [x] 2.11 Add table columns: Visit Date (`th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"`), Pet Name, Owner Name, Description
+- [x] 2.12 Add empty state: `<div th:if="${#lists.isEmpty(visits)}">No upcoming visits scheduled</div>`
+- [x] 2.13 Apply Bootstrap responsive classes: `table`, `table-striped`, `liatrio-table`, `table-responsive` for mobile compatibility
+- [x] 2.14 Modify `layout.html` to add navigation link: `<li th:replace="~{::menuItem ('/visits/upcoming','upcomingVisits','upcoming visits','calendar',#{upcomingVisits})}">`
+- [x] 2.15 Insert navigation link after "Veterinarians" line (line ~135) and before "Error" line
+- [x] 2.16 **RED**: Add controller test verifying default fromDate is `LocalDate.now()` when no parameter provided
 - [ ] 2.17 Start application: `./mvnw spring-boot:run` and navigate to `http://localhost:8080/visits/upcoming`
 - [ ] 2.18 Take screenshot of page showing visits table and save to `docs/specs/07-spec-upcoming-visits/07-proofs/basic-page-display.png`
 - [ ] 2.19 Take screenshot of navigation bar with "Upcoming Visits" link and save to `docs/specs/07-spec-upcoming-visits/07-proofs/navigation-integration.png`
 - [ ] 2.20 Test mobile responsiveness by resizing browser to 375x667 and take screenshot
-- [ ] 2.21 Run controller tests: `./mvnw test -Dtest=UpcomingVisitsControllerTests` and verify all pass
+- [x] 2.21 Run controller tests: `./mvnw test -Dtest=UpcomingVisitsControllerTests` and verify all pass
 
 ---
 
