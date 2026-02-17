@@ -206,7 +206,7 @@
 
 ---
 
-### [ ] 5.0 Create End-to-End Playwright Tests for Upcoming Visits Feature
+### [x] 5.0 Create End-to-End Playwright Tests for Upcoming Visits Feature
 
 **Description**: Implement comprehensive Playwright E2E tests covering page navigation, visit display, filtering, empty state, responsive layout, and accessibility. Tests should validate the complete user journey from clicking the navigation link through applying filters and viewing results.
 
