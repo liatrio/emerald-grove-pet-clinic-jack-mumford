@@ -217,4 +217,34 @@ class PetControllerTests {
 			.andExpect(model().attributeExists("errorMessage"));
 	}
 
+	@Nested
+	class PetDeletionTests {
+
+		@Test
+		void testProcessDeletionFormSuccess() throws Exception {
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, TEST_PET_ID))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"));
+		}
+
+		@Test
+		void testProcessDeletionFormWithNonExistentPet() throws Exception {
+			int nonExistentPetId = 999;
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", TEST_OWNER_ID, nonExistentPetId))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(view().name("redirect:/owners/{ownerId}"));
+		}
+
+		@Test
+		void testProcessDeletionFormWithNonExistentOwner() throws Exception {
+			int nonExistentOwnerId = 999;
+			given(owners.findById(nonExistentOwnerId)).willReturn(Optional.empty());
+			mockMvc.perform(post("/owners/{ownerId}/pets/{petId}/delete", nonExistentOwnerId, TEST_PET_ID))
+				.andExpect(status().isNotFound())
+				.andExpect(view().name("notFound"))
+				.andExpect(model().attributeExists("errorMessage"));
+		}
+
+	}
+
 }
