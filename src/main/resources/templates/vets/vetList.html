@@ -11,6 +11,28 @@
         <p class="liatrio-muted" th:text="#{vets.subtitle}">A snapshot of the care team and specialties.</p>
       </div>
 
+      <!-- Filter Form -->
+      <form method="get" action="#" th:action="@{/vets.html}" class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="specialty" class="form-label" th:text="#{vets.filter.specialty}">Filter by Specialty</label>
+            <select class="form-select" id="specialty" name="specialty">
+              <option value="" th:text="#{vets.filter.specialty.all}">All Specialties</option>
+              <option value="radiology" th:text="#{vets.filter.specialty.radiology}"
+                th:selected="${specialty != null and specialty == 'radiology'}"></option>
+              <option value="surgery" th:text="#{vets.filter.specialty.surgery}"
+                th:selected="${specialty != null and specialty == 'surgery'}"></option>
+              <option value="dentistry" th:text="#{vets.filter.specialty.dentistry}"
+                th:selected="${specialty != null and specialty == 'dentistry'}"></option>
+            </select>
+          </div>
+          <div class="col-md-8 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary" th:text="#{vets.filter.apply}">Apply Filter</button>
+            <a th:href="@{/vets.html}" class="btn btn-secondary ms-2" th:text="#{vets.filter.clear}">Clear Filter</a>
+          </div>
+        </div>
+      </form>
+
       <table id="vets" class="table table-striped liatrio-table">
         <thead>
           <tr>
@@ -35,27 +57,27 @@
     <span th:text="#{pages}">Pages:</span>
     <span>[</span>
     <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-      <a th:if="${currentPage != i}" th:href="@{/vets.html(page=${i},lang=${#locale.language})}">[[${i}]]</a>
+      <a th:if="${currentPage != i}" th:href="@{/vets.html(page=${i},specialty=${specialty},lang=${#locale.language})}">[[${i}]]</a>
       <span th:unless="${currentPage != i}">[[${i}]]</span>
     </span>
     <span>]&nbsp;</span>
     <span>
-      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=1,lang=${#locale.language})}" th:title="#{first}"
+      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=1,specialty=${specialty},lang=${#locale.language})}" th:title="#{first}"
         class="fa fa-fast-backward"></a>
       <span th:unless="${currentPage > 1}" th:title="#{first}" class="fa fa-fast-backward"></span>
     </span>
     <span>
-      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=${currentPage - 1},lang=${#locale.language})}" th:title="#{previous}"
+      <a th:if="${currentPage > 1}" th:href="@{/vets.html(page=${currentPage - 1},specialty=${specialty},lang=${#locale.language})}" th:title="#{previous}"
         class="fa fa-step-backward"></a>
       <span th:unless="${currentPage > 1}" th:title="#{previous}" class="fa fa-step-backward"></span>
     </span>
     <span>
-      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${currentPage + 1},lang=${#locale.language})}" th:title="#{next}"
+      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${currentPage + 1},specialty=${specialty},lang=${#locale.language})}" th:title="#{next}"
         class="fa fa-step-forward"></a>
       <span th:unless="${currentPage < totalPages}" th:title="#{next}" class="fa fa-step-forward"></span>
     </span>
     <span>
-      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${totalPages},lang=${#locale.language})}" th:title="#{last}"
+      <a th:if="${currentPage < totalPages}" th:href="@{/vets.html(page=${totalPages},specialty=${specialty},lang=${#locale.language})}" th:title="#{last}"
         class="fa fa-fast-forward"></a>
       <span th:unless="${currentPage < totalPages}" th:title="#{last}" class="fa fa-fast-forward"></span>
     </span>

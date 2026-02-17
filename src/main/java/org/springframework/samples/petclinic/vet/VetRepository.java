@@ -19,7 +19,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -54,5 +56,17 @@ public interface VetRepository extends Repository<Vet, Integer> {
 	@Transactional(readOnly = true)
 	@Cacheable("vets")
 	Page<Vet> findAll(Pageable pageable) throws DataAccessException;
+
+	/**
+	 * Retrieve <code>Vet</code>s with a specific specialty from the data store in Pages
+	 * @param specialtyName the name of the specialty to filter by (case-insensitive)
+	 * @param pageable pagination information
+	 * @return a Page of Vets with the specified specialty
+	 * @throws DataAccessException if there is a problem retrieving the vets
+	 */
+	@Transactional(readOnly = true)
+	@Query("SELECT DISTINCT v FROM Vet v JOIN v.specialties s WHERE LOWER(s.name) = LOWER(:specialtyName)")
+	Page<Vet> findBySpecialtiesNameIgnoreCase(@Param("specialtyName") String specialtyName, Pageable pageable)
+			throws DataAccessException;
 
 }
