@@ -146,16 +146,17 @@ class OwnerController {
 	}
 
 	@GetMapping("/owners")
-	public String processFindForm(@RequestParam(defaultValue = "1") int page, Owner owner, BindingResult result,
-			Model model) {
+	public String processFindForm(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(required = false) String telephone, @RequestParam(required = false) String city, Owner owner,
+			BindingResult result, Model model) {
 		// allow parameterless GET request for /owners to return all records
 		String lastName = owner.getLastName();
 		if (lastName == null) {
 			lastName = ""; // empty string signifies broadest possible search
 		}
 
-		// find owners by last name
-		Page<Owner> ownersResults = findPaginatedForOwnersLastName(page, lastName);
+		// find owners by multiple criteria
+		Page<Owner> ownersResults = findPaginatedByMultipleCriteria(page, lastName, telephone, city);
 		if (ownersResults.isEmpty()) {
 			// no owners found
 			result.rejectValue("lastName", "notFound", "not found");
@@ -170,6 +171,8 @@ class OwnerController {
 
 		// multiple owners found
 		model.addAttribute("lastName", lastName);
+		model.addAttribute("telephone", telephone);
+		model.addAttribute("city", city);
 		return addPaginationModel(page, model, ownersResults);
 	}
 
@@ -180,6 +183,12 @@ class OwnerController {
 		model.addAttribute("totalItems", paginated.getTotalElements());
 		model.addAttribute("listOwners", listOwners);
 		return "owners/ownersList";
+	}
+
+	private Page<Owner> findPaginatedByMultipleCriteria(int page, String lastName, String telephone, String city) {
+		int pageSize = 5;
+		Pageable pageable = PageRequest.of(page - 1, pageSize);
+		return owners.findByMultipleCriteria(lastName, telephone, city, pageable);
 	}
 
 	private Page<Owner> findPaginatedForOwnersLastName(int page, String lastname) {
