@@ -343,4 +343,107 @@ class ClinicServiceTests {
 		assertThat(owners).isEmpty();
 	}
 
+	// Issue #3: Find Owners - Search by telephone and city - Repository Tests
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_AllParameters() {
+		// Arrange: Search for Davis in Sun Prairie with telephone 6085551749
+		// Expected: Betty Davis
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria("Davis", "6085551749", "Sun Prairie", pageable);
+
+		// Assert
+		assertThat(owners).hasSize(1);
+		assertThat(owners.getContent().get(0).getFirstName()).isEqualTo("Betty");
+		assertThat(owners.getContent().get(0).getLastName()).isEqualTo("Davis");
+		assertThat(owners.getContent().get(0).getTelephone()).isEqualTo("6085551749");
+		assertThat(owners.getContent().get(0).getCity()).isEqualTo("Sun Prairie");
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_LastNameOnly() {
+		// Arrange: Search for Davis with null telephone and city
+		// Expected: Both Betty Davis and Harold Davis
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria("Davis", null, null, pageable);
+
+		// Assert
+		assertThat(owners).hasSize(2);
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_TelephoneOnly() {
+		// Arrange: Search by telephone starting with "608555" (partial match)
+		// Expected: Multiple owners with matching telephone prefix
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria(null, "608555", null, pageable);
+
+		// Assert
+		assertThat(owners.getTotalElements()).isGreaterThan(0);
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_CityOnly() {
+		// Arrange: Search for owners in Madison (case-insensitive)
+		// Expected: George Franklin, Peter McTavish, Maria Escobito, David Schroeder
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria(null, null, "Madison", pageable);
+
+		// Assert
+		assertThat(owners).hasSize(4);
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_CityAndTelephone() {
+		// Arrange: Search for owners in Madison with telephone starting with 608555
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria(null, "608555", "Madison", pageable);
+
+		// Assert
+		assertThat(owners.getTotalElements()).isGreaterThan(0);
+		owners.getContent().forEach(owner -> {
+			assertThat(owner.getCity()).isEqualToIgnoringCase("Madison");
+			assertThat(owner.getTelephone()).startsWith("608555");
+		});
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_CaseInsensitiveCity() {
+		// Arrange: Search with lowercase city name
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria(null, null, "madison", pageable);
+
+		// Assert
+		assertThat(owners).hasSize(4);
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_NoMatch() {
+		// Arrange: Search with non-existent criteria
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria("NonExistent", "0000000000", "NoCity", pageable);
+
+		// Assert
+		assertThat(owners).isEmpty();
+	}
+
+	@Test
+	void shouldFindOwnersByMultipleCriteria_AllNull() {
+		// Arrange: Search with all null parameters
+		// Expected: All owners returned
+
+		// Act
+		Page<Owner> owners = this.owners.findByMultipleCriteria(null, null, null, pageable);
+
+		// Assert
+		assertThat(owners.getTotalElements()).isEqualTo(10); // All test data owners
+	}
+
 }

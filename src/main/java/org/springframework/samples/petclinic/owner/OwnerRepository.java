@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -80,5 +81,19 @@ public interface OwnerRepository extends JpaRepository<Owner, Integer> {
 	 */
 	List<Owner> findByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndTelephone(String firstName, String lastName,
 			String telephone);
+
+	/**
+	 * Find owners by multiple criteria: last name, telephone, and/or city. All parameters
+	 * are optional (can be null).
+	 * @param lastName the last name to search for (starts with, case-insensitive), can be
+	 * null
+	 * @param telephone the telephone to search for (starts with), can be null
+	 * @param city the city to search for (exact match, case-insensitive), can be null
+	 * @param pageable pagination information
+	 * @return a page of matching owners
+	 */
+	@Query("SELECT o FROM Owner o WHERE " + "(?1 IS NULL OR LOWER(o.lastName) LIKE LOWER(CONCAT(?1, '%'))) AND "
+			+ "(?2 IS NULL OR o.telephone LIKE CONCAT(?2, '%')) AND " + "(?3 IS NULL OR LOWER(o.city) = LOWER(?3))")
+	Page<Owner> findByMultipleCriteria(String lastName, String telephone, String city, Pageable pageable);
 
 }
