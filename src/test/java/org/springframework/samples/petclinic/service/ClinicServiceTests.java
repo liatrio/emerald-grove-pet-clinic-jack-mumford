@@ -35,6 +35,7 @@ import org.springframework.samples.petclinic.owner.Pet;
 import org.springframework.samples.petclinic.owner.PetType;
 import org.springframework.samples.petclinic.owner.PetTypeRepository;
 import org.springframework.samples.petclinic.owner.Visit;
+import org.springframework.samples.petclinic.owner.VisitType;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -237,6 +238,7 @@ class ClinicServiceTests {
 		Pet pet7 = owner6.getPet(7);
 		int found = pet7.getVisits().size();
 		Visit visit = new Visit();
+		visit.setVisitType(VisitType.CHECKUP);
 		visit.setDescription("test");
 
 		owner6.addVisit(pet7.getId(), visit);

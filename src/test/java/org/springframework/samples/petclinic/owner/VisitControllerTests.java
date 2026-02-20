@@ -79,6 +79,7 @@ class VisitControllerTests {
 		mockMvc
 			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
 				.param("name", "George")
+				.param("visitType", "CHECKUP")
 				.param("description", "Visit Description"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/owners/{ownerId}"));
@@ -114,6 +115,7 @@ class VisitControllerTests {
 		mockMvc
 			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
 				.param("date", today.toString())
+				.param("visitType", "CHECKUP")
 				.param("description", "Checkup"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/owners/{ownerId}"));
@@ -126,6 +128,7 @@ class VisitControllerTests {
 		mockMvc
 			.perform(post("/owners/{ownerId}/pets/{petId}/visits/new", TEST_OWNER_ID, TEST_PET_ID)
 				.param("date", nextWeek.toString())
+				.param("visitType", "VACCINATION")
 				.param("description", "Vaccination"))
 			.andExpect(status().is3xxRedirection())
 			.andExpect(view().name("redirect:/owners/{ownerId}"));

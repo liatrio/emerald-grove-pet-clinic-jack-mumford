@@ -71,6 +71,7 @@
           <tr>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/edit(lang=${#locale.language})}" th:text="#{editPet}">Edit Pet</a></td>
             <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/visits/new(lang=${#locale.language})}" th:text="#{addVisit}">Add Visit</a></td>
+            <td><a th:href="@{__${owner.id}__/pets/__${pet.id}__/appointments/request(lang=${#locale.language})}" th:text="#{requestAppointment}">Request Appointment</a></td>
             <td>
               <button type="button" class="btn btn-danger btn-sm" 
                       data-bs-toggle="modal" 

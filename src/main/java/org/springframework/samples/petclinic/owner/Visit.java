@@ -16,16 +16,21 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Simple JavaBean domain object representing a visit.
@@ -47,6 +52,25 @@ public class Visit extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "pet_id")
 	private Pet pet;
+
+	@Column(name = "appointment_time")
+	private LocalDateTime appointmentTime;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false, length = 20)
+	private VisitStatus status = VisitStatus.PENDING;
+
+	@NotNull(message = "Visit type is required")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "visit_type", length = 20)
+	private VisitType visitType;
+
+	@Column(name = "request_notes", length = 500)
+	private String requestNotes;
+
+	@Version
+	@Column(name = "version")
+	private Integer version;
 
 	/**
 	 * Creates a new instance of Visit for the current date
@@ -77,6 +101,42 @@ public class Visit extends BaseEntity {
 
 	public void setPet(Pet pet) {
 		this.pet = pet;
+	}
+
+	public LocalDateTime getAppointmentTime() {
+		return this.appointmentTime;
+	}
+
+	public void setAppointmentTime(LocalDateTime appointmentTime) {
+		this.appointmentTime = appointmentTime;
+	}
+
+	public VisitStatus getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(VisitStatus status) {
+		this.status = status;
+	}
+
+	public VisitType getVisitType() {
+		return this.visitType;
+	}
+
+	public void setVisitType(VisitType visitType) {
+		this.visitType = visitType;
+	}
+
+	public String getRequestNotes() {
+		return this.requestNotes;
+	}
+
+	public void setRequestNotes(String requestNotes) {
+		this.requestNotes = requestNotes;
+	}
+
+	public Integer getVersion() {
+		return this.version;
 	}
 
 }
