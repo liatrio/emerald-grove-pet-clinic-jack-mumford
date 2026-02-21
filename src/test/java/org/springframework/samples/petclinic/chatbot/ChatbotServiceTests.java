@@ -40,6 +40,9 @@ class ChatbotServiceTests {
 	@Mock
 	private WebClient.ResponseSpec responseSpec;
 
+	@Mock
+	private PetQueryService petQueryService;
+
 	private ChatbotService chatbotService;
 
 	private static final String TEST_API_KEY = "test-api-key";
@@ -47,7 +50,7 @@ class ChatbotServiceTests {
 	@BeforeEach
 	@SuppressWarnings("unchecked")
 	void setUp() {
-		chatbotService = new ChatbotService(webClient, TEST_API_KEY);
+		chatbotService = new ChatbotService(webClient, petQueryService, TEST_API_KEY);
 
 		// Setup basic WebClient mock chain with lenient mode
 		lenient().when(webClient.post()).thenReturn(requestBodyUriSpec);
@@ -202,6 +205,99 @@ class ChatbotServiceTests {
 		assertThatThrownBy(() -> chatbotService.processMessage(null, history, locale))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("Message cannot be null");
+	}
+
+	@Test
+	void testProcessMessageWithPetQuery_PetFound() {
+		// Arrange
+		String userMessage = "What breed is Leo?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		// Mock pet query service to return a pet
+		org.springframework.samples.petclinic.owner.Owner owner = new org.springframework.samples.petclinic.owner.Owner();
+		owner.setFirstName("George");
+		owner.setLastName("Franklin");
+
+		org.springframework.samples.petclinic.owner.Pet pet = new org.springframework.samples.petclinic.owner.Pet();
+		pet.setName("Leo");
+		org.springframework.samples.petclinic.owner.PetType catType = new org.springframework.samples.petclinic.owner.PetType();
+		catType.setName("cat");
+		pet.setType(catType);
+		pet.setBirthDate(java.time.LocalDate.of(2010, 9, 7));
+
+		PetWithOwner petWithOwner = new PetWithOwner(pet, owner);
+		given(petQueryService.findPetByName("Leo")).willReturn(java.util.Optional.of(petWithOwner));
+		given(petQueryService.formatPetInfo(pet, owner))
+			.willReturn("Leo is a cat, born on 2010-09-07, owned by George Franklin");
+
+		String mockResponse = """
+				{
+					"content": [{"text": "Leo is a cat breed. He was born on September 7, 2010, and is owned by George Franklin."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		assertThat(response).contains("Leo");
+		verify(petQueryService).findPetByName("Leo");
+	}
+
+	@Test
+	void testProcessMessageWithPetQuery_PetNotFound() {
+		// Arrange
+		String userMessage = "What breed is Fluffy?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		// Mock pet query service to return empty
+		given(petQueryService.findPetByName("Fluffy")).willReturn(java.util.Optional.empty());
+
+		String mockResponse = """
+				{
+					"content": [{"text": "I couldn't find a pet named Fluffy in our records."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		verify(petQueryService).findPetByName("Fluffy");
+	}
+
+	@Test
+	void testProcessMessageWithoutPetQuery() {
+		// Arrange
+		String userMessage = "What are the clinic hours?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		String mockResponse = """
+				{
+					"content": [{"text": "Our clinic is open Monday to Friday, 9am to 5pm."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		assertThat(response).contains("clinic");
 	}
 
 }

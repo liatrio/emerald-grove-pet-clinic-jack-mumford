@@ -298,4 +298,59 @@ class ChatbotIntegrationTests {
 		assertThat(response.getBody().getResponse()).isEqualTo(expectedResponse);
 	}
 
+	/**
+	 * Tests that pet query requests are properly handled. Verifies that the chatbot can
+	 * answer questions about pets in the database by integrating with PetQueryService.
+	 */
+	@Test
+	void testPetQueryIntegration() throws Exception {
+		// Arrange
+		ChatbotRequest request = new ChatbotRequest("What breed is Leo?", new ArrayList<>());
+		String expectedResponse = "Leo is a cat, born on 2010-09-07, owned by George Franklin.";
+
+		// Mock the service to return a response that includes pet information
+		given(chatbotService.processMessage(eq(request.getMessage()), any(), anyString()))
+			.willReturn("Based on our records, " + expectedResponse);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<ChatbotRequest> httpEntity = new HttpEntity<>(request, headers);
+
+		// Act
+		ResponseEntity<ChatbotResponse> response = restTemplate.postForEntity(baseUrl, httpEntity,
+				ChatbotResponse.class);
+
+		// Assert
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getBody()).isNotNull();
+		assertThat(response.getBody().getResponse()).contains("Leo");
+		assertThat(response.getBody().getResponse()).contains("cat");
+	}
+
+	/**
+	 * Tests that pet query requests for non-existent pets are handled gracefully.
+	 */
+	@Test
+	void testPetQueryNotFound() throws Exception {
+		// Arrange
+		ChatbotRequest request = new ChatbotRequest("What breed is Fluffy?", new ArrayList<>());
+		String expectedResponse = "I couldn't find a pet named Fluffy in our records.";
+
+		given(chatbotService.processMessage(eq(request.getMessage()), any(), anyString())).willReturn(expectedResponse);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<ChatbotRequest> httpEntity = new HttpEntity<>(request, headers);
+
+		// Act
+		ResponseEntity<ChatbotResponse> response = restTemplate.postForEntity(baseUrl, httpEntity,
+				ChatbotResponse.class);
+
+		// Assert
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(response.getBody()).isNotNull();
+		assertThat(response.getBody().getResponse()).contains("couldn't find");
+		assertThat(response.getBody().getResponse()).contains("Fluffy");
+	}
+
 }

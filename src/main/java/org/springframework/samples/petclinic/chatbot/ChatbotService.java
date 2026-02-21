@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.chatbot;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.samples.petclinic.owner.Pet;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -9,17 +10,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Service for processing chatbot messages using Claude API. Handles conversation history
- * and API communication with proper error handling.
+ * and API communication with proper error handling. Integrates with PetQueryService to
+ * provide database context for pet-related queries.
  */
 @Service
 public class ChatbotService {
 
 	private final WebClient webClient;
+
+	private final PetQueryService petQueryService;
 
 	private final String apiKey;
 
@@ -33,19 +38,28 @@ public class ChatbotService {
 
 	private static final int TIMEOUT_SECONDS = 30;
 
+	// Keywords that suggest the user is asking about pets
+	private static final Pattern PET_QUERY_KEYWORDS = Pattern
+		.compile("(?i)(pet|breed|born|birthday|age|owner|cat|dog|hamster|bird|snake|lizard)");
+
 	/**
 	 * Creates a new chatbot service.
 	 * @param webClient the WebClient for making HTTP requests
+	 * @param petQueryService the service for querying pet information
 	 * @param apiKey the Claude API key
 	 */
-	public ChatbotService(WebClient webClient, @Value("${claude.api.key}") String apiKey) {
+	public ChatbotService(WebClient webClient, PetQueryService petQueryService,
+			@Value("${claude.api.key}") String apiKey) {
 		this.webClient = webClient;
+		this.petQueryService = petQueryService;
 		this.apiKey = apiKey;
 	}
 
 	/**
 	 * Processes a user message and returns the assistant's response. Includes
-	 * conversation history in the API call for context.
+	 * conversation history in the API call for context. If the message appears to be
+	 * about pets, queries the database for relevant pet information and includes it in
+	 * the prompt.
 	 * @param message the user's message
 	 * @param history the conversation history (can be null or empty)
 	 * @param locale the user's locale
@@ -62,7 +76,10 @@ public class ChatbotService {
 		}
 
 		try {
-			Map<String, Object> requestBody = buildRequestBody(message, history);
+			// Check if message is about pets and add context if needed
+			String enhancedMessage = enhanceMessageWithPetContext(message);
+
+			Map<String, Object> requestBody = buildRequestBody(enhancedMessage, history);
 
 			String responseJson = webClient.post()
 				.uri(CLAUDE_API_URL)
@@ -132,6 +149,76 @@ public class ChatbotService {
 		catch (Exception e) {
 			throw new RuntimeException("Failed to parse API response: " + e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Enhances the user message with pet context from the database if the message appears
+	 * to be about pets.
+	 * @param message the original user message
+	 * @return the enhanced message with pet context, or the original message if no pet
+	 * context is relevant
+	 */
+	private String enhanceMessageWithPetContext(String message) {
+		// Check if message contains pet-related keywords
+		if (!PET_QUERY_KEYWORDS.matcher(message).find()) {
+			return message;
+		}
+
+		// Try to extract pet names from the message (simple word extraction)
+		List<String> potentialPetNames = extractPotentialPetNames(message);
+
+		// Search for matching pets
+		StringBuilder petContext = new StringBuilder();
+		for (String petName : potentialPetNames) {
+			Optional<PetWithOwner> petWithOwner = petQueryService.findPetByName(petName);
+			if (petWithOwner.isPresent()) {
+				Pet pet = petWithOwner.get().getPet();
+				String petInfo = petQueryService.formatPetInfo(pet, petWithOwner.get().getOwner());
+				petContext.append("\n[Database Context: ").append(petInfo).append("]");
+			}
+		}
+
+		// If we found pet context, prepend it to the message
+		if (petContext.length() > 0) {
+			return petContext + "\n\nUser question: " + message;
+		}
+
+		return message;
+	}
+
+	/**
+	 * Extracts potential pet names from the user message. Looks for capitalized words
+	 * that could be pet names.
+	 * @param message the user message
+	 * @return a list of potential pet names
+	 */
+	private List<String> extractPotentialPetNames(String message) {
+		List<String> names = new ArrayList<>();
+		// Match capitalized words (potential names)
+		Pattern namePattern = Pattern.compile("\\b([A-Z][a-z]+)\\b");
+		Matcher matcher = namePattern.matcher(message);
+
+		while (matcher.find()) {
+			String word = matcher.group(1);
+			// Filter out common words that aren't names
+			if (!isCommonWord(word)) {
+				names.add(word);
+			}
+		}
+
+		return names;
+	}
+
+	/**
+	 * Checks if a word is a common word that's unlikely to be a pet name.
+	 * @param word the word to check
+	 * @return true if the word is a common word, false otherwise
+	 */
+	private boolean isCommonWord(String word) {
+		// Common words to exclude (this could be expanded)
+		List<String> commonWords = List.of("What", "Where", "When", "Why", "How", "Who", "Which", "Is", "Are", "The",
+				"Can", "Could", "Would", "Should", "Do", "Does", "Did", "Has", "Have", "Had");
+		return commonWords.contains(word);
 	}
 
 }
