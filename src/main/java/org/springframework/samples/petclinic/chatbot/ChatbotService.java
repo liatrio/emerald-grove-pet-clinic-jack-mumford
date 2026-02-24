@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.chatbot;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.owner.Pet;
+import org.springframework.samples.petclinic.owner.Visit;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,13 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Service for processing chatbot messages using Claude API. Handles conversation history
- * and API communication with proper error handling. Integrates with PetQueryService to
- * provide database context for pet-related queries.
+ * and API communication with proper error handling. Integrates with PetQueryService and
+ * VisitQueryService to provide database context for pet and visit-related queries.
  */
 @Service
 public class ChatbotService {
@@ -25,6 +27,8 @@ public class ChatbotService {
 	private final WebClient webClient;
 
 	private final PetQueryService petQueryService;
+
+	private final VisitQueryService visitQueryService;
 
 	private final String apiKey;
 
@@ -42,24 +46,33 @@ public class ChatbotService {
 	private static final Pattern PET_QUERY_KEYWORDS = Pattern
 		.compile("(?i)(pet|breed|born|birthday|age|owner|cat|dog|hamster|bird|snake|lizard)");
 
+	// Keywords that suggest the user is asking about visits/appointments
+	private static final Set<String> VISIT_KEYWORDS = Set.of("appointment", "visit", "schedule", "upcoming", "next",
+			"checkup", "vaccination", "surgery", "appointments", "visits");
+
+	// Keywords that suggest the user is asking for instructions
+	private static final Set<String> INSTRUCTIONAL_KEYWORDS = Set.of("how to", "how do i", "how can i", "help me");
+
 	/**
 	 * Creates a new chatbot service.
 	 * @param webClient the WebClient for making HTTP requests
 	 * @param petQueryService the service for querying pet information
+	 * @param visitQueryService the service for querying visit information
 	 * @param apiKey the Claude API key
 	 */
-	public ChatbotService(WebClient webClient, PetQueryService petQueryService,
+	public ChatbotService(WebClient webClient, PetQueryService petQueryService, VisitQueryService visitQueryService,
 			@Value("${claude.api.key}") String apiKey) {
 		this.webClient = webClient;
 		this.petQueryService = petQueryService;
+		this.visitQueryService = visitQueryService;
 		this.apiKey = apiKey;
 	}
 
 	/**
 	 * Processes a user message and returns the assistant's response. Includes
 	 * conversation history in the API call for context. If the message appears to be
-	 * about pets, queries the database for relevant pet information and includes it in
-	 * the prompt.
+	 * about pets or visits, queries the database for relevant information and includes it
+	 * in the prompt.
 	 * @param message the user's message
 	 * @param history the conversation history (can be null or empty)
 	 * @param locale the user's locale
@@ -76,8 +89,10 @@ public class ChatbotService {
 		}
 
 		try {
-			// Check if message is about pets and add context if needed
+			// Check if message is about pets or visits and add context if needed
 			String enhancedMessage = enhanceMessageWithPetContext(message);
+			enhancedMessage = enhanceMessageWithVisitContext(enhancedMessage, message);
+			enhancedMessage = enhanceMessageWithInstructionalGuidance(enhancedMessage, message);
 
 			Map<String, Object> requestBody = buildRequestBody(enhancedMessage, history);
 
@@ -219,6 +234,80 @@ public class ChatbotService {
 		List<String> commonWords = List.of("What", "Where", "When", "Why", "How", "Who", "Which", "Is", "Are", "The",
 				"Can", "Could", "Would", "Should", "Do", "Does", "Did", "Has", "Have", "Had");
 		return commonWords.contains(word);
+	}
+
+	/**
+	 * Enhances the user message with visit context from the database if the message
+	 * appears to be about visits or appointments.
+	 * @param enhancedMessage the message (possibly already enhanced with pet context)
+	 * @param originalMessage the original user message
+	 * @return the enhanced message with visit context, or the same message if no visit
+	 * context is relevant
+	 */
+	private String enhanceMessageWithVisitContext(String enhancedMessage, String originalMessage) {
+		// Check if message contains visit-related keywords
+		if (!isVisitRelatedQuery(originalMessage)) {
+			return enhancedMessage;
+		}
+
+		// Query for upcoming visits
+		List<Visit> upcomingVisits = visitQueryService.findUpcomingVisits();
+
+		if (upcomingVisits.isEmpty()) {
+			return enhancedMessage + "\n\n[Database Context: There are no upcoming visits scheduled in the system.]";
+		}
+
+		// Format visit information
+		StringBuilder visitContext = new StringBuilder("\n\n[Database Context: Upcoming visits in the system:\n");
+		for (Visit visit : upcomingVisits) {
+			String visitInfo = visitQueryService.formatVisitInfo(visit);
+			visitContext.append("- ").append(visitInfo).append("\n");
+		}
+		visitContext.append("]");
+
+		return enhancedMessage + visitContext.toString();
+	}
+
+	/**
+	 * Enhances the user message with instructional guidance if the message appears to be
+	 * asking for instructions on how to use the system.
+	 * @param enhancedMessage the message (possibly already enhanced with context)
+	 * @param originalMessage the original user message
+	 * @return the enhanced message with instructional guidance, or the same message if
+	 * not an instructional query
+	 */
+	private String enhanceMessageWithInstructionalGuidance(String enhancedMessage, String originalMessage) {
+		if (!isInstructionalQuery(originalMessage)) {
+			return enhancedMessage;
+		}
+
+		String guidance = "\n\n[System Guidance: To schedule a visit, navigate to your pet's page and click "
+				+ "'Add Visit'. You can choose the visit type (checkup, vaccination, dental, surgery, etc.), "
+				+ "select a date and time, and add any notes about the reason for the visit. "
+				+ "To view upcoming appointments, go to the 'Visits' section in the main menu.]";
+
+		return enhancedMessage + guidance;
+	}
+
+	/**
+	 * Checks if the user message appears to be asking about visits or appointments.
+	 * @param message the user message
+	 * @return true if the message contains visit-related keywords
+	 */
+	private boolean isVisitRelatedQuery(String message) {
+		String lowerMessage = message.toLowerCase();
+		return VISIT_KEYWORDS.stream().anyMatch(lowerMessage::contains);
+	}
+
+	/**
+	 * Checks if the user message appears to be asking for instructions on how to use the
+	 * system.
+	 * @param message the user message
+	 * @return true if the message contains instructional keywords
+	 */
+	private boolean isInstructionalQuery(String message) {
+		String lowerMessage = message.toLowerCase();
+		return INSTRUCTIONAL_KEYWORDS.stream().anyMatch(lowerMessage::contains);
 	}
 
 }

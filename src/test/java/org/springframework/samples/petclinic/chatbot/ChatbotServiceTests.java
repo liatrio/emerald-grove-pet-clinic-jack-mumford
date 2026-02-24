@@ -43,6 +43,9 @@ class ChatbotServiceTests {
 	@Mock
 	private PetQueryService petQueryService;
 
+	@Mock
+	private VisitQueryService visitQueryService;
+
 	private ChatbotService chatbotService;
 
 	private static final String TEST_API_KEY = "test-api-key";
@@ -50,7 +53,7 @@ class ChatbotServiceTests {
 	@BeforeEach
 	@SuppressWarnings("unchecked")
 	void setUp() {
-		chatbotService = new ChatbotService(webClient, petQueryService, TEST_API_KEY);
+		chatbotService = new ChatbotService(webClient, petQueryService, visitQueryService, TEST_API_KEY);
 
 		// Setup basic WebClient mock chain with lenient mode
 		lenient().when(webClient.post()).thenReturn(requestBodyUriSpec);
@@ -298,6 +301,105 @@ class ChatbotServiceTests {
 		// Assert
 		assertThat(response).isNotNull();
 		assertThat(response).contains("clinic");
+	}
+
+	@Test
+	void testProcessMessageWithVisitQuery_UpcomingVisits() {
+		// Arrange
+		String userMessage = "What appointments are upcoming?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		// Mock visit data
+		org.springframework.samples.petclinic.owner.Owner owner = new org.springframework.samples.petclinic.owner.Owner();
+		owner.setFirstName("George");
+		owner.setLastName("Franklin");
+
+		org.springframework.samples.petclinic.owner.PetType catType = new org.springframework.samples.petclinic.owner.PetType();
+		catType.setName("cat");
+
+		org.springframework.samples.petclinic.owner.Pet pet = new org.springframework.samples.petclinic.owner.Pet();
+		pet.setName("Leo");
+		pet.setType(catType);
+		pet.setOwner(owner);
+
+		org.springframework.samples.petclinic.owner.Visit visit = new org.springframework.samples.petclinic.owner.Visit();
+		visit.setDate(java.time.LocalDate.now().plusDays(7));
+		visit.setAppointmentTime(java.time.LocalDateTime.now().plusDays(7).withHour(10).withMinute(0));
+		visit.setVisitType(org.springframework.samples.petclinic.owner.VisitType.CHECKUP);
+		visit.setStatus(org.springframework.samples.petclinic.owner.VisitStatus.SCHEDULED);
+		visit.setPet(pet);
+
+		given(visitQueryService.findUpcomingVisits()).willReturn(List.of(visit));
+		given(visitQueryService.formatVisitInfo(visit))
+			.willReturn("Leo (cat) - Wellness Checkup on 2026-03-03 at 10:00 AM - Status: Scheduled");
+
+		String mockResponse = """
+				{
+					"content": [{"text": "You have one upcoming appointment: Leo (cat) - Wellness Checkup on 2026-03-03 at 10:00 AM."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		assertThat(response).contains("appointment");
+		verify(visitQueryService).findUpcomingVisits();
+	}
+
+	@Test
+	void testProcessMessageWithVisitQuery_NoUpcomingVisits() {
+		// Arrange
+		String userMessage = "What appointments are coming up?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		given(visitQueryService.findUpcomingVisits()).willReturn(List.of());
+
+		String mockResponse = """
+				{
+					"content": [{"text": "There are no upcoming appointments scheduled."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		verify(visitQueryService).findUpcomingVisits();
+	}
+
+	@Test
+	void testProcessMessageWithInstructionalQuery() {
+		// Arrange
+		String userMessage = "How do I schedule an appointment?";
+		List<ConversationMessage> history = new ArrayList<>();
+		String locale = "en";
+
+		String mockResponse = """
+				{
+					"content": [{"text": "To schedule a visit, navigate to your pet's page and click 'Add Visit'. You can choose the visit type, date, and add any notes."}],
+					"role": "assistant"
+				}
+				""";
+
+		given(responseSpec.bodyToMono(String.class)).willReturn(Mono.just(mockResponse));
+
+		// Act
+		String response = chatbotService.processMessage(userMessage, history, locale);
+
+		// Assert
+		assertThat(response).isNotNull();
+		assertThat(response).contains("schedule");
 	}
 
 }
