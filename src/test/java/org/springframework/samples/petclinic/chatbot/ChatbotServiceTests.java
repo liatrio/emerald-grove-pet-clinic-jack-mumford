@@ -53,7 +53,8 @@ class ChatbotServiceTests {
 	@BeforeEach
 	@SuppressWarnings("unchecked")
 	void setUp() {
-		chatbotService = new ChatbotService(webClient, petQueryService, visitQueryService, TEST_API_KEY);
+		chatbotService = new ChatbotService(webClient, petQueryService, visitQueryService,
+				new com.fasterxml.jackson.databind.ObjectMapper(), TEST_API_KEY);
 
 		// Setup basic WebClient mock chain with lenient mode
 		lenient().when(webClient.post()).thenReturn(requestBodyUriSpec);

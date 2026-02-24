@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.chatbot;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.samples.petclinic.owner.Pet;
 import org.springframework.samples.petclinic.owner.Visit;
@@ -32,11 +34,13 @@ public class ChatbotService {
 
 	private final String apiKey;
 
+	private final ObjectMapper objectMapper;
+
 	private static final Pattern TEXT_PATTERN = Pattern.compile("\"text\"\\s*:\\s*\"([^\"]+)\"");
 
 	private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
 
-	private static final String CLAUDE_MODEL = "claude-3-5-sonnet-20241022";
+	private static final String CLAUDE_MODEL = "claude-sonnet-4-20250514";
 
 	private static final int MAX_TOKENS = 1024;
 
@@ -58,13 +62,15 @@ public class ChatbotService {
 	 * @param webClient the WebClient for making HTTP requests
 	 * @param petQueryService the service for querying pet information
 	 * @param visitQueryService the service for querying visit information
+	 * @param objectMapper the Jackson ObjectMapper for JSON parsing
 	 * @param apiKey the Claude API key
 	 */
 	public ChatbotService(WebClient webClient, PetQueryService petQueryService, VisitQueryService visitQueryService,
-			@Value("${claude.api.key}") String apiKey) {
+			ObjectMapper objectMapper, @Value("${claude.api.key}") String apiKey) {
 		this.webClient = webClient;
 		this.petQueryService = petQueryService;
 		this.visitQueryService = visitQueryService;
+		this.objectMapper = objectMapper;
 		this.apiKey = apiKey;
 	}
 
@@ -148,18 +154,27 @@ public class ChatbotService {
 	}
 
 	/**
-	 * Extracts the response text from the Claude API JSON response.
+	 * Extracts the response text from the Claude API JSON response using proper JSON
+	 * parsing. This correctly handles escaped characters and quotes within the text.
 	 * @param responseJson the JSON response from Claude API
 	 * @return the response text
 	 * @throws RuntimeException if response parsing fails
 	 */
 	private String extractResponseText(String responseJson) {
 		try {
-			Matcher matcher = TEXT_PATTERN.matcher(responseJson);
-			if (matcher.find()) {
-				return matcher.group(1);
+			JsonNode root = objectMapper.readTree(responseJson);
+			JsonNode contentArray = root.get("content");
+
+			if (contentArray != null && contentArray.isArray() && contentArray.size() > 0) {
+				JsonNode firstContent = contentArray.get(0);
+				JsonNode textNode = firstContent.get("text");
+
+				if (textNode != null) {
+					return textNode.asText();
+				}
 			}
-			throw new RuntimeException("Invalid response format: missing text field");
+
+			throw new RuntimeException("Invalid response format: missing content/text field");
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Failed to parse API response: " + e.getMessage(), e);
