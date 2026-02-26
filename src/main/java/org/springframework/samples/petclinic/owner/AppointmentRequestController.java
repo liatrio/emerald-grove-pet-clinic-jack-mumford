@@ -31,21 +31,18 @@ import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * @author Juergen Hoeller
- * @author Ken Krebs
- * @author Arjen Poutsma
- * @author Michael Isvy
- * @author Dave Syer
- * @author Wick Dynex
+ * Controller for handling appointment requests from pet owners.
+ *
+ * @author Claude Sonnet 4.5
  */
 @Controller
-class VisitController {
+class AppointmentRequestController {
 
 	private final OwnerRepository owners;
 
 	private final VisitValidator visitValidator;
 
-	public VisitController(OwnerRepository owners, VisitValidator visitValidator) {
+	public AppointmentRequestController(OwnerRepository owners, VisitValidator visitValidator) {
 		this.owners = owners;
 		this.visitValidator = visitValidator;
 	}
@@ -61,18 +58,19 @@ class VisitController {
 	}
 
 	/**
-	 * Called before each and every @RequestMapping annotated method. 2 goals: - Make sure
-	 * we always have fresh data - Since we do not use the session scope, make sure that
-	 * Pet object always has an id (Even though id is not part of the form fields)
-	 * @param petId
-	 * @return Pet
+	 * Load pet and owner data for the appointment request form. Creates a new Visit
+	 * object with PENDING status by default.
+	 * @param ownerId the owner's ID
+	 * @param petId the pet's ID
+	 * @param model the model to populate
+	 * @return Visit object with PENDING status
 	 */
 	@ModelAttribute("visit")
 	public Visit loadPetWithVisit(@PathVariable("ownerId") int ownerId, @PathVariable("petId") int petId,
 			Map<String, Object> model) {
 		Optional<Owner> optionalOwner = owners.findById(ownerId);
 		Owner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(
-				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct "));
+				"Owner not found with id: " + ownerId + ". Please ensure the ID is correct"));
 
 		Pet pet = owner.getPet(petId);
 		if (pet == null) {
@@ -83,32 +81,42 @@ class VisitController {
 		model.put("owner", owner);
 
 		Visit visit = new Visit();
+		visit.setStatus(VisitStatus.PENDING);
 		pet.addVisit(visit);
 		return visit;
 	}
 
-	// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is
-	// called
-	@GetMapping("/owners/{ownerId}/pets/{petId}/visits/new")
-	public String initNewVisitForm() {
-		return "pets/createOrUpdateVisitForm";
+	/**
+	 * Show the appointment request form.
+	 * @return the view name for the appointment request form
+	 */
+	@GetMapping("/owners/{ownerId}/pets/{petId}/appointments/request")
+	public String showAppointmentRequestForm() {
+		return "appointments/appointmentRequestForm";
 	}
 
-	// Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is
-	// called
-	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
-	public String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,
+	/**
+	 * Process the appointment request form submission.
+	 * @param owner the owner (loaded via @ModelAttribute)
+	 * @param petId the pet's ID
+	 * @param visit the visit object bound from form data
+	 * @param result the binding result for validation
+	 * @param redirectAttributes for flash messages
+	 * @return redirect to owner details page on success, or back to form on error
+	 */
+	@PostMapping("/owners/{ownerId}/pets/{petId}/appointments/request")
+	public String processAppointmentRequest(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,
 			BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
-			return "pets/createOrUpdateVisitForm";
+			return "appointments/appointmentRequestForm";
 		}
 
-		// Set status to SCHEDULED for staff-created visits (not appointment requests)
-		visit.setStatus(VisitStatus.SCHEDULED);
+		// Ensure status is PENDING for new appointment requests
+		visit.setStatus(VisitStatus.PENDING);
 
 		owner.addVisit(petId, visit);
 		this.owners.save(owner);
-		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
+		redirectAttributes.addFlashAttribute("message", "Your appointment request has been submitted");
 		return "redirect:/owners/{ownerId}";
 	}
 
