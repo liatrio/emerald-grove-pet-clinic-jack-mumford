@@ -9304,6 +9304,27 @@ textarea.form-control-lg {
 .table th {
   color: #f8f9fa; }
 
+/* Fix contrast for tables with white/light backgrounds */
+.table:not(.liatrio-table) tbody tr {
+  background-color: #ffffff; }
+
+.table:not(.liatrio-table) td,
+.table:not(.liatrio-table) th {
+  color: #111111; }
+
+.table:not(.liatrio-table) > thead > tr > th {
+  background-color: #f8f9fa;
+  color: #111111;
+  border-bottom: 2px solid #dee2e6; }
+
+.table:not(.liatrio-table) a {
+  color: #24AE1D;
+  text-decoration: none; }
+
+.table:not(.liatrio-table) a:hover {
+  color: #1d8b17;
+  text-decoration: underline; }
+
 .table-filter {
   background-color: #1E2327;
   padding: 9px 12px; }
@@ -9391,7 +9412,29 @@ table td.action-column {
   width: 1px; }
 
 .help-block {
-  color: #b3b3b3; }
+  color: #111111; }
+
+/* Fix form label and text visibility on white backgrounds */
+.form-horizontal label,
+.form-horizontal .control-label {
+  color: #111111 !important;
+}
+
+.form-horizontal .help-inline {
+  color: #dc3545 !important;
+}
+
+.form-horizontal .form-control {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #ced4da !important;
+}
+
+.form-horizontal .form-control:focus {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+  border-color: #86b7fe !important;
+}
 
 .xd-containers {
   font-size: 15px; }
@@ -9601,41 +9644,6 @@ hr {
 .liatrio-pagination .fa {
   font-size: 12px; }
 
-.language-selector {
-  margin-right: 16px; }
-
-.language-selector .dropdown-toggle {
-  border-color: rgba(255, 255, 255, 0.5); }
-
-.language-selector .dropdown-toggle:hover {
-  border-color: rgba(255, 255, 255, 0.8);
-  background-color: rgba(255, 255, 255, 0.1); }
-
-.language-selector .dropdown-toggle:focus {
-  outline: 2px solid #24AE1D; }
-
-.language-selector .dropdown-menu {
-  background-color: #1E2327;
-  border-color: #333333; }
-
-.language-selector .dropdown-item {
-  color: #f8f9fa; }
-
-.language-selector .dropdown-item:hover {
-  background-color: rgba(36, 174, 29, 0.1);
-  color: #ffffff; }
-
-.language-selector .dropdown-item:focus {
-  background-color: rgba(36, 174, 29, 0.1);
-  color: #ffffff; }
-
-.language-selector .dropdown-item.active {
-  background-color: rgba(36, 174, 29, 0.2);
-  color: #24AE1D; }
-
-.language-selector .dropdown-item.fw-bold {
-  font-weight: 600; }
-
 body, h1, .h1, h2, .h2, h3, .h3, p, input {
   margin: 0;
   font-weight: 400;
@@ -9761,3 +9769,58 @@ strong {
     margin-bottom: 30px; } }
 
 /*# sourceMappingURL=../../../../../../target/petclinic.css.map */
+/* Fix contrast for tables with white/light backgrounds */
+.table:not(.liatrio-table) tbody tr {
+  background-color: #ffffff !important;
+}
+
+.table:not(.liatrio-table) td,
+.table:not(.liatrio-table) th {
+  color: #111111 !important;
+}
+
+.table:not(.liatrio-table) > thead > tr > th {
+  background-color: #f8f9fa !important;
+  color: #111111 !important;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.table:not(.liatrio-table) a {
+  color: #24AE1D !important;
+  text-decoration: none;
+}
+
+.table:not(.liatrio-table) a:hover {
+  color: #1d8b17 !important;
+  text-decoration: underline;
+}
+
+/* Override liatrio-table colors for better visibility on white backgrounds */
+.liatrio-table.table tbody td {
+  color: #111111 !important;
+}
+
+.liatrio-table.table thead th {
+  color: #111111 !important;
+  background-color: #e9ecef !important;
+}
+
+.liatrio-table.table tbody tr {
+  background-color: #ffffff !important;
+}
+
+.liatrio-table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #f8f9fa !important;
+}
+
+.liatrio-table.table-striped > tbody > tr:nth-of-type(even) {
+  background-color: #ffffff !important;
+}
+
+.liatrio-table a {
+  color: #24AE1D !important;
+}
+
+.liatrio-table a:hover {
+  color: #1d8b17 !important;
+}

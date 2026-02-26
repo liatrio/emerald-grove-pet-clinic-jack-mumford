@@ -83,6 +83,32 @@ $table-border-color:                      $spring-brown;
   color: #f8f9fa;
 }
 
+/* Fix contrast for tables with white/light backgrounds */
+.table:not(.liatrio-table) tbody tr {
+  background-color: #ffffff;
+}
+
+.table:not(.liatrio-table) td,
+.table:not(.liatrio-table) th {
+  color: #111111;
+}
+
+.table:not(.liatrio-table) > thead > tr > th {
+  background-color: #f8f9fa;
+  color: #111111;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table:not(.liatrio-table) a {
+  color: #24AE1D;
+  text-decoration: none;
+}
+
+.table:not(.liatrio-table) a:hover {
+  color: #1d8b17;
+  text-decoration: underline;
+}
+
 .table-filter {
   background-color: #1E2327;
   padding: 9px 12px;
@@ -193,7 +219,29 @@ table td.action-column {
 }
 
 .help-block {
-  color: #b3b3b3;
+  color: #111111;
+}
+
+/* Fix form label and text visibility on white backgrounds */
+.form-horizontal label,
+.form-horizontal .control-label {
+  color: #111111 !important;
+}
+
+.form-horizontal .help-inline {
+  color: #dc3545 !important;
+}
+
+.form-horizontal .form-control {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #ced4da !important;
+}
+
+.form-horizontal .form-control:focus {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+  border-color: #86b7fe !important;
 }
 
 .xd-containers {
