@@ -1,7 +1,5 @@
 package org.springframework.samples.petclinic.chatbot;
 
-import org.springframework.stereotype.Component;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -9,7 +7,6 @@ import java.util.concurrent.TimeUnit;
  * Rate limiter to control the number of chatbot requests per session. Uses a token bucket
  * algorithm to limit requests per time period.
  */
-@Component
 public class RateLimiter {
 
 	private final int maxRequests;
