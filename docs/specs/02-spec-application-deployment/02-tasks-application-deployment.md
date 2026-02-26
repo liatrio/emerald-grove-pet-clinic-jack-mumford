@@ -91,7 +91,7 @@ Develop Dockerfile for containerizing the Pet Clinic application using Alpine Li
 
 ---
 
-### [ ] 2.0 Provision ECS Cluster and Task Definition
+### [x] 2.0 Provision ECS Cluster and Task Definition
 
 Create ECS Fargate cluster with task definition configured for 0.5 vCPU and 1024 MB memory, including IAM roles, environment variables, Secrets Manager integration, CloudWatch logging, and X-Ray tracing.
 
