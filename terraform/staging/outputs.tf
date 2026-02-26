@@ -117,3 +117,24 @@ output "region" {
   description = "AWS region where resources are deployed"
   value       = data.aws_region.current.name
 }
+
+# Application Load Balancer Outputs
+output "alb_dns_name" {
+  description = "DNS name of the Application Load Balancer for accessing the application"
+  value       = aws_lb.main.dns_name
+}
+
+output "alb_arn" {
+  description = "ARN of the Application Load Balancer"
+  value       = aws_lb.main.arn
+}
+
+output "alb_target_group_arn" {
+  description = "ARN of the ALB target group for ECS service registration"
+  value       = aws_lb_target_group.app.arn
+}
+
+output "alb_zone_id" {
+  description = "Zone ID of the Application Load Balancer (for Route 53 alias records)"
+  value       = aws_lb.main.zone_id
+}
