@@ -184,6 +184,67 @@ DB_NAME=$(echo $SECRET | jq -r .dbname)
 PGPASSWORD=$DB_PASS psql -h $DB_HOST -U $DB_USER -d $DB_NAME
 ```
 
+## Building and Pushing Docker Images
+
+The Pet Clinic application is containerized using Docker and stored in Amazon ECR (Elastic Container Registry).
+
+### Prerequisites
+
+- Docker installed and running locally
+- AWS CLI configured with appropriate permissions
+- ECR repository created via Terraform (completed in infrastructure setup)
+
+### Build Docker Image
+
+From the repository root directory:
+
+```bash
+# Build Docker image using multi-stage Dockerfile
+docker build -t petclinic:latest .
+
+# Verify image was created
+docker images | grep petclinic
+```
+
+The Dockerfile uses a multi-stage build:
+- **Stage 1**: Maven build with `maven:3.9-eclipse-temurin-17`
+- **Stage 2**: Runtime image with `eclipse-temurin:17-jre` (~332 MB final size)
+
+### Authenticate Docker to ECR
+
+```bash
+# Get ECR repository URI from Terraform outputs
+ECR_URI=$(terraform output -raw ecr_repository_url)
+
+# Authenticate Docker to ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URI
+```
+
+### Tag and Push Image to ECR
+
+```bash
+# Tag image for ECR
+docker tag petclinic:latest $ECR_URI:latest
+
+# Push image to ECR
+docker push $ECR_URI:latest
+
+# Verify image in ECR
+aws ecr describe-images --repository-name petclinic-staging-ecr-mumford --region us-east-1
+```
+
+### ECR Image Management
+
+**Lifecycle Policy**: ECR is configured with automatic image cleanup:
+- Untagged images older than 1 day are automatically removed
+- Only the last 5 tagged images are retained
+
+**Image Scanning**: All images are scanned for vulnerabilities on push (enabled by default).
+
+### CI/CD Integration
+
+For automated builds and deployments, see Spec 03: CI/CD Pipeline (GitHub Actions workflows).
+
 ## Terraform Outputs
 
 After applying infrastructure, the following outputs are available:
