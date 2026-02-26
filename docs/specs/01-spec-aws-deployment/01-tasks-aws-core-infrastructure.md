@@ -141,7 +141,7 @@ Create security groups that restrict database access to application resources on
 
 ---
 
-### [ ] 4.0 Deploy RDS PostgreSQL Database with Secrets Manager
+### [x] 4.0 Deploy RDS PostgreSQL Database with Secrets Manager
 
 Provision RDS PostgreSQL database instance in private subnet with automated backups, encryption, and AWS Secrets Manager integration for credential management.
 
@@ -155,24 +155,24 @@ Provision RDS PostgreSQL database instance in private subnet with automated back
 
 #### 4.0 Tasks
 
-- [ ] 4.1 Create `terraform/staging/rds.tf` file
-- [ ] 4.2 Add `random_password` resource to `rds.tf` for database master password (length 16, special characters allowed, no override_special to avoid Terraform special chars)
-- [ ] 4.3 Add DB subnet group resource to `rds.tf` with name "petclinic-staging-db-subnet-group" including the private subnet
-- [ ] 4.4 Add RDS PostgreSQL instance resource to `rds.tf` with identifier "petclinic-staging-db", engine "postgres", engine_version "16.3" (or latest 16.x)
-- [ ] 4.5 Configure RDS instance with: instance_class "db.t3.micro", allocated_storage 20, storage_type "gp3", storage_encrypted true, db_name "petclinic", username "petclinic", password from random_password resource
-- [ ] 4.6 Configure RDS with: db_subnet_group_name, vpc_security_group_ids (RDS security group), publicly_accessible false, skip_final_snapshot true (for staging), backup_retention_period 1 (staging), multi_az false
-- [ ] 4.7 Add variable `backup_retention_days` to `variables.tf` with default 1, and use in RDS backup_retention_period
-- [ ] 4.8 Create `terraform/staging/secrets.tf` file
-- [ ] 4.9 Add Secrets Manager secret resource to `secrets.tf` with name "petclinic/staging/database", description "Database credentials for Pet Clinic staging"
-- [ ] 4.10 Add Secrets Manager secret version resource to `secrets.tf` with JSON string containing: host (RDS endpoint), port "5432", username "petclinic", password (from random_password), dbname "petclinic", engine "postgres"
-- [ ] 4.11 Run `terraform validate` and `terraform fmt` to verify and format configuration
-- [ ] 4.12 Run `terraform plan` to review RDS and Secrets Manager changes
-- [ ] 4.13 Run `terraform apply` to create RDS instance and secrets (note: RDS creation takes 10-15 minutes, be patient)
-- [ ] 4.14 Verify RDS instance status is "Available" in AWS Console RDS dashboard
-- [ ] 4.15 Verify secret exists in AWS Console Secrets Manager with correct name "petclinic/staging/database"
-- [ ] 4.16 Retrieve database credentials using `aws secretsmanager get-secret-value --secret-id petclinic/staging/database --region us-east-1 --query SecretString --output text | jq .`
-- [ ] 4.17 Test database connectivity using `psql` with credentials from Secrets Manager (install PostgreSQL client if needed), run `\l` to list databases and verify "petclinic" exists
-- [ ] 4.18 Commit RDS and Secrets Manager configuration with message: `feat: add RDS PostgreSQL database and Secrets Manager integration`
+- [x] 4.1 Create `terraform/staging/rds.tf` file
+- [x] 4.2 Add `random_password` resource to `rds.tf` for database master password (length 16, special characters allowed, no override_special to avoid Terraform special chars)
+- [x] 4.3 Add DB subnet group resource to `rds.tf` with name "petclinic-staging-db-subnet-group" including the private subnet
+- [x] 4.4 Add RDS PostgreSQL instance resource to `rds.tf` with identifier "petclinic-staging-db", engine "postgres", engine_version "16.3" (or latest 16.x)
+- [x] 4.5 Configure RDS instance with: instance_class "db.t3.micro", allocated_storage 20, storage_type "gp3", storage_encrypted true, db_name "petclinic", username "petclinic", password from random_password resource
+- [x] 4.6 Configure RDS with: db_subnet_group_name, vpc_security_group_ids (RDS security group), publicly_accessible false, skip_final_snapshot true (for staging), backup_retention_period 1 (staging), multi_az false
+- [x] 4.7 Add variable `backup_retention_days` to `variables.tf` with default 1, and use in RDS backup_retention_period
+- [x] 4.8 Create `terraform/staging/secrets.tf` file
+- [x] 4.9 Add Secrets Manager secret resource to `secrets.tf` with name "petclinic/staging/database", description "Database credentials for Pet Clinic staging"
+- [x] 4.10 Add Secrets Manager secret version resource to `secrets.tf` with JSON string containing: host (RDS endpoint), port "5432", username "petclinic", password (from random_password), dbname "petclinic", engine "postgres"
+- [x] 4.11 Run `terraform validate` and `terraform fmt` to verify and format configuration
+- [x] 4.12 Run `terraform plan` to review RDS and Secrets Manager changes
+- [x] 4.13 Run `terraform apply` to create RDS instance and secrets (note: RDS creation takes 10-15 minutes, be patient)
+- [x] 4.14 Verify RDS instance status is "Available" in AWS Console RDS dashboard
+- [x] 4.15 Verify secret exists in AWS Console Secrets Manager with correct name "petclinic/staging/database"
+- [x] 4.16 Retrieve database credentials using `aws secretsmanager get-secret-value --secret-id petclinic/staging/database --region us-east-1 --query SecretString --output text | jq .`
+- [x] 4.17 Test database connectivity using `psql` with credentials from Secrets Manager (install PostgreSQL client if needed), run `\l` to list databases and verify "petclinic" exists
+- [x] 4.18 Commit RDS and Secrets Manager configuration with message: `feat: add RDS PostgreSQL database and Secrets Manager integration`
 
 ---
 
