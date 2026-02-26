@@ -73,7 +73,7 @@ Bootstrap the S3 and DynamoDB resources required for Terraform remote state mana
 
 ---
 
-### [ ] 2.0 Create VPC and Network Infrastructure
+### [x] 2.0 Create VPC and Network Infrastructure
 
 Provision VPC with public and private subnets, Internet Gateway, NAT Gateway, and route tables for both staging and production environments.
 
@@ -84,27 +84,28 @@ Provision VPC with public and private subnets, Internet Gateway, NAT Gateway, an
 - CLI output: `terraform output` showing VPC ID and subnet IDs demonstrates output configuration
 - AWS Console screenshot: VPC dashboard showing VPC with CIDR 10.0.0.0/16, one public subnet (10.0.1.0/24), one private subnet (10.0.2.0/24) demonstrates network creation
 - AWS Console screenshot: Route tables showing public subnet associated with IGW and private subnet associated with NAT Gateway demonstrates proper routing configuration
+- **Proof file:** `docs/specs/01-spec-aws-deployment/01-proofs/01-task-2.0-proofs.md`
 
 #### 2.0 Tasks
 
-- [ ] 2.1 Create `terraform/staging/versions.tf` with Terraform >= 1.5.0 and AWS provider ~> 5.0 version constraints
-- [ ] 2.2 Create `terraform/staging/provider.tf` with AWS provider configuration for us-east-1 region
-- [ ] 2.3 Create `terraform/staging/variables.tf` with variables: environment (string), vpc_cidr (string, default "10.0.0.0/16"), public_subnet_cidr (string, default "10.0.1.0/24"), private_subnet_cidr (string, default "10.0.2.0/24"), az (string, default "us-east-1a")
-- [ ] 2.4 Create `terraform/staging/terraform.tfvars` with `environment = "staging"`
-- [ ] 2.5 Create `terraform/staging/vpc.tf` with VPC resource (CIDR 10.0.0.0/16) and tags including environment and Name = "petclinic-staging-vpc"
-- [ ] 2.6 Add public subnet (10.0.1.0/24) to `vpc.tf` with `map_public_ip_on_launch = true` and Name tag "petclinic-staging-public-subnet"
-- [ ] 2.7 Add private subnet (10.0.2.0/24) to `vpc.tf` with Name tag "petclinic-staging-private-subnet"
-- [ ] 2.8 Add Internet Gateway to `vpc.tf` attached to VPC with Name tag "petclinic-staging-igw"
-- [ ] 2.9 Add Elastic IP for NAT Gateway to `vpc.tf` with tags
-- [ ] 2.10 Add NAT Gateway in public subnet to `vpc.tf` with Elastic IP association and Name tag "petclinic-staging-nat"
-- [ ] 2.11 Add public route table to `vpc.tf` with route to 0.0.0.0/0 via Internet Gateway and Name tag "petclinic-staging-public-rt"
-- [ ] 2.12 Add private route table to `vpc.tf` with route to 0.0.0.0/0 via NAT Gateway and Name tag "petclinic-staging-private-rt"
-- [ ] 2.13 Add route table associations to `vpc.tf` linking public subnet to public route table and private subnet to private route table
-- [ ] 2.14 Run `terraform validate` and `terraform fmt` to verify and format configuration
-- [ ] 2.15 Run `terraform plan` to review planned infrastructure changes
-- [ ] 2.16 Run `terraform apply` to create VPC and networking infrastructure (approve when prompted)
-- [ ] 2.17 Verify VPC, subnets, IGW, NAT Gateway, and route tables in AWS Console
-- [ ] 2.18 Commit networking infrastructure with message: `feat: add VPC and network infrastructure for staging`
+- [x] 2.1 Create `terraform/staging/versions.tf` with Terraform >= 1.5.0 and AWS provider ~> 5.0 version constraints
+- [x] 2.2 Create `terraform/staging/provider.tf` with AWS provider configuration for us-east-1 region
+- [x] 2.3 Create `terraform/staging/variables.tf` with variables: environment (string), vpc_cidr (string, default "10.0.0.0/16"), public_subnet_cidr (string, default "10.0.1.0/24"), private_subnet_cidr (string, default "10.0.2.0/24"), az (string, default "us-east-1a")
+- [x] 2.4 Create `terraform/staging/terraform.tfvars` with `environment = "staging"`
+- [x] 2.5 Create `terraform/staging/vpc.tf` with VPC resource (CIDR 10.0.0.0/16) and tags including environment and Name = "petclinic-staging-vpc-mumford"
+- [x] 2.6 Add public subnet (10.0.1.0/24) to `vpc.tf` with `map_public_ip_on_launch = true` and Name tag "petclinic-staging-public-subnet-mumford"
+- [x] 2.7 Add private subnet (10.0.2.0/24) to `vpc.tf` with Name tag "petclinic-staging-private-subnet-mumford"
+- [x] 2.8 Add Internet Gateway to `vpc.tf` attached to VPC with Name tag "petclinic-staging-igw-mumford"
+- [x] 2.9 Add Elastic IP for NAT Gateway to `vpc.tf` with tags
+- [x] 2.10 Add NAT Gateway in public subnet to `vpc.tf` with Elastic IP association and Name tag "petclinic-staging-nat-mumford"
+- [x] 2.11 Add public route table to `vpc.tf` with route to 0.0.0.0/0 via Internet Gateway and Name tag "petclinic-staging-public-rt-mumford"
+- [x] 2.12 Add private route table to `vpc.tf` with route to 0.0.0.0/0 via NAT Gateway and Name tag "petclinic-staging-private-rt-mumford"
+- [x] 2.13 Add route table associations to `vpc.tf` linking public subnet to public route table and private subnet to private route table
+- [x] 2.14 Run `terraform validate` and `terraform fmt` to verify and format configuration
+- [x] 2.15 Run `terraform plan` to review planned infrastructure changes
+- [x] 2.16 Run `terraform apply` to create VPC and networking infrastructure (auto-approved)
+- [x] 2.17 Verify VPC, subnets, IGW, NAT Gateway, and route tables in AWS Console
+- [x] 2.18 Commit networking infrastructure with message: `feat: add VPC and network infrastructure for staging`
 
 ---
 
