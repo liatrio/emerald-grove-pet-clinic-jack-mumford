@@ -2,6 +2,8 @@ package org.springframework.samples.petclinic.chatbot;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chatbot")
 @Validated
 public class ChatbotController {
+
+	private static final Logger logger = LoggerFactory.getLogger(ChatbotController.class);
 
 	private final ChatbotService chatbotService;
 
@@ -56,6 +60,7 @@ public class ChatbotController {
 			return ResponseEntity.ok(new ChatbotResponse(response));
 		}
 		catch (Exception e) {
+			logger.error("Error processing chatbot request for session {}", sessionId, e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(new ChatbotResponse("An error occurred while processing your request. Please try again."));
 		}

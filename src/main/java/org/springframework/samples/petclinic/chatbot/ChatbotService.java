@@ -8,6 +8,9 @@ import org.springframework.samples.petclinic.owner.Visit;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +29,8 @@ import java.util.regex.Pattern;
 @Service
 public class ChatbotService {
 
+	private static final Logger logger = LoggerFactory.getLogger(ChatbotService.class);
+
 	private final WebClient webClient;
 
 	private final PetQueryService petQueryService;
@@ -35,8 +40,6 @@ public class ChatbotService {
 	private final String apiKey;
 
 	private final ObjectMapper objectMapper;
-
-	private static final Pattern TEXT_PATTERN = Pattern.compile("\"text\"\\s*:\\s*\"([^\"]+)\"");
 
 	private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -116,7 +119,8 @@ public class ChatbotService {
 			return extractResponseText(responseJson);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("Failed to process chatbot message: " + e.getMessage(), e);
+			logger.error("Failed to process chatbot message", e);
+			throw new RuntimeException("Failed to process chatbot message", e);
 		}
 	}
 

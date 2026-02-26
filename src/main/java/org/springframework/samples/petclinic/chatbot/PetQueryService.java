@@ -20,9 +20,11 @@ public class PetQueryService {
 
 	private final OwnerRepository ownerRepository;
 
-	// Pattern to detect potentially dangerous characters for SQL injection
+	// Pattern to detect potentially dangerous SQL injection patterns.
+	// Note: Spring Data JPA uses parameterized queries, so SQL injection via
+	// parameters is not possible. This is a defense-in-depth measure only.
 	private static final Pattern DANGEROUS_CHARS = Pattern
-		.compile("[';\"\\-\\-]|(?i)(drop|delete|insert|update|union|select|exec|execute)");
+		.compile("[';\"\\\\]|--|((?i)(\\bdrop\\b|\\bdelete\\b|\\binsert\\b|\\bupdate\\b|\\bunion\\b|\\bselect\\b|\\bexec\\b|\\bexecute\\b))");
 
 	/**
 	 * Creates a new pet query service.
