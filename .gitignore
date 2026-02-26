@@ -46,8 +46,10 @@ out/
 _site/
 *.css
 !petclinic.css
+!chatbot.css
 temp
 
 ### Local Dev ###
 .local/
 e2e-tests/test-results/
+/data/

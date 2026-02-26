@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<body>
+<div th:fragment="chatbot">
+  <!-- Floating chat button (collapsed state) -->
+  <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Open chat">
+    <i class="fa fa-comments"></i>
+  </button>
+
+  <!-- Chat widget (expanded state, initially hidden) -->
+  <div id="chatbot-widget" class="chatbot-widget" style="display: none;">
+    <div class="chatbot-header">
+      <h5 th:text="#{chatbot.title}">Pet Clinic Assistant</h5>
+      <button id="chatbot-close" class="chatbot-close" aria-label="Close chat">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <div id="chatbot-messages" class="chatbot-messages">
+      <!-- Suggested questions (shown initially) -->
+      <div id="chatbot-suggestions" class="chatbot-suggestions">
+        <p th:text="#{chatbot.suggestions.intro}">Ask me about:</p>
+        <button class="chatbot-suggestion-btn" th:text="#{chatbot.suggestion1}">How do I schedule a visit?</button>
+        <button class="chatbot-suggestion-btn" th:text="#{chatbot.suggestion2}">Tell me about appointment types</button>
+      </div>
+    </div>
+
+    <!-- Typing indicator (hidden initially) -->
+    <div id="chatbot-typing" class="chatbot-typing" style="display: none;">
+      <span></span><span></span><span></span>
+    </div>
+
+    <div class="chatbot-input-area">
+      <input
+        type="text"
+        id="chatbot-input"
+        class="chatbot-input"
+        th:placeholder="#{chatbot.placeholder}"
+        placeholder="Ask a question..."
+        maxlength="500"
+      />
+      <button id="chatbot-send" class="chatbot-send-btn" aria-label="Send message">
+        <i class="fa fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

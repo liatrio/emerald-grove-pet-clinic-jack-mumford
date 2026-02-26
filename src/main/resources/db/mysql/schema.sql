@@ -52,5 +52,12 @@ CREATE TABLE IF NOT EXISTS visits (
   pet_id INT(4) UNSIGNED,
   visit_date DATE,
   description VARCHAR(255),
-  FOREIGN KEY (pet_id) REFERENCES pets(id)
+  appointment_time DATETIME,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  visit_type VARCHAR(20),
+  request_notes VARCHAR(500),
+  version INT,
+  FOREIGN KEY (pet_id) REFERENCES pets(id),
+  INDEX(status),
+  INDEX(visit_date)
 ) engine=InnoDB;
