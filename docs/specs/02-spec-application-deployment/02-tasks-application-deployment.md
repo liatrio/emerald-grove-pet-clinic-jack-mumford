@@ -141,7 +141,7 @@ Create ECS Fargate cluster with task definition configured for 0.5 vCPU and 1024
 
 ---
 
-### [ ] 3.0 Deploy Application Load Balancer and Target Group
+### [x] 3.0 Deploy Application Load Balancer and Target Group
 
 Provision internet-facing Application Load Balancer in public subnets with HTTP listener, target group configured for Fargate IP targets, and health checks on Spring Boot Actuator endpoint.
 
