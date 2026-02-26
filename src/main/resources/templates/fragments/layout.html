@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap">
   <link th:href="@{/webjars/font-awesome/css/font-awesome.min.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}" />
+  <link rel="stylesheet" th:href="@{/resources/css/chatbot.css}" />
   <style>
     .language-selector {
       margin-right: 16px;
@@ -139,12 +140,6 @@
             <span th:text="#{upcomingVisits}">Upcoming Visits</span>
           </li>
 
-          <li
-            th:replace="~{::menuItem ('/oups','error','trigger a RuntimeException to see how it is handled','exclamation-triangle',#{error})}">
-            <span class="fa exclamation-triangle" aria-hidden="true"></span>
-            <span th:text="#{error}">Error</span>
-          </li>
-
         </ul>
       </div>
     </div>
@@ -163,7 +158,11 @@
     </footer>
   </div>
 
+  <div th:replace="~{fragments/chatbot :: chatbot}"></div>
+
   <script th:src="@{/webjars/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script th:src="@{/resources/js/chatbot.js}"></script>
 
 </body>
 
