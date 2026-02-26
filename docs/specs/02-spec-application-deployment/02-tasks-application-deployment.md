@@ -234,7 +234,7 @@ Launch ECS service with 2 desired tasks in private subnets, register with ALB ta
 
 ---
 
-### [ ] 5.0 Validate End-to-End Application Access and Monitoring
+### [x] 5.0 Validate End-to-End Application Access and Monitoring
 
 Verify Pet Clinic application is fully operational via ALB DNS, successfully connected to RDS PostgreSQL database, serving content correctly, passing health checks, and logging to CloudWatch with comprehensive proof artifacts.
 
