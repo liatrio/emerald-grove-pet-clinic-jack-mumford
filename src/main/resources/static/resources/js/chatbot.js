@@ -261,13 +261,15 @@
   }
 
   /**
-   * Render markdown to HTML using marked.js
+   * Render markdown to HTML using marked.js with sanitization.
+   * All output is sanitized to prevent XSS from AI responses.
    */
   function renderMarkdown(text) {
     // Check if marked is available
     if (typeof marked !== 'undefined') {
       try {
-        return marked.parse(text);
+        var rawHtml = marked.parse(text);
+        return sanitizeHtml(rawHtml);
       } catch (error) {
         console.error('Error parsing markdown:', error);
         return escapeHtml(text);
@@ -276,6 +278,41 @@
       // Fallback: basic formatting
       return formatBasicMarkdown(text);
     }
+  }
+
+  /**
+   * Sanitize HTML output to prevent XSS attacks.
+   * Only allows safe tags and attributes.
+   */
+  function sanitizeHtml(html) {
+    var allowedTags = ['p', 'br', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li',
+                       'code', 'pre', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                       'a', 'table', 'thead', 'tbody', 'tr', 'th', 'td'];
+    var div = document.createElement('div');
+    div.innerHTML = html;
+
+    // Remove script, style, iframe, object, embed tags
+    var dangerousTags = div.querySelectorAll('script, style, iframe, object, embed, form, input, textarea, button');
+    dangerousTags.forEach(function(el) { el.remove(); });
+
+    // Sanitize all remaining elements
+    var allElements = div.querySelectorAll('*');
+    allElements.forEach(function(el) {
+      var tagName = el.tagName.toLowerCase();
+      if (allowedTags.indexOf(tagName) === -1) {
+        // Replace disallowed tag with its text content
+        el.replaceWith(document.createTextNode(el.textContent));
+        return;
+      }
+      // Remove event handler attributes and javascript: URLs
+      Array.from(el.attributes).forEach(function(attr) {
+        if (attr.name.startsWith('on') || (attr.name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+          el.removeAttribute(attr.name);
+        }
+      });
+    });
+
+    return div.innerHTML;
   }
 
   /**
@@ -293,8 +330,8 @@
     // Italic: *text*
     formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
-    // Links: [text](url)
-    formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    // Links: [text](url) - only allow http/https URLs to prevent javascript: XSS
+    formatted = formatted.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
     // Code: `code`
     formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
