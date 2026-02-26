@@ -30,7 +30,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * Simple JavaBean domain object representing a visit.
@@ -60,7 +59,6 @@ public class Visit extends BaseEntity {
 	@Column(name = "status", nullable = false, length = 20)
 	private VisitStatus status = VisitStatus.PENDING;
 
-	@NotNull(message = "Visit type is required")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "visit_type", length = 20)
 	private VisitType visitType;
