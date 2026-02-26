@@ -36,3 +36,9 @@ variable "backup_retention_days" {
   type        = number
   default     = 1
 }
+
+variable "ecr_repository_name" {
+  description = "Name of the ECR repository for container images"
+  type        = string
+  default     = "petclinic-staging-ecr-mumford"
+}
