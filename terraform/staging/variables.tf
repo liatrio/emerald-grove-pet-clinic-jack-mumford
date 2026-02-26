@@ -42,3 +42,21 @@ variable "ecr_repository_name" {
   type        = string
   default     = "petclinic-staging-ecr-mumford"
 }
+
+variable "ecs_task_cpu" {
+  description = "CPU units for ECS task (1 vCPU = 1024)"
+  type        = number
+  default     = 512
+}
+
+variable "ecs_task_memory" {
+  description = "Memory for ECS task in MB"
+  type        = number
+  default     = 1024
+}
+
+variable "ecs_container_port" {
+  description = "Port on which the application container listens"
+  type        = number
+  default     = 8080
+}
