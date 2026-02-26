@@ -184,7 +184,7 @@ Provision internet-facing Application Load Balancer in public subnets with HTTP 
 
 ---
 
-### [ ] 4.0 Deploy ECS Service with Auto-Scaling Policies
+### [x] 4.0 Deploy ECS Service with Auto-Scaling Policies
 
 Launch ECS service with 2 desired tasks in private subnets, register with ALB target group, configure auto-scaling policies for CPU and memory utilization, and implement scheduled scaling for off-hours cost optimization.
 
