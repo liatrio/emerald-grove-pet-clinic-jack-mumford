@@ -56,3 +56,5 @@ CREATE TABLE IF NOT EXISTS visits (
   version          INT
 );
 CREATE INDEX ON visits (pet_id);
+CREATE INDEX ON visits (status);
+CREATE INDEX ON visits (visit_date);

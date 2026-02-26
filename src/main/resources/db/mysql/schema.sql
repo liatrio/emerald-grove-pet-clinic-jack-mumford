@@ -57,5 +57,7 @@ CREATE TABLE IF NOT EXISTS visits (
   visit_type VARCHAR(20),
   request_notes VARCHAR(500),
   version INT,
-  FOREIGN KEY (pet_id) REFERENCES pets(id)
+  FOREIGN KEY (pet_id) REFERENCES pets(id),
+  INDEX(status),
+  INDEX(visit_date)
 ) engine=InnoDB;

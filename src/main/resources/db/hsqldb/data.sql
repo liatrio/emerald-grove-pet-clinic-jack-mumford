@@ -53,8 +53,8 @@ INSERT INTO visits VALUES (3, 8, '2013-01-03', 'neutered', NULL, 'COMPLETED', 'S
 INSERT INTO visits VALUES (4, 7, '2013-01-04', 'spayed', NULL, 'COMPLETED', 'SURGERY', NULL, 0);
 
 -- Add upcoming visits for testing the "Upcoming Visits" feature
-INSERT INTO visits VALUES (5, 1, '2026-03-15', 'annual checkup', NULL, 'PENDING', 'WELLNESS', 'Regular wellness exam', 0);
+INSERT INTO visits VALUES (5, 1, '2026-03-15', 'annual checkup', NULL, 'PENDING', 'CHECKUP', 'Regular wellness exam', 0);
 INSERT INTO visits VALUES (6, 2, '2026-03-20', 'vaccination booster', NULL, 'PENDING', 'VACCINATION', 'Rabies booster shot', 0);
-INSERT INTO visits VALUES (7, 3, '2026-03-25', 'dental cleaning', NULL, 'PENDING', 'DENTISTRY', 'Routine dental cleaning', 0);
-INSERT INTO visits VALUES (8, 4, '2026-04-01', 'follow-up exam', NULL, 'PENDING', 'WELLNESS', 'Post-surgery follow-up', 0);
-INSERT INTO visits VALUES (9, 5, '2026-04-10', 'grooming appointment', NULL, 'PENDING', 'GROOMING', 'Nail trim and bath', 0);
+INSERT INTO visits VALUES (7, 3, '2026-03-25', 'dental cleaning', NULL, 'PENDING', 'DENTAL', 'Routine dental cleaning', 0);
+INSERT INTO visits VALUES (8, 4, '2026-04-01', 'follow-up exam', NULL, 'PENDING', 'FOLLOW_UP', 'Post-surgery follow-up', 0);
+INSERT INTO visits VALUES (9, 5, '2026-04-10', 'consultation appointment', NULL, 'PENDING', 'CONSULTATION', 'General health consultation', 0);
