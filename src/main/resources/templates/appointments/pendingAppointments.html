@@ -37,7 +37,8 @@
                th:text="${visit.pet.owner.firstName + ' ' + visit.pet.owner.lastName}">George Franklin</a>
           </td>
           <td>
-            <span class="badge bg-info" th:text="${visit.visitType.displayName}">Wellness Checkup</span>
+            <span class="badge bg-info" th:if="${visit.visitType != null}" th:text="${visit.visitType.displayName}">Wellness Checkup</span>
+            <span class="badge bg-secondary" th:if="${visit.visitType == null}">-</span>
           </td>
           <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}">2026-03-15</td>
           <td th:text="${visit.description}">Regular wellness checkup</td>
