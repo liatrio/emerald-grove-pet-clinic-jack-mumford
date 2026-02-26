@@ -188,25 +188,69 @@ PGPASSWORD=$DB_PASS psql -h $DB_HOST -U $DB_USER -d $DB_NAME
 
 After applying infrastructure, the following outputs are available:
 
+### Network Outputs
+
 | Output Name | Description |
 |-------------|-------------|
 | `vpc_id` | VPC identifier for the environment |
-| `public_subnet_id` | Public subnet ID (for load balancers) |
-| `private_subnet_id` | Private subnet ID (for application/database) |
+| `vpc_cidr` | CIDR block of the VPC (10.0.0.0/16) |
+| `public_subnet_id` | Public subnet ID (for ALB and NAT Gateway) |
+| `private_subnet_id` | First private subnet ID (for application and RDS) |
+| `private_subnet_2_id` | Second private subnet ID (for RDS multi-AZ support) |
+| `availability_zone` | Primary availability zone for resources |
+| `internet_gateway_id` | ID of the Internet Gateway |
+| `nat_gateway_id` | ID of the NAT Gateway |
+| `nat_gateway_public_ip` | Public IP address of the NAT Gateway |
+
+### Security Group Outputs
+
+| Output Name | Description |
+|-------------|-------------|
 | `alb_security_group_id` | Security group for Application Load Balancer |
 | `app_security_group_id` | Security group for application instances |
 | `rds_security_group_id` | Security group for RDS database |
-| `rds_endpoint` | RDS PostgreSQL connection endpoint |
-| `rds_port` | RDS PostgreSQL port (default: 5432) |
+
+### Database Outputs
+
+| Output Name | Description |
+|-------------|-------------|
+| `rds_endpoint` | RDS PostgreSQL connection endpoint (host:port) |
+| `rds_address` | Hostname of the RDS PostgreSQL database |
+| `rds_port` | RDS PostgreSQL port (5432) |
 | `rds_database_name` | Database name (petclinic) |
+| `rds_username` | Master username (sensitive, redacted in output) |
+| `rds_arn` | ARN of the RDS PostgreSQL instance |
+
+### Secrets Manager Outputs
+
+| Output Name | Description |
+|-------------|-------------|
 | `secrets_manager_secret_arn` | ARN of the Secrets Manager secret |
 | `secrets_manager_secret_name` | Name of the Secrets Manager secret |
+
+### Environment Outputs
+
+| Output Name | Description |
+|-------------|-------------|
+| `environment` | Environment name (staging or production) |
+| `region` | AWS region where resources are deployed |
+
+### Using Outputs
 
 Use outputs in subsequent infrastructure or application configuration:
 
 ```bash
+# View all outputs
+terraform output
+
+# View specific output
 terraform output vpc_id
 terraform output rds_endpoint
+
+# Use in scripts
+VPC_ID=$(terraform output -raw vpc_id)
+RDS_ENDPOINT=$(terraform output -raw rds_endpoint)
+SECRET_NAME=$(terraform output -raw secrets_manager_secret_name)
 ```
 
 ## Troubleshooting
