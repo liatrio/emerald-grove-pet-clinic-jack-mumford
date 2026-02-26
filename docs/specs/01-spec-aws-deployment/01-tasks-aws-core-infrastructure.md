@@ -109,7 +109,7 @@ Provision VPC with public and private subnets, Internet Gateway, NAT Gateway, an
 
 ---
 
-### [ ] 3.0 Configure Security Groups for Database and Application
+### [x] 3.0 Configure Security Groups for Database and Application
 
 Create security groups that restrict database access to application resources only and prepare for future load balancer integration.
 
@@ -117,26 +117,27 @@ Create security groups that restrict database access to application resources on
 
 - CLI output: `terraform apply` output showing security groups created demonstrates security configuration
 - CLI output: `terraform state list | grep aws_security_group` showing all security group resources demonstrates security group tracking
-- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-rds-sg` with ingress rule for PostgreSQL (port 5432) from application security group demonstrates database security
-- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-app-sg` with ingress rules for port 8080 from ALB security group demonstrates application access control
-- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-alb-sg` with ingress rules for HTTP (80) and HTTPS (443) from 0.0.0.0/0 demonstrates load balancer public access
+- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-rds-sg-mumford` with ingress rule for PostgreSQL (port 5432) from application security group demonstrates database security
+- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-app-sg-mumford` with ingress rules for port 8080 from ALB security group demonstrates application access control
+- AWS Console screenshot: Security groups dashboard showing `petclinic-staging-alb-sg-mumford` with ingress rules for HTTP (80) and HTTPS (443) from 0.0.0.0/0 demonstrates load balancer public access
+- **Proof file:** `docs/specs/01-spec-aws-deployment/01-proofs/01-task-3.0-proofs.md`
 
 #### 3.0 Tasks
 
-- [ ] 3.1 Create `terraform/staging/security_groups.tf` file
-- [ ] 3.2 Add ALB security group resource to `security_groups.tf` with name "petclinic-staging-alb-sg", description "Security group for Application Load Balancer"
-- [ ] 3.3 Add ingress rules to ALB security group for HTTP (port 80) and HTTPS (port 443) from 0.0.0.0/0
-- [ ] 3.4 Add application security group resource to `security_groups.tf` with name "petclinic-staging-app-sg", description "Security group for application instances"
-- [ ] 3.5 Add ingress rule to application security group for port 8080 from ALB security group (use security_group_id reference)
-- [ ] 3.6 Add RDS security group resource to `security_groups.tf` with name "petclinic-staging-rds-sg", description "Security group for RDS PostgreSQL database"
-- [ ] 3.7 Add ingress rule to RDS security group for PostgreSQL (port 5432) from application security group (use security_group_id reference)
-- [ ] 3.8 Add egress rules to all three security groups allowing all outbound traffic (0.0.0.0/0, all protocols)
-- [ ] 3.9 Add tags to all security groups including environment and descriptive Name tags
-- [ ] 3.10 Run `terraform validate` and `terraform fmt` to verify and format configuration
-- [ ] 3.11 Run `terraform plan` to review security group changes
-- [ ] 3.12 Run `terraform apply` to create security groups
-- [ ] 3.13 Verify security groups and rules in AWS Console EC2 Security Groups dashboard
-- [ ] 3.14 Commit security group configuration with message: `feat: add security groups for ALB, application, and RDS`
+- [x] 3.1 Create `terraform/staging/security_groups.tf` file
+- [x] 3.2 Add ALB security group resource to `security_groups.tf` with name "petclinic-staging-alb-sg-mumford", description "Security group for Application Load Balancer"
+- [x] 3.3 Add ingress rules to ALB security group for HTTP (port 80) and HTTPS (443) from 0.0.0.0/0
+- [x] 3.4 Add application security group resource to `security_groups.tf` with name "petclinic-staging-app-sg-mumford", description "Security group for application instances"
+- [x] 3.5 Add ingress rule to application security group for port 8080 from ALB security group (use security_group_id reference)
+- [x] 3.6 Add RDS security group resource to `security_groups.tf` with name "petclinic-staging-rds-sg-mumford", description "Security group for RDS PostgreSQL database"
+- [x] 3.7 Add ingress rule to RDS security group for PostgreSQL (5432) from application security group (use security_group_id reference)
+- [x] 3.8 Add egress rules to all three security groups allowing all outbound traffic (0.0.0.0/0, all protocols)
+- [x] 3.9 Add tags to all security groups including environment and descriptive Name tags
+- [x] 3.10 Run `terraform validate` and `terraform fmt` to verify and format configuration
+- [x] 3.11 Run `terraform plan` to review security group changes
+- [x] 3.12 Run `terraform apply` to create security groups
+- [x] 3.13 Verify security groups and rules in AWS Console EC2 Security Groups dashboard
+- [x] 3.14 Commit security group configuration with message: `feat: add security groups for ALB, application, and RDS`
 
 ---
 
