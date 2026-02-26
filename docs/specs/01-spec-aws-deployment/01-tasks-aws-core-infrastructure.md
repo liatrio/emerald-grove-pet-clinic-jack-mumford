@@ -176,7 +176,7 @@ Provision RDS PostgreSQL database instance in private subnet with automated back
 
 ---
 
-### [ ] 5.0 Configure Terraform Outputs and Complete Documentation
+### [x] 5.0 Configure Terraform Outputs and Complete Documentation
 
 Define Terraform outputs for all infrastructure resources and create comprehensive documentation for deployment, troubleshooting, and infrastructure management.
 
@@ -190,26 +190,26 @@ Define Terraform outputs for all infrastructure resources and create comprehensi
 
 #### 5.0 Tasks
 
-- [ ] 5.1 Create `terraform/staging/outputs.tf` file
-- [ ] 5.2 Add outputs to `outputs.tf` for: vpc_id, public_subnet_id, private_subnet_id (with descriptions)
-- [ ] 5.3 Add outputs for: alb_security_group_id, app_security_group_id, rds_security_group_id (with descriptions)
-- [ ] 5.4 Add outputs for: rds_endpoint, rds_port, rds_database_name (with descriptions)
-- [ ] 5.5 Add outputs for: secrets_manager_secret_arn, secrets_manager_secret_name (with descriptions)
-- [ ] 5.6 Run `terraform apply` (should show no changes, just register outputs)
-- [ ] 5.7 Run `terraform output` to verify all outputs display correctly with values
-- [ ] 5.8 Update `terraform/README.md` with Prerequisites section: Terraform >= 1.5.0, AWS CLI configured, appropriate IAM permissions
-- [ ] 5.9 Add State Backend Bootstrap section to README with AWS CLI commands for S3 bucket and DynamoDB table creation
-- [ ] 5.10 Add Staging Deployment section to README with: `cd terraform/staging`, `terraform init`, `terraform plan`, `terraform apply` steps
-- [ ] 5.11 Add Production Deployment section to README (placeholder noting production setup follows same pattern as staging with different directory)
-- [ ] 5.12 Add Retrieving Database Credentials section to README with AWS CLI command for Secrets Manager retrieval and example of parsing JSON output
-- [ ] 5.13 Add Troubleshooting section to README with common issues: state lock errors, RDS creation timeout, connectivity issues, and resolutions
-- [ ] 5.14 Add Terraform Outputs section to README listing all available outputs and their purposes
-- [ ] 5.15 Verify all variables in `variables.tf` have descriptions and appropriate defaults
-- [ ] 5.16 Run `terraform fmt -check -recursive terraform/` to verify all files are properly formatted
-- [ ] 5.17 Verify naming conventions in AWS Console: all resources should follow pattern "petclinic-{environment}-{resource-type}"
-- [ ] 5.18 Take screenshots of AWS Console showing: VPC dashboard, Security Groups, RDS instance, Secrets Manager (for proof artifacts)
-- [ ] 5.19 Commit outputs configuration with message: `feat: add Terraform outputs for all infrastructure resources`
-- [ ] 5.20 Commit README.md documentation in **separate PR** with message: `docs: add comprehensive Terraform deployment documentation`
+- [x] 5.1 Create `terraform/staging/outputs.tf` file
+- [x] 5.2 Add outputs to `outputs.tf` for: vpc_id, public_subnet_id, private_subnet_id (with descriptions)
+- [x] 5.3 Add outputs for: alb_security_group_id, app_security_group_id, rds_security_group_id (with descriptions)
+- [x] 5.4 Add outputs for: rds_endpoint, rds_port, rds_database_name (with descriptions)
+- [x] 5.5 Add outputs for: secrets_manager_secret_arn, secrets_manager_secret_name (with descriptions)
+- [x] 5.6 Run `terraform apply` (should show no changes, just register outputs)
+- [x] 5.7 Run `terraform output` to verify all outputs display correctly with values
+- [x] 5.8 Update `terraform/README.md` with Prerequisites section: Terraform >= 1.5.0, AWS CLI configured, appropriate IAM permissions
+- [x] 5.9 Add State Backend Bootstrap section to README with AWS CLI commands for S3 bucket and DynamoDB table creation
+- [x] 5.10 Add Staging Deployment section to README with: `cd terraform/staging`, `terraform init`, `terraform plan`, `terraform apply` steps
+- [x] 5.11 Add Production Deployment section to README (placeholder noting production setup follows same pattern as staging with different directory)
+- [x] 5.12 Add Retrieving Database Credentials section to README with AWS CLI command for Secrets Manager retrieval and example of parsing JSON output
+- [x] 5.13 Add Troubleshooting section to README with common issues: state lock errors, RDS creation timeout, connectivity issues, and resolutions
+- [x] 5.14 Add Terraform Outputs section to README listing all available outputs and their purposes
+- [x] 5.15 Verify all variables in `variables.tf` have descriptions and appropriate defaults
+- [x] 5.16 Run `terraform fmt -check -recursive terraform/` to verify all files are properly formatted
+- [x] 5.17 Verify naming conventions in AWS Console: all resources should follow pattern "petclinic-{environment}-{resource-type}"
+- [x] 5.18 Take screenshots of AWS Console showing: VPC dashboard, Security Groups, RDS instance, Secrets Manager (for proof artifacts)
+- [x] 5.19 Commit outputs configuration with message: `feat: add Terraform outputs for all infrastructure resources`
+- [x] 5.20 Commit README.md documentation in **separate PR** with message: `docs: add comprehensive Terraform deployment documentation`
 
 ---
 
