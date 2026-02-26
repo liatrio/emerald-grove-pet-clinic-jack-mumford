@@ -60,3 +60,33 @@ variable "ecs_container_port" {
   type        = number
   default     = 8080
 }
+
+variable "ecs_desired_count" {
+  description = "Desired number of ECS tasks to run"
+  type        = number
+  default     = 2
+}
+
+variable "ecs_min_count" {
+  description = "Minimum number of ECS tasks for auto-scaling"
+  type        = number
+  default     = 1
+}
+
+variable "ecs_max_count" {
+  description = "Maximum number of ECS tasks for auto-scaling"
+  type        = number
+  default     = 4
+}
+
+variable "cpu_target_value" {
+  description = "Target CPU utilization percentage for auto-scaling"
+  type        = number
+  default     = 70
+}
+
+variable "memory_target_value" {
+  description = "Target memory utilization percentage for auto-scaling"
+  type        = number
+  default     = 80
+}

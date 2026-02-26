@@ -28,6 +28,25 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Inline policy for task execution role to retrieve secrets at container startup
+resource "aws_iam_role_policy" "task_execution_secrets_access" {
+  name = "task-execution-secrets-access"
+  role = aws_iam_role.ecs_task_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = aws_secretsmanager_secret.db_credentials.arn
+      }
+    ]
+  })
+}
+
 # Task Role - Used by application code for AWS service access
 data "aws_iam_policy_document" "ecs_task_assume_role" {
   statement {

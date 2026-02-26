@@ -122,3 +122,105 @@ resource "aws_ecs_task_definition" "petclinic" {
     Name = "petclinic-${var.environment}-task-mumford"
   }
 }
+
+# ECS Service
+resource "aws_ecs_service" "petclinic" {
+  name             = "petclinic-${var.environment}-service-mumford"
+  cluster          = aws_ecs_cluster.main.id
+  task_definition  = aws_ecs_task_definition.petclinic.arn
+  desired_count    = var.ecs_desired_count
+  launch_type      = "FARGATE"
+  platform_version = "LATEST"
+
+  deployment_maximum_percent         = 100
+  deployment_minimum_healthy_percent = 0
+
+  network_configuration {
+    subnets          = [aws_subnet.private.id]
+    security_groups  = [aws_security_group.app.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.app.arn
+    container_name   = "petclinic"
+    container_port   = var.ecs_container_port
+  }
+
+  health_check_grace_period_seconds = 60
+
+  depends_on = [aws_lb_listener.http]
+
+  tags = {
+    Name = "petclinic-${var.environment}-service-mumford"
+  }
+}
+
+# Auto Scaling Target
+resource "aws_appautoscaling_target" "ecs_service" {
+  max_capacity       = var.ecs_max_count
+  min_capacity       = var.ecs_min_count
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.petclinic.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+# Auto Scaling Policy - CPU
+resource "aws_appautoscaling_policy" "ecs_cpu" {
+  name               = "petclinic-${var.environment}-cpu-autoscaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value = var.cpu_target_value
+  }
+}
+
+# Auto Scaling Policy - Memory
+resource "aws_appautoscaling_policy" "ecs_memory" {
+  name               = "petclinic-${var.environment}-memory-autoscaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+    target_value = var.memory_target_value
+  }
+}
+
+# Scheduled Scaling - Scale to 0 during off-hours (10 PM EST weekdays)
+resource "aws_appautoscaling_scheduled_action" "scale_down" {
+  name               = "petclinic-${var.environment}-scale-down"
+  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  schedule           = "cron(0 22 ? * MON-FRI *)"
+
+  scalable_target_action {
+    min_capacity = 0
+    max_capacity = 0
+  }
+}
+
+# Scheduled Scaling - Scale to 2 during business hours (6 AM EST weekdays)
+resource "aws_appautoscaling_scheduled_action" "scale_up" {
+  name               = "petclinic-${var.environment}-scale-up"
+  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
+  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
+  schedule           = "cron(0 6 ? * MON-FRI *)"
+
+  scalable_target_action {
+    min_capacity = var.ecs_min_count
+    max_capacity = var.ecs_max_count
+  }
+}

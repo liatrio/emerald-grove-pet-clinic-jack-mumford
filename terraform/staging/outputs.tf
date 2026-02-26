@@ -138,3 +138,29 @@ output "alb_zone_id" {
   description = "Zone ID of the Application Load Balancer (for Route 53 alias records)"
   value       = aws_lb.main.zone_id
 }
+
+# ECS Service Outputs
+output "ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  value       = aws_ecs_cluster.main.name
+}
+
+output "ecs_cluster_arn" {
+  description = "ARN of the ECS cluster"
+  value       = aws_ecs_cluster.main.arn
+}
+
+output "ecs_service_name" {
+  description = "Name of the ECS service"
+  value       = aws_ecs_service.petclinic.name
+}
+
+output "ecs_service_id" {
+  description = "ID of the ECS service"
+  value       = aws_ecs_service.petclinic.id
+}
+
+output "ecs_task_definition_arn" {
+  description = "ARN of the ECS task definition"
+  value       = aws_ecs_task_definition.petclinic.arn
+}
