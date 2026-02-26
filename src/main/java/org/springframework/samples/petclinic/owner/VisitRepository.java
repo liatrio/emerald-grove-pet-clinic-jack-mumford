@@ -77,4 +77,15 @@ public interface VisitRepository extends Repository<Visit, Integer> {
 	List<Visit> findUpcomingVisitsWithFilters(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate,
 			@Param("petType") String petType, @Param("ownerLastName") String ownerLastName);
 
+	/**
+	 * Retrieve all {@link Visit}s from the data store with the specified status, ordered
+	 * by date in ascending order. Uses JOIN FETCH to eagerly load Pet, Owner, and PetType
+	 * relationships to prevent N+1 query issues.
+	 * @param status the visit status to filter by
+	 * @return a List of {@link Visit}s matching the status (or an empty List if none
+	 * found)
+	 */
+	@Query("SELECT v FROM Visit v JOIN FETCH v.pet p JOIN FETCH p.owner JOIN FETCH p.type WHERE v.status = :status ORDER BY v.date ASC")
+	List<Visit> findByStatusOrderByDateAsc(@Param("status") VisitStatus status);
+
 }

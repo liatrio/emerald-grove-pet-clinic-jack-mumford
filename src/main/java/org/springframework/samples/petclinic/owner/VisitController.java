@@ -103,6 +103,9 @@ class VisitController {
 			return "pets/createOrUpdateVisitForm";
 		}
 
+		// Set status to SCHEDULED for staff-created visits (not appointment requests)
+		visit.setStatus(VisitStatus.SCHEDULED);
+
 		owner.addVisit(petId, visit);
 		this.owners.save(owner);
 		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
