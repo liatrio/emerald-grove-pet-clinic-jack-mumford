@@ -23,8 +23,8 @@ public class PetQueryService {
 	// Pattern to detect potentially dangerous SQL injection patterns.
 	// Note: Spring Data JPA uses parameterized queries, so SQL injection via
 	// parameters is not possible. This is a defense-in-depth measure only.
-	private static final Pattern DANGEROUS_CHARS = Pattern
-		.compile("[';\"\\\\]|--|((?i)(\\bdrop\\b|\\bdelete\\b|\\binsert\\b|\\bupdate\\b|\\bunion\\b|\\bselect\\b|\\bexec\\b|\\bexecute\\b))");
+	private static final Pattern DANGEROUS_CHARS = Pattern.compile(
+			"[';\"\\\\]|--|((?i)(\\bdrop\\b|\\bdelete\\b|\\binsert\\b|\\bupdate\\b|\\bunion\\b|\\bselect\\b|\\bexec\\b|\\bexecute\\b))");
 
 	/**
 	 * Creates a new pet query service.

@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.chatbot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,6 +30,15 @@ public class ChatbotConfiguration {
 	@Bean
 	public RateLimiter rateLimiter() {
 		return new RateLimiter(10, 1, TimeUnit.MINUTES);
+	}
+
+	/**
+	 * Creates the ObjectMapper bean for JSON parsing.
+	 * @return the configured ObjectMapper
+	 */
+	@Bean
+	public ObjectMapper objectMapper() {
+		return new ObjectMapper();
 	}
 
 }
