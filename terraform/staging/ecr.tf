@@ -2,8 +2,9 @@
 # Provides secure Docker image registry for Pet Clinic application containers
 
 resource "aws_ecr_repository" "petclinic" {
-  name                 = "petclinic-staging-ecr-mumford"
+  name                 = "petclinic-staging-repo-mumford"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = true
@@ -14,7 +15,7 @@ resource "aws_ecr_repository" "petclinic" {
   }
 
   tags = {
-    Name = "petclinic-staging-ecr-mumford"
+    Name = "petclinic-staging-repo-mumford"
   }
 }
 
@@ -55,13 +56,3 @@ resource "aws_ecr_lifecycle_policy" "petclinic" {
   })
 }
 
-# Output ECR repository URI for use in task definitions
-output "ecr_repository_url" {
-  description = "URL of the ECR repository for Pet Clinic application"
-  value       = aws_ecr_repository.petclinic.repository_url
-}
-
-output "ecr_repository_arn" {
-  description = "ARN of the ECR repository"
-  value       = aws_ecr_repository.petclinic.arn
-}
