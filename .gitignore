@@ -53,3 +53,9 @@ temp
 .local/
 e2e-tests/test-results/
 /data/
+
+### Terraform ###
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+tfplan

@@ -31,10 +31,10 @@ jobs:
 
       # Sub-task 1.2: Configure AWS credentials using OIDC
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6.0.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
           role-session-name: GitHubActions-Deploy
 
       # Sub-task 1.4: Set up Java 17 for Maven builds
@@ -57,9 +57,9 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-          docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-          echo "registry=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com" >> $GITHUB_OUTPUT
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin 277802554323.dkr.ecr.us-east-1.amazonaws.com
+          echo "registry=277802554323.dkr.ecr.us-east-1.amazonaws.com" >> $GITHUB_OUTPUT
 
       # Sub-task 1.8: Determine Docker image version tag
       - name: Determine image version
