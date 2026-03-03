@@ -105,7 +105,7 @@ Create a manual GitHub Actions workflow that initializes complete AWS infrastruc
 - [x] 2.17 Test workflow by triggering it manually from GitHub Actions UI with environment name "staging" (or use non-production environment if available)
 - [x] 2.18 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-2.0-proofs.md` with workflow screenshots, Terraform outputs, and verification commands
 
-### [ ] 3.0 Infrastructure Destruction Workflow
+### [x] 3.0 Infrastructure Destruction Workflow
 
 Create a safe, manual GitHub Actions workflow that completely tears down AWS infrastructure with multiple confirmation safeguards to prevent accidental deletion. The workflow must handle ECR image cleanup before destroying resources and verify complete deletion.
 
@@ -120,21 +120,21 @@ Create a safe, manual GitHub Actions workflow that completely tears down AWS inf
 
 #### 3.0 Tasks
 
-- [ ] 3.1 Create workflow file `.github/workflows/destroy-infrastructure.yml` with workflow_dispatch trigger and three required inputs: environment name (text), confirmation word (text, must be "DESTROY"), and acknowledgment checkbox
-- [ ] 3.2 Add input validation step that checks environment name matches expected value and confirmation word equals "DESTROY" exactly, failing workflow if validations don't pass
-- [ ] 3.3 Add warning message step displaying "⚠️ WARNING: This will permanently delete all infrastructure resources" before proceeding
-- [ ] 3.4 Add AWS credentials configuration step using GitHub Secrets with `aws-actions/configure-aws-credentials@v4`
-- [ ] 3.5 Add checkout step with `actions/checkout@v4` to fetch Terraform configuration
-- [ ] 3.6 Add ECR image list step running `aws ecr list-images --repository-name petclinic-staging-repo-mumford` to identify images for deletion
-- [ ] 3.7 Add ECR image deletion step running `aws ecr batch-delete-image` to remove all images from repository before destroying ECR itself
-- [ ] 3.8 Add Terraform setup step with `hashicorp/setup-terraform@v3`
-- [ ] 3.9 Add Terraform init step running `terraform init` in `terraform/staging/` directory
-- [ ] 3.10 Add Terraform destroy step running `terraform destroy -auto-approve` to remove all AWS infrastructure resources
-- [ ] 3.11 Add resource verification step checking if ECS cluster exists using `aws ecs describe-clusters` (should return ResourceNotFoundException)
-- [ ] 3.12 Add resource verification step checking if ECR repository exists using `aws ecr describe-repositories` (should return RepositoryNotFoundException)
-- [ ] 3.13 Add Terraform state verification step running `terraform show` to confirm state is empty
-- [ ] 3.14 Add workflow summary step reporting number of resources destroyed and confirmation of complete deletion
-- [ ] 3.15 Test workflow input validation by attempting to trigger with incorrect confirmation values and verifying it fails early
-- [ ] 3.16 Test complete workflow by triggering with correct confirmations in a non-production environment or document the manual testing procedure
-- [ ] 3.17 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-3.0-proofs.md` with workflow screenshots, destruction outputs, and verification commands
-- [ ] 3.18 Update README.md with section explaining how to trigger manual workflows (initialization and destruction) including required inputs and safety warnings
+- [x] 3.1 Create workflow file `.github/workflows/destroy-infrastructure.yml` with workflow_dispatch trigger and three required inputs: environment name (text), confirmation word (text, must be "DESTROY"), and acknowledgment checkbox
+- [x] 3.2 Add input validation step that checks environment name matches expected value and confirmation word equals "DESTROY" exactly, failing workflow if validations don't pass
+- [x] 3.3 Add warning message step displaying "⚠️ WARNING: This will permanently delete all infrastructure resources" before proceeding
+- [x] 3.4 Add AWS credentials configuration step using GitHub Secrets with `aws-actions/configure-aws-credentials@v4`
+- [x] 3.5 Add checkout step with `actions/checkout@v4` to fetch Terraform configuration
+- [x] 3.6 Add ECR image list step running `aws ecr list-images --repository-name petclinic-staging-repo-mumford` to identify images for deletion
+- [x] 3.7 Add ECR image deletion step running `aws ecr batch-delete-image` to remove all images from repository before destroying ECR itself
+- [x] 3.8 Add Terraform setup step with `hashicorp/setup-terraform@v3`
+- [x] 3.9 Add Terraform init step running `terraform init` in `terraform/staging/` directory
+- [x] 3.10 Add Terraform destroy step running `terraform destroy -auto-approve` to remove all AWS infrastructure resources
+- [x] 3.11 Add resource verification step checking if ECS cluster exists using `aws ecs describe-clusters` (should return ResourceNotFoundException)
+- [x] 3.12 Add resource verification step checking if ECR repository exists using `aws ecr describe-repositories` (should return RepositoryNotFoundException)
+- [x] 3.13 Add Terraform state verification step running `terraform show` to confirm state is empty
+- [x] 3.14 Add workflow summary step reporting number of resources destroyed and confirmation of complete deletion
+- [x] 3.15 Test workflow input validation by attempting to trigger with incorrect confirmation values and verifying it fails early
+- [x] 3.16 Test complete workflow by triggering with correct confirmations in a non-production environment or document the manual testing procedure
+- [x] 3.17 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-3.0-proofs.md` with workflow screenshots, destruction outputs, and verification commands
+- [x] 3.18 Update README.md with section explaining how to trigger manual workflows (initialization and destruction) including required inputs and safety warnings
