@@ -70,7 +70,7 @@ Create a GitHub Actions workflow that automatically builds, tests, and deploys t
 - [x] 1.19 Create proof artifact directory `docs/specs/03-spec-cicd-pipeline/03-proofs/` if it doesn't exist
 - [x] 1.20 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-1.0-proofs.md` with workflow screenshots, CLI outputs, and test results
 
-### [ ] 2.0 Infrastructure Initialization Workflow
+### [x] 2.0 Infrastructure Initialization Workflow
 
 Create a manual GitHub Actions workflow that initializes complete AWS infrastructure from scratch, including Terraform resource creation, Docker image build, ECR push, and deployment verification. This enables repeatable environment setup for new deployments or disaster recovery scenarios.
 
@@ -86,24 +86,24 @@ Create a manual GitHub Actions workflow that initializes complete AWS infrastruc
 
 #### 2.0 Tasks
 
-- [ ] 2.1 Create workflow file `.github/workflows/init-infrastructure.yml` with workflow_dispatch trigger and environment name input parameter
-- [ ] 2.2 Add AWS credentials configuration step using GitHub Secrets with `aws-actions/configure-aws-credentials@v4`
-- [ ] 2.3 Add checkout step with `actions/checkout@v4` to fetch repository code including Terraform configuration
-- [ ] 2.4 Add Terraform setup step with `hashicorp/setup-terraform@v3` to install Terraform CLI
-- [ ] 2.5 Add Terraform init step running `terraform init` in `terraform/staging/` directory to initialize backend and download providers
-- [ ] 2.6 Add Terraform plan step running `terraform plan` to preview infrastructure changes before applying
-- [ ] 2.7 Add Terraform apply step running `terraform apply -auto-approve` to create all AWS resources (VPC, subnets, security groups, RDS, ECR, ECS, ALB)
-- [ ] 2.8 Add Terraform output capture step to retrieve ALB DNS name, ECR repository URL, and other key outputs
-- [ ] 2.9 Add Java 17 setup step for Maven build
-- [ ] 2.10 Add Maven package step running `./mvnw clean package -DskipTests` to build application JAR
-- [ ] 2.11 Add Docker buildx setup for multi-platform builds
-- [ ] 2.12 Add ECR login step using `aws ecr get-login-password`
-- [ ] 2.13 Add initial Docker image build and push step with `--platform linux/amd64`, tagging as `latest` and `v1.0.0`, pushing to newly created ECR repository
-- [ ] 2.14 Add ECS service verification step using `aws ecs describe-services` to check if ECS tasks are running and healthy
-- [ ] 2.15 Add application health check step running `curl` against ALB DNS endpoint `/actuator/health` to verify end-to-end setup
-- [ ] 2.16 Add workflow summary step outputting ALB DNS name, ECR repository URL, and other key endpoints
-- [ ] 2.17 Test workflow by triggering it manually from GitHub Actions UI with environment name "staging" (or use non-production environment if available)
-- [ ] 2.18 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-2.0-proofs.md` with workflow screenshots, Terraform outputs, and verification commands
+- [x] 2.1 Create workflow file `.github/workflows/init-infrastructure.yml` with workflow_dispatch trigger and environment name input parameter
+- [x] 2.2 Add AWS credentials configuration step using GitHub Secrets with `aws-actions/configure-aws-credentials@v4`
+- [x] 2.3 Add checkout step with `actions/checkout@v4` to fetch repository code including Terraform configuration
+- [x] 2.4 Add Terraform setup step with `hashicorp/setup-terraform@v3` to install Terraform CLI
+- [x] 2.5 Add Terraform init step running `terraform init` in `terraform/staging/` directory to initialize backend and download providers
+- [x] 2.6 Add Terraform plan step running `terraform plan` to preview infrastructure changes before applying
+- [x] 2.7 Add Terraform apply step running `terraform apply -auto-approve` to create all AWS resources (VPC, subnets, security groups, RDS, ECR, ECS, ALB)
+- [x] 2.8 Add Terraform output capture step to retrieve ALB DNS name, ECR repository URL, and other key outputs
+- [x] 2.9 Add Java 17 setup step for Maven build
+- [x] 2.10 Add Maven package step running `./mvnw clean package -DskipTests` to build application JAR
+- [x] 2.11 Add Docker buildx setup for multi-platform builds
+- [x] 2.12 Add ECR login step using `aws ecr get-login-password`
+- [x] 2.13 Add initial Docker image build and push step with `--platform linux/amd64`, tagging as `latest` and `v1.0.0`, pushing to newly created ECR repository
+- [x] 2.14 Add ECS service verification step using `aws ecs describe-services` to check if ECS tasks are running and healthy
+- [x] 2.15 Add application health check step running `curl` against ALB DNS endpoint `/actuator/health` to verify end-to-end setup
+- [x] 2.16 Add workflow summary step outputting ALB DNS name, ECR repository URL, and other key endpoints
+- [x] 2.17 Test workflow by triggering it manually from GitHub Actions UI with environment name "staging" (or use non-production environment if available)
+- [x] 2.18 Document proof artifacts in `docs/specs/03-spec-cicd-pipeline/03-proofs/03-task-2.0-proofs.md` with workflow screenshots, Terraform outputs, and verification commands
 
 ### [ ] 3.0 Infrastructure Destruction Workflow
 
