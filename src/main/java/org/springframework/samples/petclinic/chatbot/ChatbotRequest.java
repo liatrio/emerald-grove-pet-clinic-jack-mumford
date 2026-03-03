@@ -27,6 +27,12 @@ public class ChatbotRequest {
 	@JsonCreator
 	public ChatbotRequest(@JsonProperty("message") String message,
 			@JsonProperty("conversationHistory") List<ConversationMessage> conversationHistory) {
+		if (message == null) {
+			throw new IllegalArgumentException("Message cannot be null");
+		}
+		if (message.isBlank()) {
+			throw new IllegalArgumentException("Message cannot be blank");
+		}
 		this.message = message;
 		this.conversationHistory = conversationHistory;
 	}

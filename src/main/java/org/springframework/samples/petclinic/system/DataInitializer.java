@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.system;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.samples.petclinic.owner.PetType;
 import org.springframework.samples.petclinic.owner.PetTypeRepository;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
  * doesn't run initialization scripts.
  */
 @Component
+@ConditionalOnBean(PetTypeRepository.class)
 public class DataInitializer implements CommandLineRunner {
 
 	private final PetTypeRepository petTypeRepository;

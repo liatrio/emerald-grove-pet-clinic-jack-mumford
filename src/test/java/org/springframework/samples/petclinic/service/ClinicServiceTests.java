@@ -259,7 +259,7 @@ class ClinicServiceTests {
 		Collection<Visit> visits = pet7.getVisits();
 
 		assertThat(visits) //
-			.hasSize(2) //
+			.hasSize(4) //
 			.element(0)
 			.extracting(Visit::getDate)
 			.isNotNull();
