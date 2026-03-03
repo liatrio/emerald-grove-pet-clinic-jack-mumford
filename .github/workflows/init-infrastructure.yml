@@ -9,6 +9,10 @@ on:
         type: string
         default: 'staging'
 
+# Limit GITHUB_TOKEN permissions following principle of least privilege
+permissions:
+  contents: read
+
 jobs:
   init-infrastructure:
     runs-on: ubuntu-latest

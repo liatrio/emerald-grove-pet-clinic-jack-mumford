@@ -16,6 +16,10 @@ on:
         required: true
         type: boolean
 
+# Limit GITHUB_TOKEN permissions following principle of least privilege
+permissions:
+  contents: read
+
 jobs:
   destroy-infrastructure:
     runs-on: ubuntu-latest
