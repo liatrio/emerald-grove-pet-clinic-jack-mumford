@@ -108,6 +108,22 @@ resource "aws_iam_role_policy_attachment" "iam_full" {
 
 # ── Inline Policy: Terraform Remote State ────────────────────────────────────
 
+resource "aws_iam_role_policy" "autoscaling" {
+  name = "application-autoscaling-access"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["application-autoscaling:*"]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy" "terraform_state" {
   name = "terraform-state-access"
   role = aws_iam_role.github_actions.id
