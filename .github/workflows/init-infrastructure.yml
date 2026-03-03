@@ -19,9 +19,45 @@ jobs:
     timeout-minutes: 45
 
     steps:
+      # Validate environment input early
+      - name: Validate environment input
+        run: |
+          echo "🔍 Validating environment input..."
+
+          ENV="${{ github.event.inputs.environment }}"
+
+          # Check environment name is not empty
+          if [ -z "$ENV" ]; then
+            echo "❌ ERROR: Environment name is required"
+            exit 1
+          fi
+
+          # Validate environment name format (lowercase letters, numbers, hyphens only, max 32 chars)
+          if ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
+            echo "❌ ERROR: Environment name must contain only lowercase letters, numbers, and hyphens (max 32 characters)"
+            echo "You entered: '$ENV'"
+            exit 1
+          fi
+
+          echo "✅ Environment validation passed: $ENV"
+
       # Sub-task 2.3: Checkout repository code
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Verify Terraform directory exists after checkout
+      - name: Verify Terraform directory exists
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+
+          if [ ! -d "terraform/$ENV" ]; then
+            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
+            echo "Available environments:"
+            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
+            exit 1
+          fi
+
+          echo "✅ Terraform directory verified: terraform/$ENV"
 
       # Sub-task 2.2: Configure AWS credentials
       - name: Configure AWS credentials
@@ -68,7 +104,7 @@ jobs:
           echo "Retrieving infrastructure outputs..."
 
           ALB_DNS=$(terraform output -raw alb_dns_name)
-          ECR_REPO=$(terraform output -raw ecs_cluster_name | sed 's/cluster/repo/')
+          ECR_REPO=$(terraform output -raw ecr_repository_name)
           ECS_CLUSTER=$(terraform output -raw ecs_cluster_name)
           ECS_SERVICE=$(terraform output -raw ecs_service_name)
 
@@ -187,9 +223,10 @@ jobs:
             sleep 10
           done
 
-          echo "⚠️  Health check timed out after $MAX_ATTEMPTS attempts"
-          echo "Infrastructure is created but application may need more time to start"
-          exit 0  # Don't fail the workflow - infrastructure is created
+          echo "❌ Health check timed out after $MAX_ATTEMPTS attempts"
+          echo "Infrastructure was created but application failed to become healthy"
+          echo "Please check ECS task logs and verify the deployment"
+          exit 1  # Fail the workflow - application is not healthy
 
       # Sub-task 2.16: Workflow summary
       - name: Infrastructure summary

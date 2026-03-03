@@ -321,7 +321,7 @@ The application includes automated GitHub Actions workflows for continuous deplo
 
 Automatically deploys changes to AWS ECS when you push to `main` or create pull requests.
 
-**Trigger:** Automatic on push to `main` or pull request creation
+**Trigger:** Automatic on push to `main` or pull request events (creation, updates, reopens)
 
 **What it does:**
 1. Runs Maven unit tests
@@ -408,6 +408,7 @@ Safely tear down complete AWS infrastructure with multiple confirmation safeguar
 ### Workflow Execution Tips
 
 **Monitoring workflows:**
+
 ```bash
 # View workflow status
 gh run list --workflow=deploy.yml
@@ -420,6 +421,7 @@ gh run view <run-id> --log
 ```
 
 **Versioned deployments:**
+
 ```bash
 # Create version tag to trigger versioned build
 git tag -a v1.0.0 -m "Release version 1.0.0"

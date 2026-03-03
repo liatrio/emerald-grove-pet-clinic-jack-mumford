@@ -31,9 +31,26 @@ jobs:
         run: |
           echo "🔍 Validating destruction inputs..."
 
+          ENV="${{ github.event.inputs.environment }}"
+
           # Check environment name is not empty
-          if [ -z "${{ github.event.inputs.environment }}" ]; then
+          if [ -z "$ENV" ]; then
             echo "❌ ERROR: Environment name is required"
+            exit 1
+          fi
+
+          # Validate environment name format (lowercase letters, numbers, hyphens only, max 32 chars)
+          if ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
+            echo "❌ ERROR: Environment name must contain only lowercase letters, numbers, and hyphens (max 32 characters)"
+            echo "You entered: '$ENV'"
+            exit 1
+          fi
+
+          # Check terraform directory exists
+          if [ ! -d "terraform/$ENV" ]; then
+            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
+            echo "Available environments:"
+            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
             exit 1
           fi
 
@@ -51,7 +68,7 @@ jobs:
           fi
 
           echo "✅ All validations passed"
-          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Environment: $ENV"
 
       # Sub-task 3.3: Display prominent warning message
       - name: ⚠️  DESTRUCTION WARNING
@@ -170,6 +187,7 @@ jobs:
 
       # Sub-task 3.11: Verify ECS cluster deletion
       - name: Verify ECS cluster deleted
+        id: verify-ecs
         continue-on-error: true
         run: |
           echo "🔍 Verifying ECS cluster deletion..."
@@ -185,8 +203,9 @@ jobs:
             echo "✅ ECS cluster successfully deleted (ResourceNotFoundException)"
           fi
 
-      # Sub-task 3.12: Verify ECR repository deletion
+      # Sub-task 3.12: Verify ECR repository deleted
       - name: Verify ECR repository deleted
+        id: verify-ecr
         continue-on-error: true
         run: |
           echo "🔍 Verifying ECR repository deletion..."
@@ -213,8 +232,11 @@ jobs:
           elif [ -z "$STATE_OUTPUT" ] || [ "$STATE_OUTPUT" = "empty" ]; then
             echo "✅ Terraform state is empty"
           else
-            echo "⚠️  Terraform state may contain resources:"
+            echo "❌ ERROR: Terraform state still contains resources:"
             echo "$STATE_OUTPUT" | head -20
+            echo ""
+            echo "Please manually clean up remaining resources and run terraform destroy again"
+            exit 1
           fi
 
       # Sub-task 3.14: Destruction summary
@@ -229,12 +251,28 @@ jobs:
           echo "Executed by: ${{ github.actor }}"
           echo "Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           echo ""
+          # Map step conclusions to human-readable status
+          ECS_STATUS="${{ steps.verify-ecs.conclusion }}"
+          ECR_STATUS="${{ steps.verify-ecr.conclusion }}"
+
+          if [ "$ECS_STATUS" = "success" ]; then
+            ECS_RESULT="✅ Verified deleted"
+          else
+            ECS_RESULT="⚠️  Verification failed"
+          fi
+
+          if [ "$ECR_STATUS" = "success" ]; then
+            ECR_RESULT="✅ Verified deleted"
+          else
+            ECR_RESULT="⚠️  Verification failed"
+          fi
+
           echo "📊 Destruction Report:"
           echo "  - ECR images deleted: ${{ steps.ecr-images.outputs.image_count }}"
           echo "  - Terraform resources destroyed: Check logs above"
-          echo "  - ECS cluster: Verified deleted"
-          echo "  - ECR repository: Verified deleted"
-          echo "  - Terraform state: Verified empty"
+          echo "  - ECS cluster: $ECS_RESULT"
+          echo "  - ECR repository: $ECR_RESULT"
+          echo "  - Terraform state: Check verification above"
           echo ""
           if [ "${{ job.status }}" = "success" ]; then
             echo "✅ Infrastructure destruction completed successfully"
