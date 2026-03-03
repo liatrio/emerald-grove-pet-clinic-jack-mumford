@@ -3,8 +3,9 @@
 
 # Secrets Manager Secret
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name        = "petclinic/${var.environment}/database"
-  description = "Database credentials for Pet Clinic ${var.environment} environment"
+  name                    = "petclinic/${var.environment}/database"
+  description             = "Database credentials for Pet Clinic ${var.environment} environment"
+  recovery_window_in_days = 0
 
   tags = {
     Name = "petclinic-${var.environment}-db-credentials-mumford"
