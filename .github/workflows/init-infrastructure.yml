@@ -4,15 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment name (e.g., staging, production)'
+        description: 'Environment name (e.g., staging)'
         required: true
         type: string
-        default: 'staging'
+        default: staging
 
-# Limit GITHUB_TOKEN permissions following principle of least privilege
 permissions:
   contents: read
-  id-token: write  # Required for OIDC authentication
+  id-token: write
 
 jobs:
   init-infrastructure:
@@ -20,245 +19,116 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      # Validate environment input early
       - name: Validate environment input
         run: |
-          echo "🔍 Validating environment input..."
-
           ENV="${{ github.event.inputs.environment }}"
-
-          # Check environment name is not empty
-          if [ -z "$ENV" ]; then
-            echo "❌ ERROR: Environment name is required"
+          if [ -z "$ENV" ] || ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
+            echo "Invalid environment name: '$ENV'"
             exit 1
           fi
 
-          # Validate environment name format (lowercase letters, numbers, hyphens only, max 32 chars)
-          if ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
-            echo "❌ ERROR: Environment name must contain only lowercase letters, numbers, and hyphens (max 32 characters)"
-            echo "You entered: '$ENV'"
-            exit 1
-          fi
+      - uses: actions/checkout@v4
 
-          echo "✅ Environment validation passed: $ENV"
-
-      # Sub-task 2.3: Checkout repository code
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Verify Terraform directory exists after checkout
-      - name: Verify Terraform directory exists
+      - name: Verify Terraform directory
         run: |
-          ENV="${{ github.event.inputs.environment }}"
-
-          if [ ! -d "terraform/$ENV" ]; then
-            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
-            echo "Available environments:"
-            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
+          if [ ! -d "terraform/${{ github.event.inputs.environment }}" ]; then
+            echo "Directory terraform/${{ github.event.inputs.environment }} does not exist"
             exit 1
           fi
 
-          echo "✅ Terraform directory verified: terraform/$ENV"
-
-      # Sub-task 2.2: Configure AWS credentials using OIDC
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.0.0
+      - uses: aws-actions/configure-aws-credentials@v6.0.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
           role-session-name: GitHubActions-Init
 
-      # Sub-task 2.4: Set up Terraform CLI
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.0
 
-      # Sub-task 2.5: Initialize Terraform backend
       - name: Terraform init
         working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "Initializing Terraform for environment: ${{ github.event.inputs.environment }}"
-          terraform init
+        run: terraform init
 
-      # Sub-task 2.6: Preview infrastructure changes
       - name: Terraform plan
         working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "Planning infrastructure changes..."
-          terraform plan -out=tfplan
+        run: terraform plan -out=tfplan
 
-      # Sub-task 2.7: Create all AWS resources
       - name: Terraform apply
         id: terraform-apply
         working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "Creating AWS infrastructure..."
-          terraform apply -auto-approve tfplan
-          echo "Infrastructure creation complete!"
+        run: terraform apply -auto-approve tfplan
 
-      # Sub-task 2.8: Capture Terraform outputs
       - name: Capture Terraform outputs
-        id: terraform-outputs
+        id: tf-outputs
         working-directory: terraform/${{ github.event.inputs.environment }}
         run: |
-          echo "Retrieving infrastructure outputs..."
+          echo "alb_dns=$(terraform output -raw alb_dns_name)" >> $GITHUB_OUTPUT
+          echo "ecr_repo=$(terraform output -raw ecr_repository_name)" >> $GITHUB_OUTPUT
+          echo "ecs_cluster=$(terraform output -raw ecs_cluster_name)" >> $GITHUB_OUTPUT
+          echo "ecs_service=$(terraform output -raw ecs_service_name)" >> $GITHUB_OUTPUT
 
-          ALB_DNS=$(terraform output -raw alb_dns_name)
-          ECR_REPO=$(terraform output -raw ecr_repository_name)
-          ECS_CLUSTER=$(terraform output -raw ecs_cluster_name)
-          ECS_SERVICE=$(terraform output -raw ecs_service_name)
-
-          echo "alb_dns=$ALB_DNS" >> $GITHUB_OUTPUT
-          echo "ecr_repo=$ECR_REPO" >> $GITHUB_OUTPUT
-          echo "ecs_cluster=$ECS_CLUSTER" >> $GITHUB_OUTPUT
-          echo "ecs_service=$ECS_SERVICE" >> $GITHUB_OUTPUT
-
-          echo "ALB DNS: $ALB_DNS"
-          echo "ECR Repository: $ECR_REPO"
-          echo "ECS Cluster: $ECS_CLUSTER"
-          echo "ECS Service: $ECS_SERVICE"
-
-      # Sub-task 2.9: Set up Java 17 for Maven build
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-          cache: 'maven'
+          cache: maven
 
-      # Sub-task 2.10: Build application JAR
       - name: Build application
-        run: |
-          echo "Building Spring Boot application..."
-          ./mvnw clean package -DskipTests
-          echo "Application build complete"
+        run: ./mvnw clean package -DskipTests
 
-      # Sub-task 2.11: Set up Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      # Sub-task 2.12: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         id: login-ecr
         run: |
           aws ecr get-login-password --region us-east-1 | \
-          docker login --username AWS --password-stdin 277802554323.dkr.ecr.us-east-1.amazonaws.com
+          docker login --username AWS \
+            --password-stdin 277802554323.dkr.ecr.us-east-1.amazonaws.com
           echo "registry=277802554323.dkr.ecr.us-east-1.amazonaws.com" >> $GITHUB_OUTPUT
 
-      # Sub-task 2.13: Build and push initial Docker image
       - name: Build and push initial Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: petclinic-${{ github.event.inputs.environment }}-repo-mumford
         run: |
-          echo "Building initial Docker image..."
           docker buildx build \
             --platform linux/amd64 \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:v1.0.0 \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -t $ECR_REGISTRY/petclinic-${{ github.event.inputs.environment }}-repo-mumford:v1.0.0 \
+            -t $ECR_REGISTRY/petclinic-${{ github.event.inputs.environment }}-repo-mumford:latest \
             --push \
             .
-          echo "Initial image pushed: $ECR_REGISTRY/$ECR_REPOSITORY:v1.0.0"
 
-      # Sub-task 2.14: Verify ECS service is running
-      - name: Verify ECS service
-        id: verify-ecs
+      - name: Wait for ECS service
         run: |
-          echo "Waiting for ECS service to start..."
-          sleep 30  # Give ECS service time to pull image and start tasks
-
-          # Wait for service to be stable
+          sleep 30
           aws ecs wait services-stable \
             --cluster petclinic-${{ github.event.inputs.environment }}-cluster-mumford \
             --services petclinic-${{ github.event.inputs.environment }}-service-mumford
 
-          # Get service details
-          SERVICE_STATUS=$(aws ecs describe-services \
-            --cluster petclinic-${{ github.event.inputs.environment }}-cluster-mumford \
-            --services petclinic-${{ github.event.inputs.environment }}-service-mumford \
-            --query 'services[0].{status:status,running:runningCount,desired:desiredCount}')
-
-          echo "ECS Service Status:"
-          echo "$SERVICE_STATUS"
-
-          # Check if service is active with desired count
-          RUNNING_COUNT=$(echo "$SERVICE_STATUS" | jq -r '.running')
-          DESIRED_COUNT=$(echo "$SERVICE_STATUS" | jq -r '.desired')
-
-          if [ "$RUNNING_COUNT" = "$DESIRED_COUNT" ]; then
-            echo "✅ ECS service is healthy with $RUNNING_COUNT tasks running"
-          else
-            echo "⚠️  ECS service has $RUNNING_COUNT/$DESIRED_COUNT tasks running"
-          fi
-
-      # Sub-task 2.15: Validate application health
-      - name: Application health check
+      - name: Health check
         env:
-          ALB_DNS: ${{ steps.terraform-outputs.outputs.alb_dns }}
+          ALB_DNS: ${{ steps.tf-outputs.outputs.alb_dns }}
         run: |
-          echo "Waiting for application to be healthy..."
           MAX_ATTEMPTS=30
           ATTEMPT=0
-
           while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
             ATTEMPT=$((ATTEMPT + 1))
-            echo "Health check attempt $ATTEMPT of $MAX_ATTEMPTS..."
-
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://$ALB_DNS/actuator/health || echo "000")
-
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              http://$ALB_DNS/actuator/health || echo "000")
             if [ "$HTTP_CODE" = "200" ]; then
-              HEALTH_STATUS=$(curl -s http://$ALB_DNS/actuator/health | jq -r '.status' || echo "UNKNOWN")
-              if [ "$HEALTH_STATUS" = "UP" ]; then
-                echo "✅ Application is healthy!"
-
-                # Test homepage
-                HOMEPAGE_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://$ALB_DNS/ || echo "000")
-                echo "Homepage HTTP status: $HOMEPAGE_CODE"
-
-                exit 0
-              fi
+              HEALTH_STATUS=$(curl -s http://$ALB_DNS/actuator/health \
+                | jq -r '.status' || echo "UNKNOWN")
+              [ "$HEALTH_STATUS" = "UP" ] && exit 0
             fi
-
-            echo "Health check failed (HTTP $HTTP_CODE), retrying in 10 seconds..."
             sleep 10
           done
+          exit 1
 
-          echo "❌ Health check timed out after $MAX_ATTEMPTS attempts"
-          echo "Infrastructure was created but application failed to become healthy"
-          echo "Please check ECS task logs and verify the deployment"
-          exit 1  # Fail the workflow - application is not healthy
-
-      # Sub-task 2.16: Workflow summary
       - name: Infrastructure summary
         if: always()
-        env:
-          ALB_DNS: ${{ steps.terraform-outputs.outputs.alb_dns }}
-          ECR_REPO: ${{ steps.terraform-outputs.outputs.ecr_repo }}
-          ECS_CLUSTER: ${{ steps.terraform-outputs.outputs.ecs_cluster }}
-          ECS_SERVICE: ${{ steps.terraform-outputs.outputs.ecs_service }}
         run: |
-          echo "================================================"
-          echo "Infrastructure Initialization Complete!"
-          echo "================================================"
-          echo ""
           echo "Environment: ${{ github.event.inputs.environment }}"
-          echo ""
-          echo "📍 Key Endpoints:"
-          echo "  Application URL: http://$ALB_DNS"
-          echo "  Health Check:    http://$ALB_DNS/actuator/health"
-          echo ""
-          echo "🐳 Container Resources:"
-          echo "  ECR Repository: 277802554323.dkr.ecr.us-east-1.amazonaws.com/$ECR_REPO"
-          echo "  ECS Cluster:    $ECS_CLUSTER"
-          echo "  ECS Service:    $ECS_SERVICE"
-          echo ""
-          echo "🗄️  Database:"
-          echo "  RDS Endpoint: $(cd terraform/${{ github.event.inputs.environment }} && terraform output -raw rds_endpoint 2>/dev/null || echo 'N/A')"
-          echo ""
-          echo "✅ Next Steps:"
-          echo "  1. Test application: curl http://$ALB_DNS/"
-          echo "  2. Deploy changes:   Push to main branch to trigger deployment"
-          echo "  3. Monitor:          Check ECS console for task status"
-          echo ""
-          echo "================================================"
+          echo "Application URL: http://${{ steps.tf-outputs.outputs.alb_dns }}"
+          echo "ECR: 277802554323.dkr.ecr.us-east-1.amazonaws.com/${{ steps.tf-outputs.outputs.ecr_repo }}"
+          echo "ECS Cluster: ${{ steps.tf-outputs.outputs.ecs_cluster }}"
+          echo "ECS Service: ${{ steps.tf-outputs.outputs.ecs_service }}"

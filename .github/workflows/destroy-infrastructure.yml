@@ -16,10 +16,9 @@ on:
         required: true
         type: boolean
 
-# Limit GITHUB_TOKEN permissions following principle of least privilege
 permissions:
   contents: read
-  id-token: write  # Required for OIDC authentication
+  id-token: write
 
 jobs:
   destroy-infrastructure:
@@ -27,275 +26,73 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      # Sub-task 3.2: Validate inputs (format checks only, before checkout)
-      - name: Validate input format
+      - name: Validate inputs
         run: |
-          echo "🔍 Validating destruction inputs..."
-
           ENV="${{ github.event.inputs.environment }}"
-
-          # Check environment name is not empty
-          if [ -z "$ENV" ]; then
-            echo "❌ ERROR: Environment name is required"
+          if [ -z "$ENV" ] || ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
+            echo "Invalid environment name: '$ENV'"
             exit 1
           fi
-
-          # Validate environment name format (lowercase letters, numbers, hyphens only, max 32 chars)
-          if ! echo "$ENV" | grep -qE '^[a-z0-9-]{1,32}$'; then
-            echo "❌ ERROR: Environment name must contain only lowercase letters, numbers, and hyphens (max 32 characters)"
-            echo "You entered: '$ENV'"
-            exit 1
-          fi
-
-          # Check confirmation word matches exactly
           if [ "${{ github.event.inputs.confirmation_word }}" != "DESTROY" ]; then
-            echo "❌ ERROR: Confirmation word must be 'DESTROY' (case-sensitive)"
-            echo "You entered: '${{ github.event.inputs.confirmation_word }}'"
+            echo "Confirmation word must be 'DESTROY'"
             exit 1
           fi
-
-          # Check acknowledgment checkbox is checked
           if [ "${{ github.event.inputs.acknowledge_deletion }}" != "true" ]; then
-            echo "❌ ERROR: You must acknowledge resource deletion"
+            echo "Must acknowledge resource deletion"
             exit 1
           fi
 
-          echo "✅ Input format validation passed"
-          echo "Environment: $ENV"
+      - uses: actions/checkout@v4
 
-      # Sub-task 3.3: Display prominent warning message
-      - name: ⚠️  DESTRUCTION WARNING
-        run: |
-          echo "================================================"
-          echo "⚠️  ⚠️  ⚠️  INFRASTRUCTURE DESTRUCTION WARNING ⚠️  ⚠️  ⚠️"
-          echo "================================================"
-          echo ""
-          echo "This workflow will PERMANENTLY DELETE the following:"
-          echo ""
-          echo "📦 All AWS Resources:"
-          echo "   - VPC and all subnets"
-          echo "   - Security groups"
-          echo "   - RDS PostgreSQL database (with all data)"
-          echo "   - ECS cluster, service, and task definitions"
-          echo "   - Application Load Balancer and target groups"
-          echo "   - ECR repository (with all Docker images)"
-          echo "   - IAM roles and policies"
-          echo "   - Secrets Manager secrets"
-          echo "   - NAT Gateway and Elastic IP"
-          echo ""
-          echo "⚠️  THIS ACTION CANNOT BE UNDONE"
-          echo ""
-          echo "Environment to destroy: ${{ github.event.inputs.environment }}"
-          echo ""
-          echo "Proceeding in 10 seconds..."
-          echo "================================================"
-          sleep 10
-
-      # Sub-task 3.5: Checkout repository code
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Validate terraform directory exists after checkout
       - name: Verify Terraform directory
         run: |
-          ENV="${{ github.event.inputs.environment }}"
-
-          echo "🔍 Verifying Terraform directory exists..."
-
-          if [ ! -d "terraform/$ENV" ]; then
-            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
-            echo "Available environments:"
-            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
+          if [ ! -d "terraform/${{ github.event.inputs.environment }}" ]; then
+            echo "Directory terraform/${{ github.event.inputs.environment }} does not exist"
             exit 1
           fi
 
-          echo "✅ Terraform directory verified: terraform/$ENV"
-
-      # Sub-task 3.4: Configure AWS credentials using OIDC
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.0.0
+      - uses: aws-actions/configure-aws-credentials@v6.0.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
           role-session-name: GitHubActions-Destroy
 
-      # Sub-task 3.6: List ECR images before deletion
-      - name: List ECR images
-        id: ecr-images
-        continue-on-error: true
-        run: |
-          echo "📋 Listing Docker images in ECR repository..."
-
-          REPO_NAME="petclinic-${{ github.event.inputs.environment }}-repo-mumford"
-
-          IMAGE_COUNT=$(aws ecr list-images \
-            --repository-name $REPO_NAME \
-            --query 'length(imageIds)' \
-            --output text 2>/dev/null || echo "0")
-
-          echo "image_count=$IMAGE_COUNT" >> $GITHUB_OUTPUT
-          echo "Found $IMAGE_COUNT images to delete"
-
-          if [ "$IMAGE_COUNT" -gt "0" ]; then
-            aws ecr list-images \
-              --repository-name $REPO_NAME \
-              --query 'imageIds[*].[imageTag,imageDigest]' \
-              --output table || true
-          fi
-
-      # Sub-task 3.7: Delete all ECR images
       - name: Delete ECR images
         continue-on-error: true
         run: |
-          echo "🗑️  Deleting Docker images from ECR..."
-
           REPO_NAME="petclinic-${{ github.event.inputs.environment }}-repo-mumford"
-
-          # Get all image IDs
           IMAGE_IDS=$(aws ecr list-images \
             --repository-name $REPO_NAME \
             --query 'imageIds[*]' \
             --output json 2>/dev/null || echo "[]")
-
-          if [ "$IMAGE_IDS" != "[]" ] && [ "$IMAGE_IDS" != "" ]; then
-            echo "Deleting images..."
+          if [ "$IMAGE_IDS" != "[]" ] && [ -n "$IMAGE_IDS" ]; then
             aws ecr batch-delete-image \
               --repository-name $REPO_NAME \
               --image-ids "$IMAGE_IDS" || true
-
-            echo "✅ ECR images deleted"
-          else
-            echo "ℹ️  No images found or repository doesn't exist"
           fi
 
-      # Sub-task 3.8: Set up Terraform
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.0
 
-      # Sub-task 3.9: Initialize Terraform
       - name: Terraform init
         working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "Initializing Terraform..."
-          terraform init
+        run: terraform init
 
-      # Sub-task 3.10: Destroy all infrastructure
       - name: Terraform destroy
-        id: terraform-destroy
         working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "🔥 Destroying all AWS infrastructure..."
-          echo ""
+        run: terraform destroy -auto-approve
 
-          terraform destroy -auto-approve
-
-          echo ""
-          echo "✅ Terraform destroy completed"
-
-      # Sub-task 3.11: Verify ECS cluster deletion
       - name: Verify ECS cluster deleted
-        id: verify-ecs
         continue-on-error: true
         run: |
-          echo "🔍 Verifying ECS cluster deletion..."
-
-          CLUSTER_NAME="petclinic-${{ github.event.inputs.environment }}-cluster-mumford"
-
-          if aws ecs describe-clusters \
-            --clusters $CLUSTER_NAME \
+          aws ecs describe-clusters \
+            --clusters petclinic-${{ github.event.inputs.environment }}-cluster-mumford \
             --query 'clusters[0].status' \
-            --output text 2>&1 | grep -q "ACTIVE"; then
-            echo "⚠️  ECS cluster still exists"
-          else
-            echo "✅ ECS cluster successfully deleted (ResourceNotFoundException)"
-          fi
+            --output text 2>&1
 
-      # Sub-task 3.12: Verify ECR repository deleted
-      - name: Verify ECR repository deleted
-        id: verify-ecr
-        continue-on-error: true
-        run: |
-          echo "🔍 Verifying ECR repository deletion..."
-
-          REPO_NAME="petclinic-${{ github.event.inputs.environment }}-repo-mumford"
-
-          if aws ecr describe-repositories \
-            --repository-names $REPO_NAME 2>&1 | grep -q "RepositoryNotFoundException"; then
-            echo "✅ ECR repository successfully deleted"
-          else
-            echo "⚠️  ECR repository may still exist"
-          fi
-
-      # Sub-task 3.13: Verify Terraform state is empty
-      - name: Verify Terraform state
-        working-directory: terraform/${{ github.event.inputs.environment }}
-        run: |
-          echo "🔍 Verifying Terraform state is empty..."
-
-          STATE_OUTPUT=$(terraform show -no-color 2>&1 || echo "empty")
-
-          if echo "$STATE_OUTPUT" | grep -q "No state"; then
-            echo "✅ Terraform state is empty"
-          elif [ -z "$STATE_OUTPUT" ] || [ "$STATE_OUTPUT" = "empty" ]; then
-            echo "✅ Terraform state is empty"
-          else
-            echo "❌ ERROR: Terraform state still contains resources:"
-            echo "$STATE_OUTPUT" | head -20
-            echo ""
-            echo "Please manually clean up remaining resources and run terraform destroy again"
-            exit 1
-          fi
-
-      # Sub-task 3.14: Destruction summary
       - name: Destruction summary
         if: always()
         run: |
-          echo "================================================"
-          echo "Infrastructure Destruction Summary"
-          echo "================================================"
-          echo ""
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Executed by: ${{ github.actor }}"
-          echo "Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo ""
-          # Map step conclusions to human-readable status
-          ECS_STATUS="${{ steps.verify-ecs.conclusion }}"
-          ECR_STATUS="${{ steps.verify-ecr.conclusion }}"
-
-          if [ "$ECS_STATUS" = "success" ]; then
-            ECS_RESULT="✅ Verified deleted"
-          else
-            ECS_RESULT="⚠️  Verification failed"
-          fi
-
-          if [ "$ECR_STATUS" = "success" ]; then
-            ECR_RESULT="✅ Verified deleted"
-          else
-            ECR_RESULT="⚠️  Verification failed"
-          fi
-
-          echo "📊 Destruction Report:"
-          echo "  - ECR images deleted: ${{ steps.ecr-images.outputs.image_count }}"
-          echo "  - Terraform resources destroyed: Check logs above"
-          echo "  - ECS cluster: $ECS_RESULT"
-          echo "  - ECR repository: $ECR_RESULT"
-          echo "  - Terraform state: Check verification above"
-          echo ""
-          if [ "${{ job.status }}" = "success" ]; then
-            echo "✅ Infrastructure destruction completed successfully"
-            echo ""
-            echo "All AWS resources have been permanently deleted."
-            echo "The environment '${{ github.event.inputs.environment }}' no longer exists."
-          else
-            echo "⚠️  Destruction encountered issues"
-            echo ""
-            echo "Some resources may still exist. Please:"
-            echo "1. Review workflow logs for errors"
-            echo "2. Check AWS Console for remaining resources"
-            echo "3. Manually delete any remaining resources if needed"
-            echo "4. Verify Terraform state is clean"
-          fi
-          echo ""
-          echo "================================================"
+          echo "Environment destroyed: ${{ github.event.inputs.environment }}"
+          echo "Status: ${{ job.status }}"
