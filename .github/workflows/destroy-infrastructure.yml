@@ -26,8 +26,8 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      # Sub-task 3.2: Validate all inputs before proceeding
-      - name: Validate inputs
+      # Sub-task 3.2: Validate inputs (format checks only, before checkout)
+      - name: Validate input format
         run: |
           echo "🔍 Validating destruction inputs..."
 
@@ -46,14 +46,6 @@ jobs:
             exit 1
           fi
 
-          # Check terraform directory exists
-          if [ ! -d "terraform/$ENV" ]; then
-            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
-            echo "Available environments:"
-            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
-            exit 1
-          fi
-
           # Check confirmation word matches exactly
           if [ "${{ github.event.inputs.confirmation_word }}" != "DESTROY" ]; then
             echo "❌ ERROR: Confirmation word must be 'DESTROY' (case-sensitive)"
@@ -67,7 +59,7 @@ jobs:
             exit 1
           fi
 
-          echo "✅ All validations passed"
+          echo "✅ Input format validation passed"
           echo "Environment: $ENV"
 
       # Sub-task 3.3: Display prominent warning message
@@ -101,6 +93,22 @@ jobs:
       # Sub-task 3.5: Checkout repository code
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Validate terraform directory exists after checkout
+      - name: Verify Terraform directory
+        run: |
+          ENV="${{ github.event.inputs.environment }}"
+
+          echo "🔍 Verifying Terraform directory exists..."
+
+          if [ ! -d "terraform/$ENV" ]; then
+            echo "❌ ERROR: Terraform directory 'terraform/$ENV' does not exist"
+            echo "Available environments:"
+            ls -d terraform/*/ 2>/dev/null || echo "No terraform directories found"
+            exit 1
+          fi
+
+          echo "✅ Terraform directory verified: terraform/$ENV"
 
       # Sub-task 3.4: Configure AWS credentials
       - name: Configure AWS credentials
