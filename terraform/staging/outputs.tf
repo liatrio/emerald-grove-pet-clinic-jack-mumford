@@ -164,3 +164,19 @@ output "ecs_task_definition_arn" {
   description = "ARN of the ECS task definition"
   value       = aws_ecs_task_definition.petclinic.arn
 }
+
+# ECR Repository Outputs (imported from ecr.tf)
+output "ecr_repository_name" {
+  description = "Name of the ECR repository"
+  value       = aws_ecr_repository.petclinic.name
+}
+
+output "ecr_repository_url" {
+  description = "URL of the ECR repository for Docker push/pull"
+  value       = aws_ecr_repository.petclinic.repository_url
+}
+
+output "ecr_repository_arn" {
+  description = "ARN of the ECR repository"
+  value       = aws_ecr_repository.petclinic.arn
+}

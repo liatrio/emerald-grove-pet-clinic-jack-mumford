@@ -311,6 +311,125 @@ java -jar target/spring-petclinic-*.jar
 docker run -p 8080:8080 spring-petclinic:latest
 ```
 
+### CI/CD Workflows
+
+The application includes automated GitHub Actions workflows for continuous deployment and infrastructure management:
+
+#### Automated Deployment Pipeline
+
+**Workflow:** `.github/workflows/deploy.yml`
+
+Automatically deploys changes to AWS ECS when you push to `main` or create pull requests.
+
+**Trigger:** Automatic on push to `main` or pull request events (creation, updates, reopens)
+
+**What it does:**
+1. Runs Maven unit tests
+2. Builds Docker image with AMD64 platform
+3. Pushes versioned image to Amazon ECR
+4. Deploys to ECS with force-new-deployment
+5. Validates deployment with health checks
+6. Runs E2E tests against deployed environment
+7. **Automatically rolls back on failure**
+
+**Configuration required:**
+- GitHub Secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_ACCOUNT_ID`
+
+**Image versioning:**
+- Git tags (e.g., `v1.0.0`) → Use tag as image version
+- No tag → Use commit SHA (e.g., `sha-abc1234`)
+
+#### Infrastructure Initialization Workflow
+
+**Workflow:** `.github/workflows/init-infrastructure.yml`
+
+Manually initialize complete AWS infrastructure from scratch (VPC, RDS, ECS, ALB, etc.).
+
+**Trigger:** Manual via GitHub Actions UI
+
+**How to use:**
+1. Go to: **Actions** tab → **Initialize Infrastructure** → **Run workflow**
+2. Enter environment name (e.g., `staging`)
+3. Click **Run workflow**
+
+**What it does:**
+1. Runs Terraform to create ~30 AWS resources
+2. Builds and pushes initial Docker image (v1.0.0 + latest)
+3. Verifies ECS service is running
+4. Validates application health
+5. Outputs all key endpoints (ALB DNS, ECR repo, etc.)
+
+**Use cases:**
+- Setting up new environments
+- Disaster recovery
+- Testing infrastructure changes
+
+**Duration:** ~15-20 minutes
+
+#### Infrastructure Destruction Workflow
+
+**Workflow:** `.github/workflows/destroy-infrastructure.yml`
+
+Safely tear down complete AWS infrastructure with multiple confirmation safeguards.
+
+**Trigger:** Manual via GitHub Actions UI
+
+**⚠️  WARNING: This permanently deletes all resources and data!**
+
+**How to use:**
+1. Go to: **Actions** tab → **Destroy Infrastructure** → **Run workflow**
+2. Enter **exact** environment name (e.g., `staging`)
+3. Type **`DESTROY`** (case-sensitive) in confirmation field
+4. Check the acknowledgment checkbox
+5. Click **Run workflow**
+
+**Safety features:**
+- Three-tier confirmation system
+- Input validation before any actions
+- Prominent warning messages
+- ECR image cleanup before repository deletion
+- Verification of complete deletion
+
+**What it does:**
+1. Validates all confirmation inputs
+2. Displays warning and waits 10 seconds
+3. Deletes all Docker images from ECR
+4. Runs `terraform destroy` to remove all infrastructure
+5. Verifies resources are deleted
+6. Confirms Terraform state is empty
+
+**Use cases:**
+- Cleaning up test environments
+- Reducing AWS costs when environment not needed
+- Environment reset
+
+**Duration:** ~10-15 minutes
+
+### Workflow Execution Tips
+
+**Monitoring workflows:**
+
+```bash
+# View workflow status
+gh run list --workflow=deploy.yml
+
+# Watch specific workflow run
+gh run watch <run-id>
+
+# View logs
+gh run view <run-id> --log
+```
+
+**Versioned deployments:**
+
+```bash
+# Create version tag to trigger versioned build
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+
+# Workflow will build image: petclinic-staging-repo-mumford:v1.0.0
+```
+
 **Production considerations:**
 - Use MySQL or PostgreSQL (not H2)
 - Configure connection pooling (HikariCP included)
