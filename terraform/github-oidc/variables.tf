@@ -1,7 +1,7 @@
 variable "github_org" {
   description = "GitHub organization name"
   type        = string
-  default     = "liatrio"
+  default     = "liatrio-forge"
 }
 
 variable "github_repo" {
