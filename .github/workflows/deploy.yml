@@ -14,6 +14,7 @@ concurrency:
 # Limit GITHUB_TOKEN permissions following principle of least privilege
 permissions:
   contents: read
+  id-token: write  # Required for OIDC authentication
 
 jobs:
   deploy:
@@ -28,13 +29,13 @@ jobs:
           fetch-depth: 0  # Fetch full history for semantic tag detection
           fetch-tags: true  # Ensure all tags are fetched
 
-      # Sub-task 1.2: Configure AWS credentials from GitHub Secrets
+      # Sub-task 1.2: Configure AWS credentials using OIDC
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHubActions-Deploy
 
       # Sub-task 1.4: Set up Java 17 for Maven builds
       - name: Set up JDK 17
