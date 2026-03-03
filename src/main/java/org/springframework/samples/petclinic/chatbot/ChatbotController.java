@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +46,11 @@ public class ChatbotController {
 	 * @param session the HTTP session for rate limiting
 	 * @return the chatbot response or error message
 	 */
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ChatbotResponse> handleValidationError(IllegalArgumentException ex) {
+		return ResponseEntity.badRequest().body(new ChatbotResponse(ex.getMessage()));
+	}
+
 	@PostMapping
 	public ResponseEntity<ChatbotResponse> chat(@Valid @RequestBody ChatbotRequest request, HttpSession session) {
 		String sessionId = session.getId();
