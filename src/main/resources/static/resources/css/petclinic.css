@@ -9274,6 +9274,9 @@ textarea.form-control-lg {
   .d-print-none {
     display: none !important; } }
 
+body {
+  background-color: #1a1f23; }
+
 :root {
   --liatrio-space-1: 4px;
   --liatrio-space-2: 8px;
@@ -9793,28 +9796,6 @@ strong {
 .table:not(.liatrio-table) a:hover {
   color: #1d8b17 !important;
   text-decoration: underline;
-}
-
-/* Override liatrio-table colors for better visibility on white backgrounds */
-.liatrio-table.table tbody td {
-  color: #111111 !important;
-}
-
-.liatrio-table.table thead th {
-  color: #111111 !important;
-  background-color: #e9ecef !important;
-}
-
-.liatrio-table.table tbody tr {
-  background-color: #ffffff !important;
-}
-
-.liatrio-table.table-striped > tbody > tr:nth-of-type(odd) {
-  background-color: #f8f9fa !important;
-}
-
-.liatrio-table.table-striped > tbody > tr:nth-of-type(even) {
-  background-color: #ffffff !important;
 }
 
 .liatrio-table a {

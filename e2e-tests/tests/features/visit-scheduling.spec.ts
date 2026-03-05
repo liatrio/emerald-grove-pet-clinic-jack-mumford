@@ -27,7 +27,7 @@ test.describe('Visit Scheduling', () => {
 
     await expect(visitPage.heading()).toBeVisible();
 
-    const visitDate = '2024-02-02';
+    const visitDate = '2027-02-02';
     const description = `E2E visit ${Date.now()}`;
     await visitPage.fillVisitDate(visitDate);
     await visitPage.fillDescription(description);
@@ -54,7 +54,7 @@ test.describe('Visit Scheduling', () => {
 
     await page.getByRole('link', { name: /Add Visit/i }).first().click();
 
-    await visitPage.fillVisitDate('2024-03-03');
+    await visitPage.fillVisitDate('2027-03-03');
     await visitPage.submit();
 
     await expect(page.getByText(/must not be blank/i)).toBeVisible();

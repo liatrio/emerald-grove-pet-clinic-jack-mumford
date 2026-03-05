@@ -146,7 +146,14 @@
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let serverMessage = null;
+        try {
+          const errorData = await response.json();
+          serverMessage = errorData.response || null;
+        } catch (e) {
+          // ignore parse errors
+        }
+        throw { status: response.status, serverMessage };
       }
 
       const data = await response.json();
@@ -168,8 +175,12 @@
       console.error('Error sending message:', error);
       hideTypingIndicator();
 
-      // Display error message
-      displayErrorMessage(getErrorMessage(error));
+      // Display error message (use server message if available, else localized fallback)
+      const errorText = (error && error.serverMessage) ? error.serverMessage : getErrorMessage(error);
+      displayErrorMessage(errorText);
+
+      // Save conversation history so session storage persists user message
+      saveConversationHistory();
     } finally {
       // Re-enable controls
       input.disabled = false;
@@ -204,14 +215,10 @@
   }
 
   /**
-   * Display an error message
+   * Display an error message as an AI message bubble
    */
   function displayErrorMessage(errorText) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'chatbot-error';
-    errorDiv.textContent = errorText;
-    messagesContainer.appendChild(errorDiv);
-    scrollToBottom();
+    displayMessage(errorText, false);
   }
 
   /**
