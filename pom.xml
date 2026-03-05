@@ -296,6 +296,18 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Force UTC timezone for tests: H2 LocalDate reads via java.sql.Date
+               are timezone-dependent on Java 17. Without UTC, dates stored as
+               midnight UTC shift by -1 day in negative-offset timezones (e.g.
+               US/Pacific on CI runners), causing VisitRepositoryTests to fail. -->
+          <argLine>@{argLine} -Duser.timezone=UTC</argLine>
+        </configuration>
+      </plugin>
+
       <!-- Spring Boot Actuator displays build-related information if a git.properties file is
       present at the classpath -->
       <plugin>
