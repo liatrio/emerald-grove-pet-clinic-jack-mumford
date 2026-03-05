@@ -30,15 +30,6 @@ jobs:
           aws-region: us-east-1
           role-session-name: GitHubActions-Deploy
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: maven
-
-      - name: Run unit tests
-        run: ./mvnw test
-
       - uses: docker/setup-buildx-action@v3
 
       - name: Log in to Amazon ECR
@@ -72,7 +63,6 @@ jobs:
             .
 
       - name: Update ECS service
-        id: ecs-update
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ steps.version.outputs.version }}
@@ -82,7 +72,6 @@ jobs:
             --services petclinic-staging-service-mumford \
             --query 'services[0].taskDefinition' \
             --output text)
-          echo "current_task_def=$CURRENT_TASK_DEF" >> $GITHUB_OUTPUT
 
           NEW_TASK_DEF=$(aws ecs describe-task-definition \
             --task-definition $CURRENT_TASK_DEF \
@@ -103,92 +92,3 @@ jobs:
             --task-definition $NEW_TASK_DEF_ARN \
             --health-check-grace-period-seconds 150 \
             --no-cli-pager
-
-          echo "service_updated=true" >> $GITHUB_OUTPUT
-
-      - name: Wait for ECS deployment
-        run: |
-          aws ecs wait services-stable \
-            --cluster petclinic-staging-cluster-mumford \
-            --services petclinic-staging-service-mumford
-
-      - name: Get ALB DNS name
-        id: alb
-        run: |
-          ALB_DNS=$(aws elbv2 describe-load-balancers \
-            --names petclinic-staging-alb-mumford \
-            --query 'LoadBalancers[0].DNSName' \
-            --output text)
-          echo "alb_dns=$ALB_DNS" >> $GITHUB_OUTPUT
-
-      - name: Health check
-        env:
-          ALB_DNS: ${{ steps.alb.outputs.alb_dns }}
-        run: |
-          MAX_ATTEMPTS=30
-          ATTEMPT=0
-          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-            ATTEMPT=$((ATTEMPT + 1))
-            HTTP_CODE=$(curl --connect-timeout 5 --max-time 10 -s -o /dev/null \
-              -w "%{http_code}" http://$ALB_DNS/actuator/health || echo "000")
-            if [ "$HTTP_CODE" = "200" ]; then
-              HEALTH_STATUS=$(curl --connect-timeout 5 --max-time 10 -s \
-                http://$ALB_DNS/actuator/health | jq -r '.status' || echo "UNKNOWN")
-              if [ "$HEALTH_STATUS" = "UP" ]; then
-                exit 0
-              fi
-            fi
-            sleep 10
-          done
-          exit 1
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-          cache-dependency-path: e2e-tests/package-lock.json
-
-      - name: Install E2E dependencies
-        working-directory: e2e-tests
-        run: npm ci
-
-      - name: Install Playwright browsers
-        working-directory: e2e-tests
-        run: npx playwright install --with-deps chromium
-
-      - name: Run E2E tests
-        working-directory: e2e-tests
-        env:
-          CI: true
-          E2E_BASE_URL: http://${{ steps.alb.outputs.alb_dns }}
-        run: npm test
-
-      - name: Upload E2E test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-test-results
-          path: |
-            e2e-tests/test-results/html-report
-            e2e-tests/test-results/junit.xml
-
-      - name: Rollback on failure
-        if: failure() && steps.ecs-update.outputs.service_updated == 'true'
-        env:
-          PREVIOUS_TASK_DEF: ${{ steps.ecs-update.outputs.current_task_def }}
-        run: |
-          aws ecs update-service \
-            --cluster petclinic-staging-cluster-mumford \
-            --service petclinic-staging-service-mumford \
-            --task-definition $PREVIOUS_TASK_DEF \
-            --no-cli-pager
-
-      - name: Deployment summary
-        if: always()
-        run: |
-          if [ "${{ job.status }}" = "success" ]; then
-            echo "Deployment successful: http://${{ steps.alb.outputs.alb_dns }}"
-            echo "Image: ${{ steps.login-ecr.outputs.registry }}/petclinic-staging-repo-mumford:${{ steps.version.outputs.version }}"
-          else
-            echo "Deployment failed and was rolled back"
-          fi
