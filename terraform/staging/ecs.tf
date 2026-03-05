@@ -147,7 +147,7 @@ resource "aws_ecs_service" "petclinic" {
     container_port   = var.ecs_container_port
   }
 
-  health_check_grace_period_seconds = 60
+  health_check_grace_period_seconds = 150
 
   depends_on = [aws_lb_listener.http]
 
