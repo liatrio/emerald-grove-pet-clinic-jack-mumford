@@ -103,6 +103,7 @@ jobs:
             --cluster petclinic-staging-cluster-mumford \
             --service petclinic-staging-service-mumford \
             --task-definition $NEW_TASK_DEF_ARN \
+            --health-check-grace-period-seconds 150 \
             --no-cli-pager
 
       - name: Wait for ECS deployment
