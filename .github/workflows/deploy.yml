@@ -92,8 +92,8 @@ jobs:
               del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
                   .compatibilities, .registeredAt, .registeredBy)')
 
-          NEW_TASK_DEF_ARN=$(echo $NEW_TASK_DEF | \
-            aws ecs register-task-definition --cli-input-json file:///dev/stdin \
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
 
@@ -102,6 +102,8 @@ jobs:
             --service petclinic-staging-service-mumford \
             --task-definition $NEW_TASK_DEF_ARN \
             --no-cli-pager
+
+          echo "service_updated=true" >> $GITHUB_OUTPUT
 
       - name: Wait for ECS deployment
         run: |
@@ -170,7 +172,7 @@ jobs:
             e2e-tests/test-results/junit.xml
 
       - name: Rollback on failure
-        if: failure()
+        if: failure() && steps.ecs-update.outputs.service_updated == 'true'
         env:
           PREVIOUS_TASK_DEF: ${{ steps.ecs-update.outputs.current_task_def }}
         run: |
@@ -178,11 +180,7 @@ jobs:
             --cluster petclinic-staging-cluster-mumford \
             --service petclinic-staging-service-mumford \
             --task-definition $PREVIOUS_TASK_DEF \
-            --force-new-deployment \
             --no-cli-pager
-          aws ecs wait services-stable \
-            --cluster petclinic-staging-cluster-mumford \
-            --services petclinic-staging-service-mumford
 
       - name: Deployment summary
         if: always()
