@@ -209,11 +209,11 @@ test.describe('Owner Duplicate Prevention', () => {
     await expect(page).toHaveURL(/\/owners\/new/);
     await expect(page.getByText(/An owner with this information already exists/i)).toBeVisible();
 
-    // Verify no second owner was created by searching
+    // Verify no second owner was created: searching returns only 1 Wilson,
+    // so the controller redirects straight to that owner's details page
     await ownerPage.openFindOwners();
     await ownerPage.searchByLastName(owner.lastName);
 
-    // Should only find one owner
-    await expect(ownerPage.ownersTable().getByRole('link', { name: new RegExp(owner.lastName) })).toHaveCount(1);
+    await expect(page).toHaveURL(new RegExp(`/owners/${ownerId}`));
   });
 });

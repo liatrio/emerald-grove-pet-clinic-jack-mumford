@@ -34,13 +34,13 @@ test.describe('Pet Management', () => {
 
     await petRow.getByRole('link', { name: /Add Visit/i }).first().click();
 
-    await page.locator('input#date').fill('2024-01-01');
+    await page.locator('input#date').fill('2027-01-01');
     await page.locator('input#description').fill('Annual checkup');
     await page.screenshot({ path: testInfo.outputPath('visit-add-form-filled.png'), fullPage: true });
     await page.getByRole('button', { name: /Add Visit/i }).click();
 
     await expect(page.getByRole('heading', { name: /Pets and Visits/i })).toBeVisible();
-    await expect(petRow.getByRole('cell', { name: '2024-01-01', exact: true })).toBeVisible();
+    await expect(petRow.getByRole('cell', { name: '2027-01-01', exact: true })).toBeVisible();
     await expect(petRow.getByRole('cell', { name: 'Annual checkup', exact: true })).toBeVisible();
 
     await page.screenshot({ path: testInfo.outputPath('pet-details-with-visit-history.png'), fullPage: true });

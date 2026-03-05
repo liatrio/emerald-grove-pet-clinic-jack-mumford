@@ -35,7 +35,6 @@
         <label for="visitType" class="col-sm-2 control-label" th:text="#{visit.type.label}">Visit Type</label>
         <div class="col-sm-10">
           <select id="visitType" name="visitType" class="form-control" th:field="*{visitType}">
-            <option value="" th:text="#{visit.type.select}">Select visit type...</option>
             <option th:each="type : ${T(org.springframework.samples.petclinic.owner.VisitType).values()}"
                     th:value="${type}"
                     th:text="${type.displayName}">Type</option>

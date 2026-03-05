@@ -155,6 +155,14 @@ class OwnerController {
 			lastName = ""; // empty string signifies broadest possible search
 		}
 
+		// normalize empty strings to null so JPQL IS NULL checks work correctly
+		if (telephone != null && telephone.trim().isEmpty()) {
+			telephone = null;
+		}
+		if (city != null && city.trim().isEmpty()) {
+			city = null;
+		}
+
 		// find owners by multiple criteria
 		Page<Owner> ownersResults = findPaginatedByMultipleCriteria(page, lastName, telephone, city);
 		if (ownersResults.isEmpty()) {
