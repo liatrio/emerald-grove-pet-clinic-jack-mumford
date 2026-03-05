@@ -1,0 +1,238 @@
+<context>
+  <project>
+    <name>Emerald Grove Veterinary Clinic</name>
+    <description>Spring Boot 4.0.0 petclinic app — Thymeleaf, Spring Data JPA, H2/PostgreSQL</description>
+    <build>Maven (./mvnw)</build>
+    <java>17</java>
+    <tests>JUnit 5 unit tests + Playwright E2E tests in e2e-tests/</tests>
+    <docker>Dockerfile at repo root, must build for linux/amd64 platform (ECS requirement)</docker>
+  </project>
+
+  <github>
+    <org>liatrio-forge</org>
+    <repo>emerald-grove-pet-clinic-jack-mumford</repo>
+    <default_branch>main</default_branch>
+    <remote>https://github.com/liatrio-forge/emerald-grove-pet-clinic-jack-mumford.git</remote>
+    <secrets>
+      <!-- Only one secret is needed. Region and account ID are hardcoded in workflows. -->
+      <secret name="AWS_ROLE_ARN">must be set after OIDC role is recreated via Terraform</secret>
+    </secrets>
+  </github>
+
+  <aws>
+    <account_id>277802554323</account_id>
+    <region>us-east-1</region>
+    <ecr_registry>277802554323.dkr.ecr.us-east-1.amazonaws.com</ecr_registry>
+    <state>ALL infrastructure has been destroyed. Everything must be recreated from scratch.</state>
+
+    <terraform_state_backend>
+      <!-- These S3/DynamoDB resources were pre-existing and were NOT destroyed -->
+      <s3_bucket>petclinic-terraform-state-mumford</s3_bucket>
+      <dynamodb_table>petclinic-terraform-locks-mumford</dynamodb_table>
+      <region>us-east-1</region>
+      <staging_key>staging/terraform.tfstate</staging_key>
+      <oidc_key>global/github-oidc/terraform.tfstate</oidc_key>
+    </terraform_state_backend>
+
+    <naming_convention>petclinic-{environment}-{resource}-mumford</naming_convention>
+
+    <sso>
+      <start_url>https://d-906787324a.awsapps.com/start/#</start_url>
+      <login_command>aws sso login</login_command>
+      <get_credentials>
+        <!-- After sso login, find the fresh cache file and extract credentials: -->
+        CACHE_FILE=$(ls -t ~/.aws/sso/cache/*.json | xargs grep -l '"startUrl"' | head -1)
+        TOKEN=$(python3 -c "import json; print(json.load(open('$CACHE_FILE'))['accessToken'])")
+        eval $(aws sso get-role-credentials --access-token "$TOKEN" \
+          --account-id 277802554323 --role-name AWSAdministratorAccess --region us-east-1 \
+          | python3 -c "import json,sys; c=json.load(sys.stdin)['roleCredentials'];
+            print(f'export AWS_ACCESS_KEY_ID={c[\"accessKeyId\"]}');
+            print(f'export AWS_SECRET_ACCESS_KEY={c[\"secretAccessKey\"]}');
+            print(f'export AWS_SESSION_TOKEN={c[\"sessionToken\"]}')")
+        export AWS_REGION=us-east-1
+      </get_credentials>
+    </sso>
+  </aws>
+
+  <terraform>
+    <version>1.9.0</version>
+    <aws_provider>~> 5.0</aws_provider>
+    <random_provider>~> 3.5</random_provider>
+
+    <modules>
+      <module path="terraform/github-oidc/">
+        Account-level OIDC identity provider and GitHub Actions IAM role.
+        Must be applied FIRST before any workflows can authenticate.
+        After apply, copy the output role ARN into GitHub secret AWS_ROLE_ARN.
+      </module>
+      <module path="terraform/staging/">
+        All staging environment infrastructure. Applied via the
+        init-infrastructure GitHub Actions workflow or locally.
+      </module>
+    </modules>
+
+    <gitignore_entries>
+      **/.terraform/
+      *.tfstate
+      *.tfstate.backup
+      tfplan
+    </gitignore_entries>
+
+    <known_bugs_to_fix>
+      <!-- BUG 1: ECR name mismatch — Terraform creates "petclinic-staging-ecr-mumford"
+           but workflows reference "petclinic-staging-repo-mumford". These must match.
+           Recommended fix: rename the ECR resource in ecr.tf to "petclinic-staging-repo-mumford" -->
+
+      <!-- BUG 2: Duplicate outputs — ecr_repository_url and ecr_repository_arn are
+           defined in both ecr.tf AND outputs.tf, causing "terraform init" to fail.
+           Fix: keep ECR outputs only in outputs.tf, remove them from ecr.tf -->
+
+      <!-- BUG 3: ECR repository cannot be destroyed if it contains images.
+           Fix: add force_delete = true to the aws_ecr_repository resource in ecr.tf -->
+
+      <!-- BUG 4: backend.tf uses deprecated "dynamodb_table" parameter.
+           Fix: replace with "use_lockfile = true" in the github-oidc backend only
+           (staging backend may still use dynamodb_table for compatibility) -->
+    </known_bugs_to_fix>
+  </terraform>
+
+  <workflows>
+    <action_versions>
+      <action name="aws-actions/configure-aws-credentials">v6.0.0</action>
+      <action name="actions/checkout">v4</action>
+      <action name="actions/setup-java">v4</action>
+      <action name="docker/setup-buildx-action">v3</action>
+      <action name="actions/setup-node">v4</action>
+      <action name="actions/upload-artifact">v4</action>
+      <action name="hashicorp/setup-terraform">v3</action>
+    </action_versions>
+
+    <required_permissions>
+      contents: read
+      id-token: write   # Required for OIDC — must be present in every workflow
+    </required_permissions>
+
+    <aws_credentials_step>
+      <!-- Paste this exact block into every workflow that needs AWS access -->
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.0.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: GitHubActions-{Deploy|Init|Destroy}
+    </aws_credentials_step>
+
+    <ecr_login_step>
+      <!-- ECR login — hardcode region and account ID, do not use secrets -->
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS \
+            --password-stdin 277802554323.dkr.ecr.us-east-1.amazonaws.com
+          echo "registry=277802554323.dkr.ecr.us-east-1.amazonaws.com" >> $GITHUB_OUTPUT
+    </ecr_login_step>
+
+    <image_versioning>
+      - If HEAD has a git tag (e.g. v1.0.0) use the tag as the image version
+      - Otherwise use short SHA: sha-${GITHUB_SHA::7}
+      - Always also tag as "latest"
+    </image_versioning>
+
+    <deploy_workflow file=".github/workflows/deploy.yml">
+      <trigger>push to main + pull_request (opened, synchronize, reopened)</trigger>
+      <concurrency>group: deploy-petclinic-staging-service-mumford, cancel-in-progress: true</concurrency>
+      <timeout_minutes>30</timeout_minutes>
+      <steps>
+        1.  Checkout (fetch-depth: 0, fetch-tags: true)
+        2.  Configure AWS credentials (OIDC)
+        3.  Set up JDK 17 (temurin, maven cache)
+        4.  Run unit tests: ./mvnw test
+        5.  Set up Docker Buildx
+        6.  Log in to ECR
+        7.  Determine image version (git tag or sha-SHORT_SHA)
+        8.  Build and push Docker image (linux/amd64, versioned + latest tags)
+        9.  Update ECS service:
+              a. Get current task definition ARN (save for rollback)
+              b. Fetch task definition JSON
+              c. Update image in containerDefinitions[0]
+              d. Strip read-only fields (taskDefinitionArn, revision, status,
+                 requiresAttributes, compatibilities, registeredAt, registeredBy)
+              e. Register new task definition revision
+              f. Update ECS service to new task definition
+        10. Wait for ECS to stabilize: aws ecs wait services-stable
+        11. Get ALB DNS: aws elbv2 describe-load-balancers --names petclinic-staging-alb-mumford
+        12. Health check loop: poll /actuator/health up to 30x with 10s sleep,
+            expect HTTP 200 and JSON {"status":"UP"}
+        13. Set up Node 20 (npm cache, cache-dependency-path: e2e-tests/package-lock.json)
+        14. npm ci in e2e-tests/
+        15. Install Playwright chromium only: npx playwright install --with-deps chromium
+        16. Run E2E tests with BASE_URL=http://{ALB_DNS} and CI=true
+        17. Upload E2E test results artifact (always, even on failure)
+        18. Rollback on failure: update ECS service back to saved task definition ARN
+            + wait for stabilization
+        19. Deployment summary (always): print status, URL, image tag
+      </steps>
+    </deploy_workflow>
+
+    <init_workflow file=".github/workflows/init-infrastructure.yml">
+      <trigger>workflow_dispatch, input: environment (string, default: "staging")</trigger>
+      <timeout_minutes>45</timeout_minutes>
+      <steps>
+        1.  Validate environment name (non-empty, matches ^[a-z0-9-]{1,32}$)
+        2.  Checkout code
+        3.  Verify terraform/{environment}/ directory exists
+        4.  Configure AWS credentials (OIDC)
+        5.  Set up Terraform 1.9.0
+        6.  terraform init (working-directory: terraform/{environment})
+        7.  terraform plan -out=tfplan
+        8.  terraform apply -auto-approve tfplan
+        9.  Capture outputs: alb_dns_name, ecr_repository_name, ecs_cluster_name, ecs_service_name
+        10. Set up JDK 17
+        11. Build app jar: ./mvnw clean package -DskipTests
+        12. Set up Docker Buildx
+        13. Log in to ECR
+        14. Build and push initial image as v1.0.0 + latest (linux/amd64)
+        15. sleep 30 then aws ecs wait services-stable
+        16. Health check loop (same as deploy workflow)
+        17. Infrastructure summary (always): print all endpoints and resource names
+      </steps>
+    </init_workflow>
+
+    <destroy_workflow file=".github/workflows/destroy-infrastructure.yml">
+      <trigger>
+        workflow_dispatch with inputs:
+          - environment (string, required)
+          - confirmation_word (string, must equal "DESTROY" exactly)
+          - acknowledge_deletion (boolean, must be true)
+      </trigger>
+      <timeout_minutes>30</timeout_minutes>
+      <steps>
+        1.  Validate all three inputs (fail fast, before checkout or AWS calls)
+        2.  Print destruction warning listing all resource types, sleep 10
+        3.  Checkout code
+        4.  Verify terraform/{environment}/ directory exists
+        5.  Configure AWS credentials (OIDC)
+        6.  List ECR images (continue-on-error: true)
+        7.  Batch delete all ECR images (continue-on-error: true)
+        8.  Set up Terraform 1.9.0
+        9.  terraform init
+        10. terraform destroy -auto-approve
+        11. Verify ECS cluster deleted (continue-on-error: true)
+        12. Verify ECR repository deleted (continue-on-error: true)
+        13. Verify terraform show reports empty state
+        14. Destruction summary (always)
+      </steps>
+    </destroy_workflow>
+  </workflows>
+
+  <order_of_operations>
+    To get everything working from scratch:
+    1. Fix the four known Terraform bugs listed above
+    2. aws sso login
+    3. cd terraform/github-oidc && terraform init && terraform apply
+    4. Copy the output role ARN into GitHub secret: AWS_ROLE_ARN
+    5. Trigger "Initialize Infrastructure" workflow in GitHub Actions UI
+    6. Push to main to trigger the deploy workflow
+  </order_of_operations>
+</context>
