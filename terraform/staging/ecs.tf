@@ -196,31 +196,3 @@ resource "aws_appautoscaling_policy" "ecs_memory" {
     target_value = var.memory_target_value
   }
 }
-
-# Scheduled Scaling - Scale to 0 during off-hours (10 PM EST weekdays)
-resource "aws_appautoscaling_scheduled_action" "scale_down" {
-  name               = "petclinic-${var.environment}-scale-down"
-  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
-  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
-  schedule           = "cron(0 22 ? * MON-FRI *)"
-
-  scalable_target_action {
-    min_capacity = 0
-    max_capacity = 0
-  }
-}
-
-# Scheduled Scaling - Scale to 2 during business hours (6 AM EST weekdays)
-resource "aws_appautoscaling_scheduled_action" "scale_up" {
-  name               = "petclinic-${var.environment}-scale-up"
-  service_namespace  = aws_appautoscaling_target.ecs_service.service_namespace
-  resource_id        = aws_appautoscaling_target.ecs_service.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs_service.scalable_dimension
-  schedule           = "cron(0 6 ? * MON-FRI *)"
-
-  scalable_target_action {
-    min_capacity = var.ecs_min_count
-    max_capacity = var.ecs_max_count
-  }
-}
