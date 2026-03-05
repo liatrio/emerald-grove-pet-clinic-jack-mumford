@@ -92,8 +92,8 @@ jobs:
               del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
                   .compatibilities, .registeredAt, .registeredBy)')
 
-          NEW_TASK_DEF_ARN=$(echo $NEW_TASK_DEF | \
-            aws ecs register-task-definition --cli-input-json file:///dev/stdin \
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
             --query 'taskDefinition.taskDefinitionArn' \
             --output text)
 
