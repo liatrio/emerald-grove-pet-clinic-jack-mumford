@@ -39,6 +39,32 @@ class VisitRepositoryTests {
 	private VisitRepository visitRepository;
 
 	@Test
+	void testFindByDateGreaterThanEqualOrderByDateAsc() {
+		// Arrange
+		LocalDate fromDate = LocalDate.of(2013, 1, 2);
+
+		// Act
+		List<Visit> visits = this.visitRepository.findByDateGreaterThanEqualOrderByDateAsc(fromDate);
+
+		// Assert
+		assertThat(visits).isNotNull();
+		assertThat(visits).isNotEmpty();
+
+		// Verify all visits are on or after fromDate
+		for (Visit visit : visits) {
+			assertThat(visit.getDate()).isAfterOrEqualTo(fromDate);
+		}
+
+		// Verify visits are sorted by date ascending
+		for (int i = 1; i < visits.size(); i++) {
+			assertThat(visits.get(i).getDate()).isAfterOrEqualTo(visits.get(i - 1).getDate());
+		}
+
+		// Verify that at least the original test data visits are included
+		assertThat(visits).hasSizeGreaterThanOrEqualTo(3);
+	}
+
+	@Test
 	void testFindByDateGreaterThanEqualOrderByDateAscWithJoinFetch() {
 		// Arrange
 		LocalDate fromDate = LocalDate.of(2013, 1, 1);
@@ -54,6 +80,50 @@ class VisitRepositoryTests {
 			assertThat(visit.getPet()).isNotNull();
 			assertThat(visit.getPet().getName()).isNotNull();
 			// This would fail with LazyInitializationException if not JOIN FETCH
+		}
+	}
+
+	@Test
+	void testFindByDateBetweenOrderByDateAsc() {
+		// Arrange
+		LocalDate fromDate = LocalDate.of(2013, 1, 2);
+		LocalDate toDate = LocalDate.of(2013, 1, 3);
+
+		// Act
+		List<Visit> visits = this.visitRepository.findByDateBetweenOrderByDateAsc(fromDate, toDate);
+
+		// Assert
+		assertThat(visits).isNotEmpty();
+		assertThat(visits).hasSize(2); // 2013-01-02 and 2013-01-03
+
+		// Verify all visits are within date range
+		for (Visit visit : visits) {
+			assertThat(visit.getDate()).isAfterOrEqualTo(fromDate);
+			assertThat(visit.getDate()).isBeforeOrEqualTo(toDate);
+		}
+	}
+
+	@Test
+	void testFindUpcomingVisitsWithFilters_allParameters() {
+		// Arrange
+		LocalDate fromDate = LocalDate.of(2013, 1, 1);
+		LocalDate toDate = LocalDate.of(2013, 1, 4);
+		String petType = "cat";
+		String ownerLastName = "coleman";
+
+		// Act
+		List<Visit> visits = this.visitRepository.findUpcomingVisitsWithFilters(fromDate, toDate, petType,
+				ownerLastName);
+
+		// Assert
+		assertThat(visits).isNotEmpty();
+
+		// Verify all visits match the filter criteria
+		for (Visit visit : visits) {
+			assertThat(visit.getDate()).isAfterOrEqualTo(fromDate);
+			assertThat(visit.getDate()).isBeforeOrEqualTo(toDate);
+			assertThat(visit.getPet().getType().getName()).isEqualToIgnoringCase(petType);
+			assertThat(visit.getPet().getOwner().getLastName()).containsIgnoringCase(ownerLastName);
 		}
 	}
 
@@ -90,6 +160,26 @@ class VisitRepositoryTests {
 		// Verify all visits are for the specified owner
 		for (Visit visit : visits) {
 			assertThat(visit.getPet().getOwner().getLastName()).containsIgnoringCase(ownerLastName);
+		}
+	}
+
+	@Test
+	void testFindUpcomingVisitsWithFilters_dateRangeOnly() {
+		// Arrange
+		LocalDate fromDate = LocalDate.of(2013, 1, 2);
+		LocalDate toDate = LocalDate.of(2013, 1, 3);
+
+		// Act
+		List<Visit> visits = this.visitRepository.findUpcomingVisitsWithFilters(fromDate, toDate, null, null);
+
+		// Assert
+		assertThat(visits).isNotEmpty();
+		assertThat(visits).hasSize(2);
+
+		// Verify all visits are within date range
+		for (Visit visit : visits) {
+			assertThat(visit.getDate()).isAfterOrEqualTo(fromDate);
+			assertThat(visit.getDate()).isBeforeOrEqualTo(toDate);
 		}
 	}
 
