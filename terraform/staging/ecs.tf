@@ -75,7 +75,7 @@ resource "aws_ecs_task_definition" "petclinic" {
         },
         {
           name      = "CLAUDE_API_KEY"
-          valueFrom = "${aws_secretsmanager_secret.claude_api_key.arn}:api_key::"
+          valueFrom = data.aws_secretsmanager_secret.claude_api_key.arn
         }
       ]
 
