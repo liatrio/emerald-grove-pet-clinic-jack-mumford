@@ -9,6 +9,7 @@ on:
       - 'pom.xml'
       - 'Dockerfile'
       - '.github/workflows/deploy.yml'
+      - '.releaserc.json'
 
 concurrency:
   group: deploy-petclinic-staging-service-mumford
