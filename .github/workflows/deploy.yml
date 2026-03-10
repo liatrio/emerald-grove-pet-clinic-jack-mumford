@@ -15,8 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
+  issues: write
+  pull-requests: write
 
 jobs:
   deploy:
@@ -38,6 +40,17 @@ jobs:
       - name: Run unit tests
         run: ./mvnw test -B
 
+      - name: Semantic release
+        id: release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          extra_plugins: |
+            @semantic-release/commit-analyzer
+            @semantic-release/release-notes-generator
+            @semantic-release/github
+
       - uses: aws-actions/configure-aws-credentials@v6.0.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -57,8 +70,8 @@ jobs:
       - name: Determine image version
         id: version
         run: |
-          if git describe --exact-match --tags HEAD 2>/dev/null; then
-            VERSION=$(git describe --exact-match --tags HEAD)
+          if [ "${{ steps.release.outputs.new_release_published }}" = "true" ]; then
+            VERSION="v${{ steps.release.outputs.new_release_version }}"
           else
             VERSION="sha-${GITHUB_SHA::7}"
           fi
