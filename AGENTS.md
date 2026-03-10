@@ -158,6 +158,12 @@ Before submitting a PR, verify:
 - Don't merge PRs with failing checks
 - Ensure E2E tests pass before merging
 
+## Pull Request Merging
+
+- **Never merge a pull request yourself**
+- Only the repository owner merges pull requests
+- Your role is to create PRs and ensure they are ready for review — merging is always a human decision
+
 ## Communication
 
 - If blockers are encountered, document them clearly
