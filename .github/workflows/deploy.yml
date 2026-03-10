@@ -106,3 +106,9 @@ jobs:
             --task-definition $NEW_TASK_DEF_ARN \
             --health-check-grace-period-seconds 150 \
             --no-cli-pager
+
+      - name: Wait for deployment to stabilize
+        run: |
+          aws ecs wait services-stable \
+            --cluster petclinic-staging-cluster-mumford \
+            --services petclinic-staging-service-mumford
