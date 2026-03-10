@@ -72,6 +72,10 @@ resource "aws_ecs_task_definition" "petclinic" {
         {
           name      = "SPRING_DATASOURCE_PASSWORD"
           valueFrom = "${aws_secretsmanager_secret.db_credentials.arn}:password::"
+        },
+        {
+          name      = "CLAUDE_API_KEY"
+          valueFrom = "${aws_secretsmanager_secret.claude_api_key.arn}:api_key::"
         }
       ]
 

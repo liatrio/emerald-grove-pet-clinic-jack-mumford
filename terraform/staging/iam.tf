@@ -41,7 +41,10 @@ resource "aws_iam_role_policy" "task_execution_secrets_access" {
         Action = [
           "secretsmanager:GetSecretValue"
         ]
-        Resource = aws_secretsmanager_secret.db_credentials.arn
+        Resource = [
+          aws_secretsmanager_secret.db_credentials.arn,
+          aws_secretsmanager_secret.claude_api_key.arn
+        ]
       }
     ]
   })

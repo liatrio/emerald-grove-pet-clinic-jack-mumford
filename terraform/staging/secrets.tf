@@ -1,5 +1,18 @@
 # AWS Secrets Manager
-# Stores database credentials securely for application access
+# Stores database credentials and API keys securely for application access
+
+# Claude API Key Secret
+# Value must be set manually: aws secretsmanager put-secret-value \
+#   --secret-id petclinic/staging/claude-api-key --secret-string '{"api_key":"<your-key>"}'
+resource "aws_secretsmanager_secret" "claude_api_key" {
+  name                    = "petclinic/${var.environment}/claude-api-key"
+  description             = "Claude API key for Pet Clinic ${var.environment} chatbot"
+  recovery_window_in_days = 0
+
+  tags = {
+    Name = "petclinic-${var.environment}-claude-api-key-mumford"
+  }
+}
 
 # Secrets Manager Secret
 resource "aws_secretsmanager_secret" "db_credentials" {
