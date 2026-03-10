@@ -1,5 +1,10 @@
 # AWS Secrets Manager
-# Stores database credentials securely for application access
+# Stores database credentials and API keys securely for application access
+
+# Reference to existing Claude API key secret in Secrets Manager
+data "aws_secretsmanager_secret" "claude_api_key" {
+  name = "CLAUDE_API_KEY_MUMFORD"
+}
 
 # Secrets Manager Secret
 resource "aws_secretsmanager_secret" "db_credentials" {
