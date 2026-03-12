@@ -20,6 +20,7 @@ permissions:
   id-token: write
   issues: write
   pull-requests: write
+  packages: write
 
 jobs:
   deploy:
@@ -52,6 +53,9 @@ jobs:
             @semantic-release/release-notes-generator
             @semantic-release/github
 
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
       - uses: aws-actions/configure-aws-credentials@v6.0.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -82,11 +86,14 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ steps.version.outputs.version }}
+          GHCR_IMAGE: ghcr.io/${{ github.repository }}
         run: |
           docker buildx build \
             --platform linux/amd64 \
             -t $ECR_REGISTRY/petclinic-staging-repo-mumford:$IMAGE_TAG \
             -t $ECR_REGISTRY/petclinic-staging-repo-mumford:latest \
+            -t $GHCR_IMAGE:$IMAGE_TAG \
+            -t $GHCR_IMAGE:latest \
             --push \
             .
 
